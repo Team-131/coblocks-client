@@ -8,7 +8,7 @@ const gameSlice = createSlice({
   },
   reducers: {
     updateMap: (state, action) => {
-      state[action.payload.tutorialId.mapArray] = action.payload.mapArray;
+      state[action.payload.gameId].mapArray = action.payload.mapArray;
     },
   },
 });
