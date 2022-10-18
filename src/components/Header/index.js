@@ -5,19 +5,17 @@ import { LOGO, BUTTON } from "../../config/constants";
 
 function Header() {
   return (
-    <>
-      <Wrapper>
-        <Logo>
-          <TextWhite>{LOGO.C}</TextWhite>
-          <TextYellow>{LOGO.O}</TextYellow>
-          <TextWhite>{LOGO.BLOCKS}</TextWhite>
-        </Logo>
-        <ButtonWrapper>
-          <Button>{BUTTON.TUTORIAL}</Button>
-          <Button>{BUTTON.GAME_SELECTION}</Button>
-        </ButtonWrapper>
-      </Wrapper>
-    </>
+    <Wrapper>
+      <Logo>
+        <TextWhite>{LOGO.C}</TextWhite>
+        <TextYellow>{LOGO.O}</TextYellow>
+        <TextWhite>{LOGO.BLOCKS}</TextWhite>
+      </Logo>
+      <ButtonWrapper>
+        <Button>{BUTTON.TUTORIAL}</Button>
+        <Button>{BUTTON.GAME_SELECTION}</Button>
+      </ButtonWrapper>
+    </Wrapper>
   );
 }
 
@@ -40,11 +38,11 @@ const Logo = styled.div`
   font-weight: bolder;
 `;
 
-const TextWhite = styled.div`
+const TextWhite = styled.span`
   color: #ffffff;
 `;
 
-const TextYellow = styled.div`
+const TextYellow = styled.span`
   padding-left: 0.3vw;
   color: #f5ed58;
   transform: rotate(45deg);

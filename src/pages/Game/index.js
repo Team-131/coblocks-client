@@ -1,9 +1,9 @@
 import React from "react";
 import styled from "styled-components";
 
-import Header from "../../components/Header/index";
-import BlockCombinator from "../../components/BlockCombinator/index";
-import Map from "../../components/Map/index";
+import Header from "../../components/Header";
+import BlockCombinator from "../../components/BlockCombinator";
+import Map from "../../components/Map";
 
 import { BUTTON } from "../../config/constants";
 
@@ -18,13 +18,13 @@ function Game() {
           <Button rightMargin={"15vw"}>{BUTTON.NEXT_GAME}</Button>
         </ButtonsWrapper>
       </TopWrapper>
-      <BottomWrapper>
+      <ContentsWrapper>
         <BlockCombinator />
         <RightWrapper>
           <Map />
           <Button>{BUTTON.START}</Button>
         </RightWrapper>
-      </BottomWrapper>
+      </ContentsWrapper>
     </>
   );
 }
@@ -36,7 +36,7 @@ const TopWrapper = styled.div`
   height: 5vw;
 `;
 
-const Title = styled.div`
+const Title = styled.span`
   margin-left: 15vw;
   font-size: 1.5vw;
   font-weight: bolder;
@@ -62,7 +62,7 @@ const Button = styled.button`
   box-shadow: 0vw 0.3vw 0.3vw rgba(0, 0, 0, 0.25);
 `;
 
-const BottomWrapper = styled.div`
+const ContentsWrapper = styled.div`
   display: flex;
   align-items: start;
   justify-content: space-around;

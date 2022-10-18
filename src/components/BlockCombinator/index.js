@@ -13,16 +13,14 @@ function BlockCombinator() {
   }
 
   return (
-    <>
-      <Wrapper>
-        <WindowWrapper backGroundColor={"#64a9bd"}>
-          <BlockSelectionWindow />
-        </WindowWrapper>
-        <WindowWrapper backGroundColor={"#f5ed58"}>
-          <BlockLogicWindow />
-        </WindowWrapper>
-      </Wrapper>
-    </>
+    <Wrapper>
+      <WindowWrapper backGroundColor={"#64a9bd"}>
+        <BlockSelectionWindow />
+      </WindowWrapper>
+      <WindowWrapper backGroundColor={"#f5ed58"}>
+        <BlockLogicWindow />
+      </WindowWrapper>
+    </Wrapper>
   );
 }
 

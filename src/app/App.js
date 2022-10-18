@@ -1,7 +1,7 @@
 import React from "react";
 import { createGlobalStyle } from "styled-components";
 
-import Game from "../pages/Game/index";
+import Game from "../pages/Game";
 
 function App() {
   return (
