@@ -4,6 +4,11 @@ export const LOGO = {
   BLOCKS: "blocks",
 };
 
+export const STARS = {
+  EMPTY_STAR: "☆",
+  FULFILLED_STAR: "★",
+};
+
 export const BUTTON = {
   TUTORIAL: "연습하기",
   GAME_SELECTION: "게임선택",

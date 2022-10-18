@@ -24,7 +24,6 @@ const Wrapper = styled.div`
   align-items: center;
   justify-content: space-between;
   height: 3.7vw;
-  margin-top: 1vw;
   border: 0.3vw solid #000000;
   background: #de3589;
   box-shadow: 0vw 0.3vw 0.3vw rgba(0, 0, 0, 0.25);
