@@ -102,7 +102,7 @@ const WindowWrapper = styled.div`
   width: 20vw;
   height: 70vh;
   margin-right: 3vw;
-  border: 3px solid #000000;
+  border: 0.3vw solid #000000;
   background-color: ${(props) => props.backGroundColor};
   box-shadow: 0vw 0.3vw 0.3vw rgba(0, 0, 0, 0.25);
 `;
@@ -114,8 +114,8 @@ const Block = styled.div`
   width: 70%;
   height: 2.5rem;
   margin: 0.2rem 0;
-  border: 3px solid #000000;
   background-color: #7e72ce;
+  border: 2px solid #000000;
   color: white;
   font-weight: bolder;
 `;
