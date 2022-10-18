@@ -58,7 +58,7 @@ const Star = styled.span`
   font-weight: bolder;
 `;
 
-const Tip = styled.div`
+const Tip = styled.span`
   margin-top: 0.5vw;
   color: #ffffff;
   font-size: 1.3vw;

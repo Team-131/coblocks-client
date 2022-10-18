@@ -4,7 +4,7 @@ import styled from "styled-components";
 function NotFound() {
   return (
     <ImageWrapper>
-      <img alt="error_page" src="assets/img/error_image.png" />
+      <img alt="not_found_page" src="assets/img/NotFound.png" />
     </ImageWrapper>
   );
 }

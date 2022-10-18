@@ -28,9 +28,6 @@ function App() {
 const Global = createGlobalStyle`
   * {
     box-sizing: border-box;
-  }
-
-  body {
     margin: 0;
   }
 `;
