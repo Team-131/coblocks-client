@@ -16,8 +16,9 @@ function Home() {
       <Button
         backgroundColor={"#071bbb"}
         color={"#ffffff"}
-        onClick={() => navigate("/tutorial/1", { replace: true })}
+        onClick={() => navigate("/tutorial/123", { replace: true })}
       >
+        <Icon className="fa-solid fa-gamepad" />
         {BUTTON.TUTORIAL}
       </Button>
       <Button
@@ -25,6 +26,7 @@ function Home() {
         color={"#071bbb"}
         onClick={() => navigate("game_list", { replace: true })}
       >
+        <Icon className="fa-solid fa-list" />
         {BUTTON.GAME_SELECTION}
       </Button>
     </Background>
@@ -59,6 +61,10 @@ const TextWhite = styled.span`
 const TextYellow = styled.span`
   color: #fd5ebb;
   transform: rotate(45deg);
+`;
+
+const Icon = styled.i`
+  margin-right: 1rem;
 `;
 
 const Button = styled.button`
