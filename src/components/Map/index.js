@@ -1,15 +1,9 @@
 import React, { useEffect, useRef, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import PropTypes from "prop-types";
 
-import mapsData from "../../data/mapData";
-
-function Map() {
+function Map({ mapData }) {
   const ref = useRef(null);
-  const { gameId } = useParams();
-  const navigate = useNavigate();
-  const [character, setCharacter] = useState({ x: 0, y: 0, direction: 0 }); //direction ->  up : 0, right: 1, down : 2, left : 3
-
-  const mapData = mapsData[gameId];
+  const [character, setCharacter] = useState({ x: 0, y: 0, direction: 0 });
 
   const catSprite = new Image();
   const assets = new Image();
@@ -18,10 +12,6 @@ function Map() {
   assets.src = "/assets/image/coblocks-assets.png";
 
   useEffect(() => {
-    if (!mapData) {
-      return navigate("/not_found");
-    }
-
     assets.addEventListener(
       "load",
       () => {
@@ -137,7 +127,11 @@ function Map() {
     );
   };
 
-  return <canvas ref={ref} width="400" height="400"></canvas>;
+  return <canvas ref={ref} width="400" height="400" />;
 }
 
 export default Map;
+
+Map.propTypes = {
+  mapData: PropTypes.object.isRequired,
+};
