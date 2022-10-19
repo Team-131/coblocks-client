@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 import mapsData from "../../data/mapData";
 
@@ -6,6 +7,7 @@ function Map() {
   const ref = useRef(null);
   const [isMapData, setIsMapData] = useState(false);
   const [map, setMap] = useState([]);
+  const navigate = useNavigate();
 
   const cat = new Image();
   const assets = new Image();
@@ -15,7 +17,14 @@ function Map() {
 
   useEffect(() => {
     if (mapsData) {
-      setMap(mapsData["map1"]);
+      const key = window.location.pathname.split("/")[2];
+      const mapData = mapsData[key];
+
+      if (!mapData) {
+        navigate("/not_found");
+      }
+
+      setMap(mapData);
       setIsMapData(!isMapData);
     }
   }, []);
@@ -25,22 +34,28 @@ function Map() {
       assets.addEventListener(
         "load",
         () => {
-          const startingCoord = getCoordinate(map.startingPoint);
+          const startingCoordinate = getCoordinate(map.startingPoint);
 
-          for (let coordY = 0; coordY < 10; coordY++) {
-            for (let coordX = 0; coordX < 10; coordX++) {
-              const mapElement = map.elements[coordY * 10 + coordX];
-              const assetCoord = getCoordinate(mapElement);
+          for (let coordinateY = 0; coordinateY < 10; coordinateY++) {
+            for (let coordinateX = 0; coordinateX < 10; coordinateX++) {
+              const mapElement = map.elements[coordinateY * 10 + coordinateX];
+              const assetCoordinate = getCoordinate(mapElement);
 
-              drawField(assets, coordX, coordY, map.defaultField, 0);
+              drawField(assets, coordinateX, coordinateY, map.defaultField, 0);
 
               if (mapElement !== -1) {
-                drawField(assets, coordX, coordY, assetCoord.x, assetCoord.y);
+                drawField(
+                  assets,
+                  coordinateX,
+                  coordinateY,
+                  assetCoordinate.x,
+                  assetCoordinate.y,
+                );
               }
             }
           }
 
-          drawField(cat, startingCoord.x, startingCoord.y, 0, 1);
+          drawField(cat, startingCoordinate.x, startingCoordinate.y, 0, 1);
         },
         false,
       );
