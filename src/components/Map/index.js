@@ -1,13 +1,14 @@
-import React, { useEffect, useRef, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import React, { useEffect, useRef } from "react";
+import { useNavigate, useParams } from "react-router-dom";
 
 import mapsData from "../../data/mapData";
 
 function Map() {
   const ref = useRef(null);
-  const [isMapData, setIsMapData] = useState(false);
-  const [map, setMap] = useState([]);
+  const { gameId } = useParams();
   const navigate = useNavigate();
+
+  const mapData = mapsData[gameId];
 
   const catSprite = new Image();
   const assets = new Image();
@@ -16,61 +17,49 @@ function Map() {
   assets.src = "/assets/image/coblocks-assets.png";
 
   useEffect(() => {
-    if (mapsData) {
-      const key = window.location.pathname.split("/")[2];
-      const mapData = mapsData[key];
-
-      if (!mapData) {
-        navigate("/not_found");
-      }
-
-      setMap(mapData);
-      setIsMapData(!isMapData);
+    if (!mapData) {
+      return navigate("/not_found");
     }
-  }, []);
 
-  useEffect(() => {
-    if (isMapData) {
-      assets.addEventListener(
-        "load",
-        () => {
-          const startingCoordinate = getCoordinate(map.startingPoint);
+    assets.addEventListener(
+      "load",
+      () => {
+        const startingCoordinate = getCoordinate(mapData.startingPoint);
 
-          for (let coordinateY = 0; coordinateY < 10; coordinateY++) {
-            for (let coordinateX = 0; coordinateX < 10; coordinateX++) {
-              const mapElement = map.elements[coordinateY * 10 + coordinateX];
-              const assetCoordinate = getCoordinate(mapElement);
+        for (let coordinateY = 0; coordinateY < 10; coordinateY++) {
+          for (let coordinateX = 0; coordinateX < 10; coordinateX++) {
+            const mapElement = mapData.elements[coordinateY * 10 + coordinateX];
+            const assetCoordinate = getCoordinate(mapElement);
 
-              drawField(assets, coordinateX, coordinateY, map.defaultField, 0);
+            drawField(
+              assets,
+              coordinateX,
+              coordinateY,
+              mapData.defaultField,
+              0,
+            );
 
-              if (mapElement !== -1) {
-                drawField(
-                  assets,
-                  coordinateX,
-                  coordinateY,
-                  assetCoordinate.x,
-                  assetCoordinate.y,
-                );
-              }
+            if (mapElement !== -1) {
+              drawField(
+                assets,
+                coordinateX,
+                coordinateY,
+                assetCoordinate.x,
+                assetCoordinate.y,
+              );
             }
           }
+        }
 
-          drawField(
-            catSprite,
-            startingCoordinate.x,
-            startingCoordinate.y,
-            0,
-            1,
-          );
-        },
-        false,
-      );
-    }
-  }, [isMapData]);
+        drawField(catSprite, startingCoordinate.x, startingCoordinate.y, 0, 1);
+      },
+      false,
+    );
+  }, []);
 
   const getCoordinate = (data) => {
     if (data === -1) {
-      return { x: map.defaultField, y: 0 };
+      return { x: mapData.defaultField, y: 0 };
     }
 
     const x = data % 10;
@@ -80,20 +69,20 @@ function Map() {
 
   const drawField = (
     image,
-    mapCoordX,
-    mapCoordY,
-    assetCoordX = 0,
-    assetCoordY = 0,
+    mapCoordinateX,
+    mapCoordinateY,
+    assetCoordinateX = 0,
+    assetCoordinateY = 0,
   ) => {
-    const ctx = ref.current.getContext("2d");
-    ctx.drawImage(
+    const context = ref.current.getContext("2d");
+    context.drawImage(
       image,
-      46 * assetCoordX,
-      46 * assetCoordY,
+      46 * assetCoordinateX,
+      46 * assetCoordinateY,
       46,
       46,
-      40 * mapCoordX,
-      40 * mapCoordY,
+      40 * mapCoordinateX,
+      40 * mapCoordinateY,
       40,
       40,
     );
