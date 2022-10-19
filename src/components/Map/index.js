@@ -64,6 +64,7 @@ function Map() {
 
     const x = data % 10;
     const y = Math.floor(data / 10);
+
     return { x, y };
   };
 
@@ -75,6 +76,7 @@ function Map() {
     assetCoordinateY = 0,
   ) => {
     const context = ref.current.getContext("2d");
+
     context.drawImage(
       image,
       46 * assetCoordinateX,
