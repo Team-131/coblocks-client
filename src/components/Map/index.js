@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 
 import mapsData from "../../data/mapData";
@@ -7,6 +7,7 @@ function Map() {
   const ref = useRef(null);
   const { gameId } = useParams();
   const navigate = useNavigate();
+  const [character, setCharacter] = useState({ x: 0, y: 0, direction: 0 }); //direction ->  up : 0, right: 1, down : 2, left : 3
 
   const mapData = mapsData[gameId];
 
@@ -25,6 +26,12 @@ function Map() {
       "load",
       () => {
         const startingCoordinate = getCoordinate(mapData.startingPoint);
+
+        setCharacter({
+          x: startingCoordinate.x,
+          y: startingCoordinate.y,
+          direction: 1,
+        });
 
         for (let coordinateY = 0; coordinateY < 10; coordinateY++) {
           for (let coordinateX = 0; coordinateX < 10; coordinateX++) {
@@ -56,6 +63,46 @@ function Map() {
       false,
     );
   }, []);
+
+  const turnLeft = () => {
+    const newCharacter = { ...character };
+
+    if (newCharacter.direction === 0) {
+      newCharacter.direction = 3;
+    } else {
+      newCharacter.direction--;
+    }
+
+    setCharacterDirection(newCharacter);
+  };
+
+  const turnRight = () => {
+    const newCharacter = { ...character };
+
+    if (newCharacter.direction === 3) {
+      newCharacter.direction = 0;
+    } else {
+      newCharacter.direction++;
+    }
+
+    setCharacterDirection(newCharacter);
+  };
+
+  const setCharacterDirection = (newCharacter) => {
+    const element = mapData.elements[character.y * 10 + character.x];
+    const { x, y } = getCoordinate(element);
+
+    drawField(assets, newCharacter.x, newCharacter.y, x, y);
+    drawField(
+      catSprite,
+      newCharacter.x,
+      newCharacter.y,
+      0,
+      newCharacter.direction,
+    );
+
+    setCharacter(newCharacter);
+  };
 
   const getCoordinate = (data) => {
     if (data === -1) {
