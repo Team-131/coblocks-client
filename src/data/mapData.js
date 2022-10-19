@@ -1,5 +1,5 @@
 const mapsData = {
-  map1: {
+  1: {
     title: "황무지",
     defaultField: 1,
     startingPoint: 50,
@@ -12,7 +12,7 @@ const mapsData = {
       -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
     ],
   },
-  map2: {
+  14: {
     title: "들판",
     defaultField: 0,
     startingPoint: 50,
@@ -25,7 +25,7 @@ const mapsData = {
       -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
     ],
   },
-  map3: {
+  15: {
     title: "물조심",
     defaultField: 0,
     startingPoint: 90,
