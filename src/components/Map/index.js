@@ -9,11 +9,11 @@ function Map() {
   const [map, setMap] = useState([]);
   const navigate = useNavigate();
 
-  const cat = new Image();
+  const catSprite = new Image();
   const assets = new Image();
 
-  cat.src = "/assets/img/cat.png";
-  assets.src = "/assets/img/coblocks-assets.png";
+  catSprite.src = "/assets/image/cat.png";
+  assets.src = "/assets/image/coblocks-assets.png";
 
   useEffect(() => {
     if (mapsData) {
@@ -55,7 +55,13 @@ function Map() {
             }
           }
 
-          drawField(cat, startingCoordinate.x, startingCoordinate.y, 0, 1);
+          drawField(
+            catSprite,
+            startingCoordinate.x,
+            startingCoordinate.y,
+            0,
+            1,
+          );
         },
         false,
       );
@@ -73,7 +79,7 @@ function Map() {
   };
 
   const drawField = (
-    img,
+    image,
     mapCoordX,
     mapCoordY,
     assetCoordX = 0,
@@ -81,7 +87,7 @@ function Map() {
   ) => {
     const ctx = ref.current.getContext("2d");
     ctx.drawImage(
-      img,
+      image,
       46 * assetCoordX,
       46 * assetCoordY,
       46,
