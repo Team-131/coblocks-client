@@ -1,5 +1,8 @@
-import React from "react";
+import React, { useEffect } from "react";
 import styled from "styled-components";
+import { useNavigate, useParams } from "react-router-dom";
+
+import mapsData from "../../data/mapData";
 
 import Header from "../../components/Header";
 import BlockCombinator from "../../components/BlockCombinator";
@@ -8,11 +11,21 @@ import Map from "../../components/Map";
 import { BUTTON } from "../../config/constants";
 
 function Game() {
+  const navigate = useNavigate();
+  const { gameId } = useParams();
+  const mapData = { ...mapsData[gameId] };
+
+  useEffect(() => {
+    if (!mapData) {
+      navigate("/not_found");
+    }
+  }, []);
+
   return (
     <>
       <Header />
       <TopWrapper>
-        <Title>여기는 제목 자리입니다.</Title>
+        <Title>{mapData.title}</Title>
         <ButtonsWrapper>
           <Button rightMargin={"4vw"}>{BUTTON.REPEAT}</Button>
           <Button rightMargin={"15vw"}>{BUTTON.NEXT_GAME}</Button>
@@ -21,7 +34,7 @@ function Game() {
       <ContentsWrapper>
         <BlockCombinator />
         <RightWrapper>
-          <Map />
+          {mapData && <Map mapData={mapData} />}
           <Button>{BUTTON.START}</Button>
         </RightWrapper>
       </ContentsWrapper>

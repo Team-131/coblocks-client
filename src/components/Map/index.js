@@ -1,14 +1,9 @@
-import React, { useEffect, useRef } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import React, { useEffect, useRef, useState } from "react";
+import PropTypes from "prop-types";
 
-import mapsData from "../../data/mapData";
-
-function Map() {
+function Map({ mapData }) {
   const ref = useRef(null);
-  const { gameId } = useParams();
-  const navigate = useNavigate();
-
-  const mapData = mapsData[gameId];
+  const [character, setCharacter] = useState({ x: 0, y: 0, direction: 0 });
 
   const catSprite = new Image();
   const assets = new Image();
@@ -17,14 +12,16 @@ function Map() {
   assets.src = "/assets/image/coblocks-assets.png";
 
   useEffect(() => {
-    if (!mapData) {
-      return navigate("/not_found");
-    }
-
     assets.addEventListener(
       "load",
       () => {
         const startingCoordinate = getCoordinate(mapData.startingPoint);
+
+        setCharacter({
+          x: startingCoordinate.x,
+          y: startingCoordinate.y,
+          direction: 1,
+        });
 
         for (let coordinateY = 0; coordinateY < 10; coordinateY++) {
           for (let coordinateX = 0; coordinateX < 10; coordinateX++) {
@@ -56,6 +53,46 @@ function Map() {
       false,
     );
   }, []);
+
+  const turnLeft = () => {
+    const newCharacter = { ...character };
+
+    if (newCharacter.direction === 0) {
+      newCharacter.direction = 3;
+    } else {
+      newCharacter.direction--;
+    }
+
+    setCharacterDirection(newCharacter);
+  };
+
+  const turnRight = () => {
+    const newCharacter = { ...character };
+
+    if (newCharacter.direction === 3) {
+      newCharacter.direction = 0;
+    } else {
+      newCharacter.direction++;
+    }
+
+    setCharacterDirection(newCharacter);
+  };
+
+  const setCharacterDirection = (newCharacter) => {
+    const element = mapData.elements[character.y * 10 + character.x];
+    const { x, y } = getCoordinate(element);
+
+    drawField(assets, newCharacter.x, newCharacter.y, x, y);
+    drawField(
+      catSprite,
+      newCharacter.x,
+      newCharacter.y,
+      0,
+      newCharacter.direction,
+    );
+
+    setCharacter(newCharacter);
+  };
 
   const getCoordinate = (data) => {
     if (data === -1) {
@@ -90,7 +127,11 @@ function Map() {
     );
   };
 
-  return <canvas ref={ref} width="400" height="400"></canvas>;
+  return <canvas ref={ref} width="400" height="400" />;
 }
 
 export default Map;
+
+Map.propTypes = {
+  mapData: PropTypes.object.isRequired,
+};
