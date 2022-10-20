@@ -8,8 +8,8 @@ function Modal({ closeModal, resultMessage, children }) {
   return (
     <Portal>
       <Background
-        onClick={(e) => {
-          if (e.target !== e.currentTarget) return;
+        onClick={(event) => {
+          if (event.target !== event.currentTarget) return;
 
           closeModal();
         }}
