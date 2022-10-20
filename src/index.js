@@ -6,7 +6,7 @@ import { BrowserRouter } from "react-router-dom";
 import App from "./app/App";
 import store from "./app/configureStore";
 
-const rootElement = document.getElementById("root");
+const rootElement = document.getElementById("app-root");
 const root = createRoot(rootElement);
 
 root.render(
