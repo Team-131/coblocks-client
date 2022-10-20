@@ -25,7 +25,7 @@ function BlockCombinator() {
   };
 
   const drop = (event) => {
-    const data = event.dataTransfer.getData("text");
+    const dragBlockText = event.dataTransfer.getData("text");
     const newLogicBlocks = logicBlocks.slice();
 
     if (
@@ -34,14 +34,14 @@ function BlockCombinator() {
       newLogicBlocks[dragOverBlock.current]
     ) {
       newLogicBlocks.splice(newLogicBlocks.indexOf(""), 1);
-      newLogicBlocks.splice(dragOverBlock.current, 0, data);
+      newLogicBlocks.splice(dragOverBlock.current, 0, dragBlockText);
       setLogicBlocks(newLogicBlocks);
     } else if (
       newLogicBlocks.includes("") &&
       !blockId.includes("blocksLogic") &&
       !newLogicBlocks[dragOverBlock.current]
     ) {
-      newLogicBlocks.splice(newLogicBlocks.indexOf(""), 1, data);
+      newLogicBlocks.splice(newLogicBlocks.indexOf(""), 1, dragBlockText);
       setLogicBlocks(newLogicBlocks);
     }
 
@@ -50,14 +50,14 @@ function BlockCombinator() {
       newLogicBlocks[dragOverBlock.current]
     ) {
       newLogicBlocks.splice(blockIndex, 1);
-      newLogicBlocks.splice(dragOverBlock.current, 0, data);
+      newLogicBlocks.splice(dragOverBlock.current, 0, dragBlockText);
       setLogicBlocks(newLogicBlocks);
     } else if (
       blockId.includes("blocksLogic") &&
       !newLogicBlocks[dragOverBlock.current]
     ) {
       newLogicBlocks.splice(blockIndex, 1);
-      newLogicBlocks.splice(newLogicBlocks.indexOf(""), 1, data);
+      newLogicBlocks.splice(newLogicBlocks.indexOf(""), 1, dragBlockText);
       newLogicBlocks.push("");
       setLogicBlocks(newLogicBlocks);
     }
@@ -94,7 +94,7 @@ function BlockCombinator() {
           blockTitle ? (
             <Block
               key={`${blockTitle}${index}`}
-              id={`"blocksLogic${index}`}
+              id={`blocksLogic${index}`}
               draggable="true"
               onDragStart={(event) => dragStart(event, index)}
               onDragEnter={(event) => dragEnter(event, index)}
@@ -104,7 +104,7 @@ function BlockCombinator() {
           ) : (
             <EmptyBlock
               key={`${blockTitle}${index}`}
-              id={`${index}`}
+              id={`${blockTitle}${index}`}
               onDragEnter={(event) => dragEnter(event, index)}
             >
               {blockTitle}
