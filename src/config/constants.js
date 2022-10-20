@@ -17,6 +17,10 @@ export const BUTTON = {
   START: "시작하기",
 };
 
+export const ID = {
+  BLOCKS_LOGIC: "blocksLogic",
+};
+
 export const WINDOW = {
   BLOCKS_SELECTION: "코드 블록 선택하기",
   BLOCKS_LOGIC: "코드 블록 놓기",
