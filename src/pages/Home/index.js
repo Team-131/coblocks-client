@@ -74,9 +74,9 @@ const Button = styled.button`
   height: 4rem;
   width: 15rem;
   padding: 1vw;
+  margin: 1vw;
   border: 3px solid #000000;
   border-radius: 30px;
-  margin: 1vw;
   background: ${(props) => props.backgroundColor};
   color: ${(props) => props.color};
   font-size: 2rem;
