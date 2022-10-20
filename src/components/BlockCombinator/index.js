@@ -1,34 +1,64 @@
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import styled from "styled-components";
 
 import { WINDOW } from "../../config/constants";
 
 function BlockCombinator() {
-  const blocks = [
-    "1칸전진",
-    "왼쪽회전",
-    "오른쪽회전",
-    "if",
-    "while",
-    "공격",
-    "놓기",
-  ];
+  const dragOverBlock = useRef();
+  const blocks = ["1칸전진", "오른쪽회전", "왼쪽회전", "공격", "if", "while"];
 
   const [logicBlocks, setLogicBlocks] = useState(
     Array.from({ length: 10 }).fill(""),
   );
 
-  const dragStart = (event) => {
+  let blockIndex;
+  let blockId;
+
+  const dragStart = (event, index) => {
     event.dataTransfer.setData("text", event.target.innerText);
+    blockIndex = index;
+    blockId = event.currentTarget.id;
+  };
+
+  const dragEnter = (event, index) => {
+    dragOverBlock.current = index;
   };
 
   const drop = (event) => {
-    const data = event.dataTransfer.getData("text");
+    const dragBlockText = event.dataTransfer.getData("text");
+    const newLogicBlocks = logicBlocks.slice();
 
-    if (data && logicBlocks.includes("")) {
-      const newLogicBlocks = logicBlocks.slice();
+    if (
+      newLogicBlocks.includes("") &&
+      !blockId.includes("blocksLogic") &&
+      newLogicBlocks[dragOverBlock.current]
+    ) {
+      newLogicBlocks.splice(newLogicBlocks.indexOf(""), 1);
+      newLogicBlocks.splice(dragOverBlock.current, 0, dragBlockText);
+      setLogicBlocks(newLogicBlocks);
+    } else if (
+      newLogicBlocks.includes("") &&
+      !blockId.includes("blocksLogic") &&
+      !newLogicBlocks[dragOverBlock.current]
+    ) {
+      newLogicBlocks.splice(newLogicBlocks.indexOf(""), 1, dragBlockText);
+      setLogicBlocks(newLogicBlocks);
+    }
 
-      newLogicBlocks.splice(newLogicBlocks.indexOf(""), 1, data);
+    if (
+      blockId.includes("blocksLogic") &&
+      newLogicBlocks[dragOverBlock.current]
+    ) {
+      newLogicBlocks.splice(blockIndex, 1);
+      newLogicBlocks.splice(dragOverBlock.current, 0, dragBlockText);
+      setLogicBlocks(newLogicBlocks);
+    } else if (
+      blockId.includes("blocksLogic") &&
+      !newLogicBlocks[dragOverBlock.current]
+    ) {
+      newLogicBlocks.splice(blockIndex, 1);
+      newLogicBlocks.splice(newLogicBlocks.indexOf(""), 1, dragBlockText);
+      newLogicBlocks.push("");
       setLogicBlocks(newLogicBlocks);
     }
   };
@@ -41,12 +71,12 @@ function BlockCombinator() {
     <Wrapper>
       <WindowWrapper backGroundColor={"#64a9bd"}>
         <Title color={"#ffffff"}>{WINDOW.BLOCKS_SELECTION}</Title>
-        {blocks.map((blockTitle) => (
+        {blocks.map((blockTitle, index) => (
           <Block
             key={blockTitle}
             id={blockTitle}
-            onDragStart={dragStart}
             draggable="true"
+            onDragStart={(event) => dragStart(event, index)}
           >
             {blockTitle}
           </Block>
@@ -64,8 +94,10 @@ function BlockCombinator() {
           blockTitle ? (
             <Block
               key={`${blockTitle}${index}`}
-              id={`${blockTitle}${index}`}
+              id={`blocksLogic${index}`}
               draggable="true"
+              onDragStart={(event) => dragStart(event, index)}
+              onDragEnter={(event) => dragEnter(event, index)}
             >
               {blockTitle}
             </Block>
@@ -73,6 +105,7 @@ function BlockCombinator() {
             <EmptyBlock
               key={`${blockTitle}${index}`}
               id={`${blockTitle}${index}`}
+              onDragEnter={(event) => dragEnter(event, index)}
             >
               {blockTitle}
             </EmptyBlock>
@@ -111,7 +144,7 @@ const Block = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
-  width: 70%;
+  width: 13vw;
   height: 2.5rem;
   margin: 0.2rem 0;
   background-color: #7e72ce;
@@ -124,7 +157,7 @@ const EmptyBlock = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
-  width: 70%;
+  width: 13vw;
   height: 2.5rem;
   margin: 0.2rem 0;
   border: 2px dashed #000000;
