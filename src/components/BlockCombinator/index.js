@@ -24,7 +24,7 @@ function BlockCombinator() {
     dragOverBlock.current = index;
   };
 
-  const hendleBlock = (event) => {
+  const handleBlock = (event) => {
     const dragBlockText = event.dataTransfer.getData("text");
     const newLogicBlocks = logicBlocks.slice();
     const firstEmptyBlock = newLogicBlocks.indexOf("");
@@ -94,7 +94,7 @@ function BlockCombinator() {
       </WindowWrapper>
       <WindowWrapper
         backGroundColor={"#f5ed58"}
-        onDrop={hendleBlock}
+        onDrop={handleBlock}
         onDragOver={allowDrop}
       >
         <Title color={"#000000"} draggable="false">
