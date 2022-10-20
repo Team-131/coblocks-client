@@ -1,7 +1,7 @@
 import React, { useRef, useState } from "react";
 import styled from "styled-components";
 
-import { ID, WINDOW } from "../../config/constants";
+import { WINDOW } from "../../config/constants";
 
 function BlockCombinator() {
   const dragOverBlock = useRef();
@@ -30,27 +30,35 @@ function BlockCombinator() {
 
     if (
       newLogicBlocks.includes("") &&
-      !blockId.includes(ID.BLOCKS_LOGIC) &&
-      !newLogicBlocks[dragOverBlock.current]
-    ) {
-      newLogicBlocks.splice(newLogicBlocks.indexOf(""), 1, data);
-      setLogicBlocks(newLogicBlocks);
-    } else if (
-      newLogicBlocks.includes("") &&
-      !blockId.includes(ID.BLOCKS_LOGIC) &&
+      !blockId.includes("blocksLogic") &&
       newLogicBlocks[dragOverBlock.current]
     ) {
       newLogicBlocks.splice(newLogicBlocks.indexOf(""), 1);
       newLogicBlocks.splice(dragOverBlock.current, 0, data);
       setLogicBlocks(newLogicBlocks);
+    } else if (
+      newLogicBlocks.includes("") &&
+      !blockId.includes("blocksLogic") &&
+      !newLogicBlocks[dragOverBlock.current]
+    ) {
+      newLogicBlocks.splice(newLogicBlocks.indexOf(""), 1, data);
+      setLogicBlocks(newLogicBlocks);
     }
 
     if (
-      blockId.includes(ID.BLOCKS_LOGIC) &&
+      blockId.includes("blocksLogic") &&
       newLogicBlocks[dragOverBlock.current]
     ) {
       newLogicBlocks.splice(blockIndex, 1);
       newLogicBlocks.splice(dragOverBlock.current, 0, data);
+      setLogicBlocks(newLogicBlocks);
+    } else if (
+      blockId.includes("blocksLogic") &&
+      !newLogicBlocks[dragOverBlock.current]
+    ) {
+      newLogicBlocks.splice(blockIndex, 1);
+      newLogicBlocks.splice(newLogicBlocks.indexOf(""), 1, data);
+      newLogicBlocks.push("");
       setLogicBlocks(newLogicBlocks);
     }
   };
@@ -86,7 +94,7 @@ function BlockCombinator() {
           blockTitle ? (
             <Block
               key={`${blockTitle}${index}`}
-              id={`${ID.BLOCKS_LOGIC}-${index}`}
+              id={`"blocksLogic${index}`}
               draggable="true"
               onDragStart={(event) => dragStart(event, index)}
               onDragEnter={(event) => dragEnter(event, index)}
