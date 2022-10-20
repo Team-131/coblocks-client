@@ -24,41 +24,47 @@ function BlockCombinator() {
     dragOverBlock.current = index;
   };
 
-  const drop = (event) => {
+  const hendleBlock = (event) => {
     const dragBlockText = event.dataTransfer.getData("text");
     const newLogicBlocks = logicBlocks.slice();
+    const firstEmptyBlock = newLogicBlocks.indexOf("");
 
-    if (
-      newLogicBlocks.includes("") &&
-      !blockId.includes("blocksLogic") &&
-      newLogicBlocks[dragOverBlock.current]
-    ) {
-      newLogicBlocks.splice(newLogicBlocks.indexOf(""), 1);
-      newLogicBlocks.splice(dragOverBlock.current, 0, dragBlockText);
-      setLogicBlocks(newLogicBlocks);
-    } else if (
-      newLogicBlocks.includes("") &&
-      !blockId.includes("blocksLogic") &&
-      !newLogicBlocks[dragOverBlock.current]
-    ) {
-      newLogicBlocks.splice(newLogicBlocks.indexOf(""), 1, dragBlockText);
-      setLogicBlocks(newLogicBlocks);
+    if (blockId.includes("blocksLogic")) {
+      if (newLogicBlocks[dragOverBlock.current]) {
+        newLogicBlocks.splice(blockIndex, 1);
+        newLogicBlocks.splice(dragOverBlock.current, 0, dragBlockText);
+
+        setLogicBlocks(newLogicBlocks);
+      } else if (!newLogicBlocks[dragOverBlock.current]) {
+        newLogicBlocks.splice(blockIndex, 1);
+        newLogicBlocks.splice(newLogicBlocks.indexOf(""), 1, dragBlockText);
+        newLogicBlocks.push("");
+
+        setLogicBlocks(newLogicBlocks);
+      }
+    } else {
+      if (firstEmptyBlock !== -1) {
+        if (newLogicBlocks[dragOverBlock.current]) {
+          newLogicBlocks.splice(firstEmptyBlock, 1);
+          newLogicBlocks.splice(dragOverBlock.current, 0, dragBlockText);
+
+          setLogicBlocks(newLogicBlocks);
+        } else {
+          newLogicBlocks.splice(firstEmptyBlock, 1, dragBlockText);
+
+          setLogicBlocks(newLogicBlocks);
+        }
+      }
     }
+  };
 
-    if (
-      blockId.includes("blocksLogic") &&
-      newLogicBlocks[dragOverBlock.current]
-    ) {
+  const removeLogicBlock = () => {
+    const newLogicBlocks = logicBlocks.slice();
+
+    if (blockId.includes("blocksLogic")) {
       newLogicBlocks.splice(blockIndex, 1);
-      newLogicBlocks.splice(dragOverBlock.current, 0, dragBlockText);
-      setLogicBlocks(newLogicBlocks);
-    } else if (
-      blockId.includes("blocksLogic") &&
-      !newLogicBlocks[dragOverBlock.current]
-    ) {
-      newLogicBlocks.splice(blockIndex, 1);
-      newLogicBlocks.splice(newLogicBlocks.indexOf(""), 1, dragBlockText);
       newLogicBlocks.push("");
+
       setLogicBlocks(newLogicBlocks);
     }
   };
@@ -69,7 +75,11 @@ function BlockCombinator() {
 
   return (
     <Wrapper>
-      <WindowWrapper backGroundColor={"#64a9bd"}>
+      <WindowWrapper
+        backGroundColor={"#64a9bd"}
+        onDrop={removeLogicBlock}
+        onDragOver={allowDrop}
+      >
         <Title color={"#ffffff"}>{WINDOW.BLOCKS_SELECTION}</Title>
         {blocks.map((blockTitle, index) => (
           <Block
@@ -84,7 +94,7 @@ function BlockCombinator() {
       </WindowWrapper>
       <WindowWrapper
         backGroundColor={"#f5ed58"}
-        onDrop={drop}
+        onDrop={hendleBlock}
         onDragOver={allowDrop}
       >
         <Title color={"#000000"} draggable="false">
