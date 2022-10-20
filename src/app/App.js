@@ -15,10 +15,10 @@ function App() {
       <Global />
       <Routes>
         <Route path="/" exact element={<Home />} />
-        <Route path="tutorial/:tutorialId" element={<Tutorial />} />
-        <Route path="game_list" element={<GameList />} />
-        <Route path="game/:gameId" element={<Game />} />
-        <Route path="error" element={<Error />} />
+        <Route path="/tutorial/:tutorialId" element={<Tutorial />} />
+        <Route path="/game_list" element={<GameList />} />
+        <Route path="/game/:gameId" element={<Game />} />
+        <Route path="/error" element={<Error />} />
         <Route path="*" element={<NotFound />} />
       </Routes>
     </>

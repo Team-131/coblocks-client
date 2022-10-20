@@ -1,9 +1,10 @@
-import React, { useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 import { useNavigate, useParams } from "react-router-dom";
 
 import mapsData from "../../data/mapData";
 
+import { Modal } from "../../components/Modal/Modal";
 import Header from "../../components/Header";
 import BlockCombinator from "../../components/BlockCombinator";
 import Map from "../../components/Map";
@@ -11,8 +12,10 @@ import Map from "../../components/Map";
 import { BUTTON } from "../../config/constants";
 
 function Game() {
+  const [isModalOpen, setIsModalOpen] = useState(true);
   const navigate = useNavigate();
   const { gameId } = useParams();
+
   const mapData = { ...mapsData[gameId] };
 
   useEffect(() => {
@@ -23,6 +26,12 @@ function Game() {
 
   return (
     <>
+      {isModalOpen && (
+        <Modal
+          closeModal={() => setIsModalOpen(false)}
+          resultMessage={"성공 🎉 / 실패 😭"}
+        />
+      )}
       <Header />
       <TopWrapper>
         <Title>{mapData.title}</Title>
