@@ -1,35 +1,75 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import styled from "styled-components";
+import { useNavigate, useParams } from "react-router-dom";
 
-import Header from "../../components/Header";
+import { tutoriaMapsData } from "../../data/tutorialMapsData";
+
+import { Modal } from "../../components/Modal/Modal";
+import { Header } from "../../components/Header";
 import BlockCombinator from "../../components/BlockCombinator";
 import Map from "../../components/Map";
 
 import { STARS, BUTTON } from "../../config/constants";
 
 function Tutorial() {
+  const [isModalOpen, setIsModalOpen] = useState(true);
+  const navigate = useNavigate();
+  const { tutorialId } = useParams();
+  const allTutorialKeys = Object.keys(tutoriaMapsData);
+  const mapData = { ...tutoriaMapsData[tutorialId] };
+
+  useEffect(() => {
+    if (!tutoriaMapsData[tutorialId]) {
+      navigate("/not_found");
+    }
+  }, []);
+
   return (
-    <Wrapper>
-      <Header />
-      <TopWrapper>
-        <GuideWrapper>
-          <Star color={"#f5ed58"}>{STARS.FULFILLED_STAR}</Star>
-          <Star color={"#808080"}>{STARS.EMPTY_STAR}</Star>
-          <Tip>Tip: 여기는 사용자 팁 자리입니다.</Tip>
-        </GuideWrapper>
-        <ButtonsWrapper>
-          <Button rightMargin={"4vw"}>{BUTTON.REPEAT}</Button>
-          <Button rightMargin={"15vw"}>{BUTTON.NEXT_GAME}</Button>
-        </ButtonsWrapper>
-      </TopWrapper>
-      <ContentsWrapper>
-        <BlockCombinator />
-        <RightWrapper>
-          <Map />
-          <Button>{BUTTON.START}</Button>
-        </RightWrapper>
-      </ContentsWrapper>
-    </Wrapper>
+    <>
+      {isModalOpen && (
+        <Modal
+          closeModal={() => setIsModalOpen(false)}
+          resultMessage={"성공 🎉 / 실패 😭"}
+        />
+      )}
+      <Wrapper>
+        <Header />
+        <TopWrapper>
+          <GuideWrapper>
+            {allTutorialKeys.map((stage, index) =>
+              stage === tutorialId ? (
+                <Star color={"#f5ed58"} key={`tutorial${tutorialId}-${index}`}>
+                  {STARS.FULFILLED_STAR}
+                </Star>
+              ) : (
+                <Star
+                  color={"#808080"}
+                  key={`tutorial${tutorialId}-${index}`}
+                  onClick={() =>
+                    navigate(`/tutorial/${stage}`, { replace: true })
+                  }
+                >
+                  {STARS.EMPTY_STAR}
+                </Star>
+              ),
+            )}
+
+            <Tip>Tip: {mapData.tip}</Tip>
+          </GuideWrapper>
+          <ButtonsWrapper>
+            <Button rightMargin={"4vw"}>{BUTTON.REPEAT}</Button>
+            <Button rightMargin={"15vw"}>{BUTTON.NEXT_GAME}</Button>
+          </ButtonsWrapper>
+        </TopWrapper>
+        <ContentsWrapper>
+          <BlockCombinator />
+          <RightWrapper>
+            {mapData && <Map mapData={tutoriaMapsData[tutorialId]} />}
+            <Button>{BUTTON.START}</Button>
+          </RightWrapper>
+        </ContentsWrapper>
+      </Wrapper>
+    </>
   );
 }
 

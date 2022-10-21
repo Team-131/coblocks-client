@@ -5,7 +5,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import mapsData from "../../data/mapData";
 
 import { Modal } from "../../components/Modal/Modal";
-import Header from "../../components/Header";
+import { Header } from "../../components/Header";
 import BlockCombinator from "../../components/BlockCombinator";
 import Map from "../../components/Map";
 
@@ -19,7 +19,7 @@ function Game() {
   const mapData = { ...mapsData[gameId] };
 
   useEffect(() => {
-    if (!mapData) {
+    if (!mapsData[gameId]) {
       navigate("/not_found");
     }
   }, []);

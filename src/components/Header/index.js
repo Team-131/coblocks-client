@@ -15,7 +15,7 @@ function Header() {
         <TextWhite>{LOGO.BLOCKS}</TextWhite>
       </Logo>
       <ButtonWrapper>
-        <Button onClick={() => navigate("/tutorial/123", { replace: true })}>
+        <Button onClick={() => navigate("/tutorial/stage1", { replace: true })}>
           {BUTTON.TUTORIAL}
         </Button>
         <Button onClick={() => navigate("/game_list", { replace: true })}>
@@ -68,4 +68,4 @@ const Button = styled.button`
   font-weight: bolder;
 `;
 
-export default Header;
+export { Header };
