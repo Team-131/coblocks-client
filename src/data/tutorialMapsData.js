@@ -1,9 +1,9 @@
 const tutoriaMapsData = {
   stage1: {
-    tip: "1칸 전진 블록을 사용해서 목적지에 도착 해 보세요.",
+    tip: "앞으로 1칸 이동 사용해서 목적지에 도착해 보세요.",
     defaultField: 1,
     startingPoint: 50,
-    blocks: ["1칸전진"],
+    blocks: ["앞으로 1칸 이동"],
     limitCount: 10,
     elements: [
       0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 21, 21, 21, 21, 11, 21, 21, 21, 21, 21, 0,
@@ -14,10 +14,10 @@ const tutoriaMapsData = {
     ],
   },
   stage2: {
-    tip: "1칸 전진과 while을 사용해서 목적지에 도착 해 보세요.",
+    tip: "앞으로 1칸 이동과 계속 반복하기를 사용해서 목적지에 도착해 보세요.",
     defaultField: 0,
     startingPoint: 50,
-    blocks: ["1칸전진", "while"],
+    blocks: ["앞으로 1칸 이동", "계속 반복하기"],
     limitCount: 2,
     elements: [
       30, 30, 30, 30, -1, 30, 30, 30, 30, 30, 21, 21, 21, 21, 11, 21, 21, 21,
@@ -29,10 +29,15 @@ const tutoriaMapsData = {
     ],
   },
   stage3: {
-    tip: "회전 블럭을 사용해 보세요.",
+    tip: "돌리기 블록을 사용해 보세요.",
     defaultField: 0,
     startingPoint: 90,
-    blocks: ["1칸전진", "while", "오른쪽회전", "왼쪽회전"],
+    blocks: [
+      "앞으로 1칸 이동",
+      "계속 반복하기",
+      "오른쪽으로 돌리기",
+      "왼쪽으로 돌리기",
+    ],
     limitCount: 10,
     elements: [
       21, 21, 21, 21, 21, 21, 21, 21, 1, 60, 21, 21, 21, 21, 21, 21, 21, 21, 1,
@@ -44,10 +49,15 @@ const tutoriaMapsData = {
     ],
   },
   stage4: {
-    tip: "1칸전진, 회전을 반복문에 넣어서 사용해 보세요.",
+    tip: "앞으로 1칸 이동, 돌리기 블록을 반복문에 넣어서 사용해 보세요.",
     defaultField: 0,
     startingPoint: 90,
-    blocks: ["1칸전진", "while", "오른쪽회전", "왼쪽회전"],
+    blocks: [
+      "앞으로 1칸 이동",
+      "계속 반복하기",
+      "오른쪽으로 돌리기",
+      "왼쪽으로 돌리기",
+    ],
     limitCount: 6,
     elements: [
       -1, -1, -1, -1, 10, -1, -1, -1, -1, -1, -1, -1, 20, -1, 21, -1, -1, -1,
@@ -62,7 +72,12 @@ const tutoriaMapsData = {
     tip: "열쇠를 얻어야 문을 열 수 있습니다.",
     defaultField: 0,
     startingPoint: 90,
-    blocks: ["1칸전진", "while", "오른쪽회전", "왼쪽회전"],
+    blocks: [
+      "앞으로 1칸 이동",
+      "계속 반복하기",
+      "오른쪽으로 돌리기",
+      "왼쪽으로 돌리기",
+    ],
     limitCount: 10,
     elements: [
       80, 80, 80, 21, 21, 21, 21, -1, -1, 60, 90, 90, 90, 21, 21, 21, 21, -1,
@@ -77,7 +92,13 @@ const tutoriaMapsData = {
     tip: "공격을 하면 몬스터를 사라지게 할 수 있습니다.",
     defaultField: 1,
     startingPoint: 90,
-    blocks: ["1칸전진", "while", "오른쪽회전", "왼쪽회전", "공격"],
+    blocks: [
+      "앞으로 1칸 이동",
+      "계속 반복하기",
+      "오른쪽으로 돌리기",
+      "왼쪽으로 돌리기",
+      "공격",
+    ],
     limitCount: 10,
     elements: [
       80, 80, 80, 21, 21, 21, 21, -1, -1, 60, 90, 90, 90, 21, 21, 21, 21, -1,
@@ -89,10 +110,16 @@ const tutoriaMapsData = {
     ],
   },
   stage7: {
-    tip: "if를 사용해서 목적지에 도달해 보세요.",
+    tip: "만약 ... 한다면를 사용해서 목적지에 도달해 보세요.",
     defaultField: 0,
     startingPoint: 90,
-    blocks: ["1칸전진", "while", "오른쪽회전", "왼쪽회전", "if"],
+    blocks: [
+      "앞으로 1칸 이동",
+      "계속 반복하기",
+      "오른쪽으로 돌리기",
+      "왼쪽으로 돌리기",
+      "만약 ... 한다면",
+    ],
     limitCount: 6,
     elements: [
       20, 20, 20, 20, 20, 20, 20, 20, 20, 60, -1, -1, -1, -1, -1, -1, -1, -1,
