@@ -2,12 +2,12 @@ import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 import { useNavigate, useParams } from "react-router-dom";
 
-import mapsData from "../../data/mapData";
+import { mapInfo } from "../../mapInfo/mapInfo";
 
 import { Modal } from "../../components/Modal/Modal";
 import { Header } from "../../components/Header";
 import BlockCombinator from "../../components/BlockCombinator";
-import Map from "../../components/Map";
+import { Map } from "../../components/Map";
 
 import { BUTTON } from "../../config/constants";
 
@@ -16,7 +16,7 @@ function Game() {
   const navigate = useNavigate();
   const { gameId } = useParams();
 
-  const mapData = { ...mapsData[gameId] };
+  const currentMapInfo = { ...mapInfo[gameId] };
 
   useEffect(() => {
     if (!mapsData[gameId]) {
@@ -34,7 +34,7 @@ function Game() {
       )}
       <Header />
       <TopWrapper>
-        <Title>{mapData.title}</Title>
+        <Title>{currentMapInfo.title}</Title>
         <ButtonsWrapper>
           <Button rightMargin={"4vw"}>{BUTTON.REPEAT}</Button>
           <Button rightMargin={"15vw"}>{BUTTON.NEXT_GAME}</Button>
@@ -43,7 +43,7 @@ function Game() {
       <ContentsWrapper>
         <BlockCombinator />
         <RightWrapper>
-          {mapData && <Map mapData={mapData} />}
+          {currentMapInfo && <Map mapInfo={currentMapInfo} />}
           <Button>{BUTTON.START}</Button>
         </RightWrapper>
       </ContentsWrapper>
@@ -99,4 +99,4 @@ const RightWrapper = styled.div`
   height: 70vh;
 `;
 
-export default Game;
+export { Game };

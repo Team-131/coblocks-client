@@ -7,7 +7,7 @@ import { tutoriaMapsData } from "../../data/tutorialMapsData";
 import { Modal } from "../../components/Modal/Modal";
 import { Header } from "../../components/Header";
 import BlockCombinator from "../../components/BlockCombinator";
-import Map from "../../components/Map";
+import { Map } from "../../components/Map";
 
 import { STARS, BUTTON } from "../../config/constants";
 
