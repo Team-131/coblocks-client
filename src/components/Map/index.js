@@ -77,7 +77,7 @@ function Map({ mapInfo }) {
     );
   }, [mapInfo]);
 
-  const turnLeft = () => {
+  const turnLeft = (character) => {
     const newCharacter = { ...character };
 
     if (newCharacter.direction === UP) {
@@ -89,7 +89,7 @@ function Map({ mapInfo }) {
     setCharacterDirection(newCharacter);
   };
 
-  const turnRight = () => {
+  const turnRight = (character) => {
     const newCharacter = { ...character };
 
     if (newCharacter.direction === LEFT) {
@@ -153,8 +153,9 @@ function Map({ mapInfo }) {
 
     switch (forwardElement) {
       case ROCK:
-      case WATER:
         return "block";
+      case WATER:
+        return "water";
       default:
         return "land";
     }
@@ -245,6 +246,11 @@ function Map({ mapInfo }) {
       await sleep(60);
     }
 
+    if (forwardTileType === "water") {
+      await sleep(60);
+      drown(nextCharacter.x, nextCharacter.y);
+    }
+
     setCharacter(nextCharacter);
   };
 
@@ -270,12 +276,25 @@ function Map({ mapInfo }) {
     );
   };
 
+  const drown = async (coordinateX, coordinateY) => {
+    for (let i = 0; i < CAT_SPRITE_FRAMES; i++) {
+      drawField({
+        image: catAsset,
+        mapCoordinateX: coordinateX,
+        mapCoordinateY: coordinateY,
+        assetCoordinateX: i,
+        assetCoordinateY: 4,
+      });
+      await sleep(200);
+    }
+  };
+
   return (
     <>
       <canvas ref={ref} width="400" height="400" />
       <TestButtons>
-        <button onClick={turnLeft}>왼쪽회전</button>
-        <button onClick={turnRight}>오른쪽회전</button>
+        <button onClick={() => turnLeft(character)}>왼쪽회전</button>
+        <button onClick={() => turnRight(character)}>오른쪽회전</button>
         <button onClick={moveOneTile}>1칸전진</button>
       </TestButtons>
     </>
