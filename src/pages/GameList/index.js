@@ -60,9 +60,9 @@ const ListWrapper = styled.div`
 `;
 
 const GameTitleList = styled.p`
-  text-align: center;
+  margin: 1rem 0;
+  color: white;
   font-size: 5vh;
   font-weight: bolder;
-  color: white;
-  margin: 1rem 0;
+  text-align: center;
 `;
