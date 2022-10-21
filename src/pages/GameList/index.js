@@ -15,9 +15,9 @@ function GameList() {
       <Header />
       <GuiedMessage>도전하고 싶은 맵을 선택하세요.</GuiedMessage>
       <ListWrapper>
-        {mapLists.map((maplist, index) => (
+        {mapLists.map((maplist) => (
           <GameTitleList
-            key={index}
+            key={maplist[0]}
             onClick={() => navigate(`/game/${maplist[0]}`, { replace: true })}
           >{`${maplist[0]}: ${maplist[1].title}`}</GameTitleList>
         ))}
@@ -26,7 +26,7 @@ function GameList() {
   );
 }
 
-export default GameList;
+export { GameList };
 
 const GuiedMessage = styled.p`
   display: flex;
