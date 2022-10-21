@@ -1,4 +1,4 @@
-const mapsData = {
+const mapInfo = {
   stage1: {
     title: "황무지",
     defaultField: 1,
@@ -40,4 +40,4 @@ const mapsData = {
   },
 };
 
-export default mapsData;
+export { mapInfo };
