@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import { useNavigate, useParams } from "react-router-dom";
 
-import { tutoriaMapsData } from "../../data/tutorialMapsData";
+import { tutorialMapsData } from "../../mapInfo/tutorialMapsData";
 
 import { Modal } from "../../components/Modal/Modal";
 import { Header } from "../../components/Header";
@@ -15,11 +15,11 @@ function Tutorial() {
   const [isModalOpen, setIsModalOpen] = useState(true);
   const navigate = useNavigate();
   const { tutorialId } = useParams();
-  const allTutorialKeys = Object.keys(tutoriaMapsData);
-  const mapData = { ...tutoriaMapsData[tutorialId] };
+  const allTutorialKeys = Object.keys(tutorialMapsData);
+  const mapData = { ...tutorialMapsData[tutorialId] };
 
   useEffect(() => {
-    if (!tutoriaMapsData[tutorialId]) {
+    if (!tutorialMapsData[tutorialId]) {
       navigate("/not_found");
     }
   }, []);
@@ -64,7 +64,7 @@ function Tutorial() {
         <ContentsWrapper>
           <BlockCombinator />
           <RightWrapper>
-            {mapData && <Map mapData={tutoriaMapsData[tutorialId]} />}
+            {mapData && <Map mapData={tutorialMapsData[tutorialId]} />}
             <Button>{BUTTON.START}</Button>
           </RightWrapper>
         </ContentsWrapper>

@@ -1,4 +1,4 @@
-const tutoriaMapsData = {
+const tutorialMapsData = {
   stage1: {
     tip: "앞으로 1칸 이동 사용해서 목적지에 도착해 보세요.",
     defaultField: 1,
@@ -132,4 +132,4 @@ const tutoriaMapsData = {
   },
 };
 
-export { tutoriaMapsData };
+export { tutorialMapsData };
