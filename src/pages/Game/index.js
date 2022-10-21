@@ -19,7 +19,7 @@ function Game() {
   const currentMapInfo = { ...mapInfo[gameId] };
 
   useEffect(() => {
-    if (!mapsData[gameId]) {
+    if (!mapInfo[gameId]) {
       navigate("/not_found");
     }
   }, []);
