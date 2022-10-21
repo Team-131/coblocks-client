@@ -8,8 +8,8 @@ function Map({ mapData }) {
   const catSprite = new Image();
   const assets = new Image();
 
-  catSprite.src = "/assets/image/cat.png";
-  assets.src = "/assets/image/coblocks-assets.png";
+  catSprite.src = "/assets/image/cat_asset.png";
+  assets.src = "/assets/image/map_asset.png";
 
   useEffect(() => {
     assets.addEventListener(
@@ -52,7 +52,7 @@ function Map({ mapData }) {
       },
       false,
     );
-  }, []);
+  }, [mapData]);
 
   const turnLeft = () => {
     const newCharacter = { ...character };
