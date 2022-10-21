@@ -68,4 +68,4 @@ const Button = styled.button`
   font-weight: bolder;
 `;
 
-export default Header;
+export { Header };
