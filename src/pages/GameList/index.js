@@ -2,33 +2,31 @@ import React from "react";
 import styled from "styled-components";
 import { useNavigate } from "react-router-dom";
 
-import { Header } from "../../components/Header";
-import mapsData from "../../data/mapData";
+import Header from "../../components/Header";
+import { mapInfo } from "../../mapInfo/mapInfo";
 
 function GameList() {
   const navigate = useNavigate();
 
-  const mapLists = Object.entries({ ...mapsData });
+  const mapLists = Object.entries({ ...mapInfo });
 
   return (
     <>
       <Header />
-      <GuiedMessage>도전하고 싶은 맵을 선택하세요.</GuiedMessage>
+      <GuideMessage>도전하고 싶은 맵을 선택하세요.</GuideMessage>
       <ListWrapper>
-        {mapLists.map((maplist) => (
+        {mapLists.map((mapList) => (
           <GameTitleList
-            key={maplist[0]}
-            onClick={() => navigate(`/game/${maplist[0]}`, { replace: true })}
-          >{`${maplist[0]}: ${maplist[1].title}`}</GameTitleList>
+            key={mapList[0]}
+            onClick={() => navigate(`/game/${mapList[0]}`, { replace: true })}
+          >{`${mapList[0]}: ${mapList[1].title}`}</GameTitleList>
         ))}
       </ListWrapper>
     </>
   );
 }
 
-export { GameList };
-
-const GuiedMessage = styled.p`
+const GuideMessage = styled.p`
   display: flex;
   align-items: center;
   justify-content: center;
@@ -47,6 +45,7 @@ const ListWrapper = styled.div`
   background: #393fb3;
   box-shadow: 0vw 0.3vw 0.3vw rgba(0, 0, 0, 0.25);
   overflow-y: scroll;
+
   &::-webkit-scrollbar {
     width: 8px;
     height: 8px;
@@ -66,3 +65,5 @@ const GameTitleList = styled.p`
   font-weight: bolder;
   text-align: center;
 `;
+
+export { GameList };
