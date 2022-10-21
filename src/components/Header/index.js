@@ -1,19 +1,26 @@
 import React from "react";
 import styled from "styled-components";
+import { useNavigate } from "react-router-dom";
 
 import { LOGO, BUTTON } from "../../config/constants";
 
 function Header() {
+  const navigate = useNavigate();
+
   return (
     <Wrapper>
-      <Logo>
+      <Logo onClick={() => navigate("/", { replace: true })}>
         <TextWhite>{LOGO.C}</TextWhite>
         <TextYellow>{LOGO.O}</TextYellow>
         <TextWhite>{LOGO.BLOCKS}</TextWhite>
       </Logo>
       <ButtonWrapper>
-        <Button>{BUTTON.TUTORIAL}</Button>
-        <Button>{BUTTON.GAME_SELECTION}</Button>
+        <Button onClick={() => navigate("/tutorial/123", { replace: true })}>
+          {BUTTON.TUTORIAL}
+        </Button>
+        <Button onClick={() => navigate("/game_list", { replace: true })}>
+          {BUTTON.GAME_SELECTION}
+        </Button>
       </ButtonWrapper>
     </Wrapper>
   );
