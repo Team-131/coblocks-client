@@ -132,13 +132,13 @@ function Map({ mapInfo }) {
     setCharacter(newCharacter);
   };
 
-  const getAssetCoordinate = (rawAssetNumber) => {
-    if (rawAssetNumber === -1) {
+  const getAssetCoordinate = (rawAssetIndex) => {
+    if (rawAssetIndex === -1) {
       return { x: mapInfo.defaultField, y: 0 };
     }
 
-    const x = rawAssetNumber % 10;
-    const y = Math.floor(rawAssetNumber / 10);
+    const x = rawAssetIndex % 10;
+    const y = Math.floor(rawAssetIndex / 10);
 
     return { x, y };
   };
