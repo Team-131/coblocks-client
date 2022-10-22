@@ -16,7 +16,7 @@ function Home() {
       <Button
         backgroundColor={"#071bbb"}
         color={"#ffffff"}
-        onClick={() => navigate("/tutorial/123", { replace: true })}
+        onClick={() => navigate("/tutorial/stage1", { replace: true })}
       >
         <Icon className="fa-solid fa-gamepad" />
         {BUTTON.TUTORIAL}

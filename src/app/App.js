@@ -4,7 +4,7 @@ import { createGlobalStyle } from "styled-components";
 
 import Home from "../pages/Home";
 import Tutorial from "../pages/Tutorial";
-import Game from "../pages/Game";
+import { Game } from "../pages/Game";
 import { GameList } from "../pages/GameList";
 import Error from "../pages/Error/Error";
 import NotFound from "../pages/NotFound";
