@@ -16,8 +16,16 @@ function Map({ mapInfo }) {
     ROCK,
     WATER,
     CAT_SPRITE_FRAMES,
+    CAT_DROWN_ROW,
+    CAT_MOVE_FRAME_TIME,
+    CAT_DROWN_FRAME_TIME,
   } = ASSET;
-  const { SINGLE_TILE_WIDTH, SINGLE_TILE_HEIGHT } = RENDER;
+  const {
+    SINGLE_TILE_WIDTH,
+    SINGLE_TILE_HEIGHT,
+    MAP_PIXEL_WIDTH,
+    MAP_PIXEL_HEIGHT,
+  } = RENDER;
 
   const catAsset = new Image();
   const mapAsset = new Image();
@@ -208,7 +216,7 @@ function Map({ mapInfo }) {
       mapInfo.elements[forwardCoordinateY * 10 + forwardCoordinateX],
     );
 
-    for (let i = 0; i < 9; i++) {
+    for (let i = 0; i < CAT_SPRITE_FRAMES * 2 + 1; i++) {
       const mapElement = mapInfo.elements[character.y * 10 + character.x];
       const { x: assetCoordinateX, y: assetCoordinateY } =
         getAssetCoordinate(mapElement);
@@ -236,18 +244,21 @@ function Map({ mapInfo }) {
         SINGLE_ASSET_WIDTH,
         SINGLE_ASSET_HEIGHT,
         SINGLE_TILE_WIDTH * character.x +
-          (nextCharacter.x - character.x) * 5 * i,
+          (nextCharacter.x - character.x) *
+            (SINGLE_TILE_WIDTH / (CAT_SPRITE_FRAMES * 2)) *
+            i,
         SINGLE_TILE_HEIGHT * character.y +
-          (nextCharacter.y - character.y) * 5 * i,
+          (nextCharacter.y - character.y) *
+            (SINGLE_TILE_WIDTH / (CAT_SPRITE_FRAMES * 2)) *
+            i,
         SINGLE_TILE_WIDTH,
         SINGLE_TILE_HEIGHT,
       );
 
-      await sleep(60);
+      await sleep(CAT_MOVE_FRAME_TIME);
     }
 
     if (forwardTileType === "water") {
-      await sleep(60);
       drown(nextCharacter.x, nextCharacter.y);
     }
 
@@ -283,15 +294,15 @@ function Map({ mapInfo }) {
         mapCoordinateX: coordinateX,
         mapCoordinateY: coordinateY,
         assetCoordinateX: i,
-        assetCoordinateY: 4,
+        assetCoordinateY: CAT_DROWN_ROW,
       });
-      await sleep(200);
+      await sleep(CAT_DROWN_FRAME_TIME);
     }
   };
 
   return (
     <>
-      <canvas ref={ref} width="400" height="400" />
+      <canvas ref={ref} width={MAP_PIXEL_WIDTH} height={MAP_PIXEL_HEIGHT} />
       <TestButtons>
         <button onClick={() => turnLeft(character)}>왼쪽회전</button>
         <button onClick={() => turnRight(character)}>오른쪽회전</button>
