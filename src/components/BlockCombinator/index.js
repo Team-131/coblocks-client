@@ -1,21 +1,22 @@
 import React, { useRef, useState } from "react";
 import styled from "styled-components";
-
-import { WINDOW } from "../../config/constants";
 import { cloneDeep } from "lodash";
+
+import { WINDOW, BLOCKS } from "../../config/constants";
 
 function BlockCombinator() {
   const targetBlockIndex = useRef(); //도착 블럭의 인덱스
-  const whileBlock = { type: "∞ 계속 반복하기", content: [] };
-  const repeatBlock = { type: "🔁 반복하기", content: [] };
+  const { MOVE, TURN_RIGHT, TURN_LEFT, ATTACK, IF, WHILE, REPEAT } = BLOCKS;
+  const whileBlock = { type: WHILE, content: [] };
+  const repeatBlock = { type: REPEAT, content: [] };
   const blocks = [
-    { name: "🚶 앞으로 1칸 이동", isNestable: "false" },
-    { name: "↪️ 오른쪽으로 회전하기", isNestable: "false" },
-    { name: "↩️ 왼쪽으로 회전하기", isNestable: "false" },
-    { name: "⚔️ 공격하기", isNestable: "false" },
-    { name: "🧐 만약", isNestable: "false" },
-    { name: "∞ 계속 반복하기", isNestable: "true" },
-    { name: "🔁 반복하기", isNestable: "true" },
+    { name: MOVE, isNestable: "false" },
+    { name: TURN_RIGHT, isNestable: "false" },
+    { name: TURN_LEFT, isNestable: "false" },
+    { name: ATTACK, isNestable: "false" },
+    { name: IF, isNestable: "false" },
+    { name: WHILE, isNestable: "true" },
+    { name: REPEAT, isNestable: "true" },
   ];
 
   const [logicBlocks, setLogicBlocks] = useState([]);
@@ -30,8 +31,8 @@ function BlockCombinator() {
 
     let blockName = event.target.innerText;
 
-    if (blockName.includes("🧐 만약")) {
-      blockName = "🧐 만약";
+    if (blockName.includes(IF)) {
+      blockName = IF;
     }
 
     event.dataTransfer.setData("text", blockName);
@@ -54,20 +55,18 @@ function BlockCombinator() {
 
     const currentBlockText = event.dataTransfer.getData("text");
     const newLogicBlocks = logicBlocks.slice();
-    const targetParentElement = event.target.parentElement;
     const currentBlock = newLogicBlocks[blockIndex];
     const targetBlock = newLogicBlocks[targetBlockIndex.current];
-    const newCurrentBlock = currentBlock;
+    const targetParentElement = event.target.parentElement;
     const newParentBlock = newLogicBlocks[getBlockIndex(parentElement)];
+    const newTargetParentBlock =
+      newLogicBlocks[getBlockIndex(targetParentElement)];
 
     if (blockId.includes("codeBlock")) {
       if (BlocksCount > 0) {
-        if (
-          currentBlockText === "∞ 계속 반복하기" ||
-          currentBlockText === "🔁 반복하기"
-        ) {
+        if (currentBlockText === WHILE || currentBlockText === REPEAT) {
           const insertBlock =
-            currentBlockText === "∞ 계속 반복하기" ? whileBlock : repeatBlock;
+            currentBlockText === WHILE ? whileBlock : repeatBlock;
           if (!event.target.id.includes("if")) {
             if (targetBlock) {
               newLogicBlocks.splice(targetBlockIndex.current, 0, insertBlock);
@@ -84,27 +83,20 @@ function BlockCombinator() {
         } else {
           if (!event.target.id.includes("if")) {
             if (targetParentElement.id) {
-              const newObjectBlock = cloneDeep(
-                newLogicBlocks[getBlockIndex(targetParentElement)],
-              );
-
-              newObjectBlock["content"].splice(
+              newTargetParentBlock["content"].splice(
                 targetBlockIndex.current,
                 0,
                 currentBlockText,
               );
-              newLogicBlocks[getBlockIndex(targetParentElement)] =
-                newObjectBlock;
+              newLogicBlocks.splice(
+                getBlockIndex(targetParentElement),
+                1,
+                newTargetParentBlock,
+              );
             } else {
               if (typeof targetBlock === "object") {
-                const newObjectBlock = cloneDeep(targetBlock);
-
-                newObjectBlock["content"].push(currentBlockText);
-                newLogicBlocks.splice(
-                  targetBlockIndex.current,
-                  1,
-                  newObjectBlock,
-                );
+                targetBlock["content"].push(currentBlockText);
+                newLogicBlocks.splice(targetBlockIndex.current, 1, targetBlock);
               } else {
                 newLogicBlocks.splice(
                   targetBlockIndex.current,
@@ -144,37 +136,21 @@ function BlockCombinator() {
       if (typeof currentBlock === "object") {
         if (!targetParentElement.id) {
           newLogicBlocks.splice(blockIndex, 1);
-          newLogicBlocks.splice(targetBlockIndex.current, 0, newCurrentBlock);
+          newLogicBlocks.splice(targetBlockIndex.current, 0, currentBlock);
         } else {
           newLogicBlocks.splice(blockIndex, 1);
           newLogicBlocks.splice(
             getBlockIndex(targetParentElement),
             0,
-            newCurrentBlock,
+            currentBlock,
           );
         }
       } else {
         if (!targetParentElement.id) {
-          if (typeof currentBlock === "object") {
-            const newObjectBlock = cloneDeep(targetBlock);
-
-            newObjectBlock["content"].push(currentBlockText);
-            newLogicBlocks.splice(targetBlockIndex.current, 1, newObjectBlock);
-            newLogicBlocks.splice(blockIndex, 1);
-          } else {
-            newLogicBlocks.splice(blockIndex, 1);
-            newLogicBlocks.splice(
-              targetBlockIndex.current,
-              0,
-              currentBlockText,
-            );
-          }
+          newLogicBlocks.splice(blockIndex, 1);
+          newLogicBlocks.splice(targetBlockIndex.current, 0, currentBlockText);
         } else {
-          const newObjectBlock = cloneDeep(
-            newLogicBlocks[getBlockIndex(targetParentElement)],
-          );
-
-          newObjectBlock["content"].splice(
+          newTargetParentBlock["content"].splice(
             targetBlockIndex.current,
             0,
             currentBlockText,
@@ -182,7 +158,7 @@ function BlockCombinator() {
           newLogicBlocks.splice(
             getBlockIndex(targetParentElement),
             1,
-            newObjectBlock,
+            newTargetParentBlock,
           );
           newLogicBlocks.splice(blockIndex, 1);
         }
@@ -264,12 +240,10 @@ function BlockCombinator() {
         setBlocksCount(BlocksCount + countContents + 1);
       }
     } else if (blockId.includes("childBlock")) {
-      const newWhileBlock = cloneDeep(
-        newLogicBlocks[getBlockIndex(parentElement)],
-      );
+      const newObjectBlock = newLogicBlocks[getBlockIndex(parentElement)];
 
-      newWhileBlock["content"].splice(blockIndex, 1);
-      newLogicBlocks.splice(getBlockIndex(parentElement), 1, newWhileBlock);
+      newObjectBlock["content"].splice(blockIndex, 1);
+      newLogicBlocks.splice(getBlockIndex(parentElement), 1, newObjectBlock);
       setBlocksCount(BlocksCount + 1);
     }
     ``;
@@ -329,7 +303,7 @@ function BlockCombinator() {
           {WINDOW.BLOCKS_LOGIC}
         </Title>
         {logicBlocks.map((blockType, index) =>
-          blockType === "🧐 만약" ? (
+          blockType === IF ? (
             <NormalBlock
               key={`${blockType}${index}`}
               id={`logicBlock${index}`}
@@ -364,12 +338,12 @@ function BlockCombinator() {
             >
               <div>
                 {blockType["type"]}
-                {blockType["type"] === "🔁 반복하기" && (
+                {blockType["type"] === REPEAT && (
                   <CountInput type={"text"}></CountInput>
                 )}
               </div>
               {blockType["content"].map((childBlockType, childIndex) =>
-                childBlockType === "🧐 만약" ? (
+                childBlockType === IF ? (
                   <NormalBlock
                     key={`while${childBlockType}${childIndex}`}
                     id={`childBlock${childIndex}`}
