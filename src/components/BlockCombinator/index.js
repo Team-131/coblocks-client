@@ -23,8 +23,7 @@ function BlockCombinator() {
 
   let blockIndex;
   let blockId;
-  let parentId;
-  let targetParentId;
+  let parentElement;
 
   const dragStart = (event, index) => {
     event.stopPropagation();
@@ -38,14 +37,16 @@ function BlockCombinator() {
     event.dataTransfer.setData("text", blockName);
     blockIndex = index;
     blockId = event.currentTarget.id;
-    parentId = event.target.parentElement.id;
+    parentElement = event.target.parentElement;
   };
 
   const dragEnter = (event, index) => {
     event.stopPropagation();
 
     targetBlockIndex.current = index;
-    targetParentId = event.target.parentElement.id;
+  };
+  const getBlockIndex = (blockElement) => {
+    return Number(blockElement.id.substr(10));
   };
 
   const handleBlock = (event) => {
@@ -53,12 +54,11 @@ function BlockCombinator() {
 
     const currentBlockText = event.dataTransfer.getData("text");
     const newLogicBlocks = logicBlocks.slice();
-    const targetParentIndex = Number(targetParentId?.substr(10));
-    const parentIndex = Number(parentId?.substr(10));
+    const targetParentElement = event.target.parentElement;
     const currentBlock = newLogicBlocks[blockIndex];
     const targetBlock = newLogicBlocks[targetBlockIndex.current];
-    const newCurrentBlock = cloneDeep(currentBlock);
-    const newParentBlock = cloneDeep(newLogicBlocks[parentIndex]);
+    const newCurrentBlock = currentBlock;
+    const newParentBlock = newLogicBlocks[getBlockIndex(parentElement)];
 
     if (blockId.includes("codeBlock")) {
       if (BlocksCount > 0) {
@@ -68,17 +68,24 @@ function BlockCombinator() {
         ) {
           const insertBlock =
             currentBlockText === "∞ 계속 반복하기" ? whileBlock : repeatBlock;
-
-          if (targetBlock) {
-            newLogicBlocks.splice(targetBlockIndex.current, 0, insertBlock);
+          if (!event.target.id.includes("if")) {
+            if (targetBlock) {
+              newLogicBlocks.splice(targetBlockIndex.current, 0, insertBlock);
+            } else {
+              newLogicBlocks.push(insertBlock);
+            }
           } else {
-            newLogicBlocks.push(insertBlock);
+            newLogicBlocks.splice(
+              getBlockIndex(targetParentElement.parentElement),
+              0,
+              insertBlock,
+            );
           }
         } else {
           if (!event.target.id.includes("if")) {
-            if (targetParentId) {
+            if (targetParentElement.id) {
               const newObjectBlock = cloneDeep(
-                newLogicBlocks[targetParentIndex],
+                newLogicBlocks[getBlockIndex(targetParentElement)],
               );
 
               newObjectBlock["content"].splice(
@@ -86,7 +93,8 @@ function BlockCombinator() {
                 0,
                 currentBlockText,
               );
-              newLogicBlocks[targetParentIndex] = newObjectBlock;
+              newLogicBlocks[getBlockIndex(targetParentElement)] =
+                newObjectBlock;
             } else {
               if (typeof targetBlock === "object") {
                 const newObjectBlock = cloneDeep(targetBlock);
@@ -106,19 +114,22 @@ function BlockCombinator() {
               }
             }
           } else {
-            if (targetParentId.includes("childBlock")) {
-              const index = Number(
-                event.target.parentElement.parentElement.id.substr(10),
-              );
+            if (targetParentElement.id.includes("childBlock")) {
+              const index = getBlockIndex(targetParentElement.parentElement);
               const newObjectBlock = cloneDeep(newLogicBlocks[index]);
+
               newObjectBlock["content"].splice(
-                targetParentIndex,
+                getBlockIndex(targetParentElement),
                 0,
                 currentBlockText,
               );
               newLogicBlocks.splice(index, 1, newObjectBlock);
             } else {
-              newLogicBlocks.splice(targetParentIndex, 0, currentBlockText);
+              newLogicBlocks.splice(
+                getBlockIndex(targetParentElement),
+                0,
+                currentBlockText,
+              );
             }
           }
         }
@@ -126,56 +137,61 @@ function BlockCombinator() {
         setBlocksCount(BlocksCount - 1);
         setLogicBlocks(newLogicBlocks);
       }
-    } else if (blockId.includes("logicBlock")) {
+    } else if (
+      blockId.includes("logicBlock") &&
+      !event.target.id.includes("if")
+    ) {
       if (typeof currentBlock === "object") {
-        if (!targetParentId) {
+        if (!targetParentElement.id) {
           newLogicBlocks.splice(blockIndex, 1);
           newLogicBlocks.splice(targetBlockIndex.current, 0, newCurrentBlock);
         } else {
           newLogicBlocks.splice(blockIndex, 1);
-          newLogicBlocks.splice(targetParentIndex, 0, newCurrentBlock);
+          newLogicBlocks.splice(
+            getBlockIndex(targetParentElement),
+            0,
+            newCurrentBlock,
+          );
         }
       } else {
-        if (!targetParentId) {
-          if (!event.target.id.includes("if")) {
-            if (typeof currentBlock === "object") {
-              const newObjectBlock = cloneDeep(targetBlock);
+        if (!targetParentElement.id) {
+          if (typeof currentBlock === "object") {
+            const newObjectBlock = cloneDeep(targetBlock);
 
-              newObjectBlock["content"].push(currentBlockText);
-              newLogicBlocks.splice(
-                targetBlockIndex.current,
-                1,
-                newObjectBlock,
-              );
-              newLogicBlocks.splice(blockIndex, 1);
-            } else {
-              newLogicBlocks.splice(blockIndex, 1);
-              newLogicBlocks.splice(
-                targetBlockIndex.current,
-                0,
-                currentBlockText,
-              );
-            }
-          }
-        } else {
-          if (!event.target.id.includes("if")) {
-            const newObjectBlock = cloneDeep(newLogicBlocks[targetParentIndex]);
-
-            newObjectBlock["content"].splice(
+            newObjectBlock["content"].push(currentBlockText);
+            newLogicBlocks.splice(targetBlockIndex.current, 1, newObjectBlock);
+            newLogicBlocks.splice(blockIndex, 1);
+          } else {
+            newLogicBlocks.splice(blockIndex, 1);
+            newLogicBlocks.splice(
               targetBlockIndex.current,
               0,
               currentBlockText,
             );
-            newLogicBlocks.splice(targetParentIndex, 1, newObjectBlock);
-            newLogicBlocks.splice(blockIndex, 1);
           }
+        } else {
+          const newObjectBlock = cloneDeep(
+            newLogicBlocks[getBlockIndex(targetParentElement)],
+          );
+
+          newObjectBlock["content"].splice(
+            targetBlockIndex.current,
+            0,
+            currentBlockText,
+          );
+          newLogicBlocks.splice(
+            getBlockIndex(targetParentElement),
+            1,
+            newObjectBlock,
+          );
+          newLogicBlocks.splice(blockIndex, 1);
         }
       }
 
       setLogicBlocks(newLogicBlocks);
     } else if (blockId.includes("childBlock")) {
-      if (targetParentId) {
-        if (parentId === targetParentId) {
+      if (targetParentElement.id) {
+        if (parentElement.id === targetParentElement.id) {
           newParentBlock["content"].splice(blockIndex, 1);
           newParentBlock["content"].splice(
             targetBlockIndex.current,
@@ -183,11 +199,11 @@ function BlockCombinator() {
             currentBlockText,
           );
 
-          newLogicBlocks[parentIndex] = newParentBlock;
-        } else if (parentId !== targetParentId) {
-          if (!targetParentId.includes("childBlock")) {
+          newLogicBlocks[getBlockIndex(parentElement)] = newParentBlock;
+        } else if (parentElement.id !== targetParentElement.id) {
+          if (!targetParentElement.id.includes("childBlock")) {
             const newTargetObjectBlock = cloneDeep(
-              newLogicBlocks[targetParentIndex],
+              newLogicBlocks[getBlockIndex(targetParentElement)],
             );
 
             newParentBlock["content"].splice(blockIndex, 1);
@@ -196,18 +212,23 @@ function BlockCombinator() {
               0,
               currentBlockText,
             );
-            newLogicBlocks[parentIndex] = newParentBlock;
-            newLogicBlocks[targetParentIndex] = newTargetObjectBlock;
+            newLogicBlocks[getBlockIndex(parentElement)] = newParentBlock;
+            newLogicBlocks[getBlockIndex(targetParentElement)] =
+              newTargetObjectBlock;
           }
         }
       } else {
         if (typeof targetBlock === "object") {
-          if (parentIndex !== targetBlockIndex.current) {
+          if (getBlockIndex(parentElement) !== targetBlockIndex.current) {
             const newTargetObjectBlock = cloneDeep(targetBlock);
 
             newParentBlock["content"].splice(blockIndex, 1);
             newTargetObjectBlock["content"].push(currentBlockText);
-            newLogicBlocks.splice(parentIndex, 1, newParentBlock);
+            newLogicBlocks.splice(
+              getBlockIndex(parentElement),
+              1,
+              newParentBlock,
+            );
             newLogicBlocks.splice(
               targetBlockIndex.current,
               1,
@@ -216,11 +237,11 @@ function BlockCombinator() {
           }
         } else if (targetBlock) {
           newParentBlock["content"].splice(blockIndex, 1);
-          newLogicBlocks[parentIndex] = newParentBlock;
+          newLogicBlocks[getBlockIndex(parentElement)] = newParentBlock;
           newLogicBlocks.splice(targetBlockIndex.current, 0, currentBlockText);
         } else {
           newParentBlock["content"].splice(blockIndex, 1);
-          newLogicBlocks[parentIndex] = newParentBlock;
+          newLogicBlocks[getBlockIndex(parentElement)] = newParentBlock;
           newLogicBlocks.push(currentBlockText);
         }
       }
@@ -231,7 +252,6 @@ function BlockCombinator() {
 
   const removeLogicBlock = () => {
     const newLogicBlocks = logicBlocks.slice();
-    const parentIndex = Number(parentId.substr(10));
 
     if (blockId.includes("logicBlock")) {
       if (typeof newLogicBlocks[blockIndex] === "string") {
@@ -244,13 +264,15 @@ function BlockCombinator() {
         setBlocksCount(BlocksCount + countContents + 1);
       }
     } else if (blockId.includes("childBlock")) {
-      const newWhileBlock = cloneDeep(newLogicBlocks[parentIndex]);
+      const newWhileBlock = cloneDeep(
+        newLogicBlocks[getBlockIndex(parentElement)],
+      );
 
       newWhileBlock["content"].splice(blockIndex, 1);
-      newLogicBlocks.splice(parentIndex, 1, newWhileBlock);
+      newLogicBlocks.splice(getBlockIndex(parentElement), 1, newWhileBlock);
       setBlocksCount(BlocksCount + 1);
     }
-
+    ``;
     setLogicBlocks(newLogicBlocks);
   };
 
