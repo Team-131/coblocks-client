@@ -49,7 +49,7 @@ export const RENDER = {
   MAP_PIXEL_HEIGHT: 400,
 };
 
-export const BLOCKS = {
+export const BLOCK_NAMES = {
   MOVE: "🚶 앞으로 1칸 이동",
   TURN_RIGHT: "↪️ 오른쪽으로 회전하기",
   TURN_LEFT: "↩️ 왼쪽으로 회전하기",

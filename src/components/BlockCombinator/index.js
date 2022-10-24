@@ -2,11 +2,12 @@ import React, { useRef, useState } from "react";
 import styled from "styled-components";
 import { cloneDeep } from "lodash";
 
-import { WINDOW, BLOCKS } from "../../config/constants";
+import { WINDOW, BLOCK_NAMES } from "../../config/constants";
 
 function BlockCombinator() {
   const targetBlockIndex = useRef();
-  const { MOVE, TURN_RIGHT, TURN_LEFT, ATTACK, IF, WHILE, REPEAT } = BLOCKS;
+  const { MOVE, TURN_RIGHT, TURN_LEFT, ATTACK, IF, WHILE, REPEAT } =
+    BLOCK_NAMES;
   const whileBlock = { type: WHILE, content: [] };
   const repeatBlock = { type: REPEAT, content: [] };
   const blocks = [
@@ -73,6 +74,7 @@ function BlockCombinator() {
         if (currentBlockText === WHILE || currentBlockText === REPEAT) {
           const insertBlock =
             currentBlockText === WHILE ? whileBlock : repeatBlock;
+
           if (!event.target.id.includes("if")) {
             if (targetBlock) {
               newLogicBlocks.splice(targetBlockIndex.current, 0, insertBlock);
@@ -262,15 +264,16 @@ function BlockCombinator() {
   const translateBlocks = () => {
     const result = document.querySelectorAll(".if");
     const newLogicBlocks = cloneDeep(logicBlocks);
+
     result.forEach((element) => {
-      const indexs = element.id.split("-");
-      if (indexs.length === 3) {
-        newLogicBlocks[indexs[1]]["content"][indexs[2]] = element.value;
+      const indexes = element.id.split("-");
+
+      if (indexes.length === 3) {
+        newLogicBlocks[indexes[1]]["content"][indexes[2]] = element.value;
       } else {
-        newLogicBlocks[indexs[1]] = element.value;
+        newLogicBlocks[indexes[1]] = element.value;
       }
     });
-    console.log(newLogicBlocks);
   };
 
   return (
