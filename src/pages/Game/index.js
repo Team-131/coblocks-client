@@ -15,6 +15,7 @@ import { BUTTON } from "../../config/constants";
 function Game() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isSubmit, setIsSubmit] = useState(false);
+
   const [resultMessage, setResultMessage] = useState("");
   const [keyQuantity, setKeyQuantity] = useState(0);
   const navigate = useNavigate();
@@ -68,7 +69,9 @@ function Game() {
             />
           )}
           열쇠: {keyQuantity}
+
           <Button onClick={() => setIsSubmit(!isSubmit)}>{BUTTON.START}</Button>
+
         </RightWrapper>
       </ContentsWrapper>
     </>

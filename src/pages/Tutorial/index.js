@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import styled from "styled-components";
 import { useNavigate, useParams } from "react-router-dom";
 import cloneDeep from "lodash/cloneDeep";
@@ -20,9 +20,18 @@ function Tutorial() {
   const navigate = useNavigate();
   const { tutorialId } = useParams();
   const allTutorialKeys = Object.keys(tutorialMapsData);
+
   const [mapData, setMapData] = useState(
     cloneDeep(tutorialMapsData[tutorialId]),
   );
+
+  useEffect(() => {
+    setMapData(cloneDeep(tutorialMapsData[tutorialId]));
+  }, [tutorialId]);
+
+  useEffect(() => {
+    isModalOpen;
+  }, [isModalOpen]);
 
   useEffect(() => {
     if (!tutorialMapsData[tutorialId]) {
@@ -38,7 +47,7 @@ function Tutorial() {
       {isModalOpen && (
         <Modal
           closeModal={() => setIsModalOpen(false)}
-          resultMessage={"성공 🎉 / 실패 😭"}
+          resultMessage={resultMessage}
         />
       )}
       <Wrapper>
