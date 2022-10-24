@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import PropTypes from "prop-types";
 import styled from "styled-components";
+import cloneDeep from "lodash/cloneDeep";
 
 import { sleep } from "../../utils/sleep";
 import {
@@ -32,6 +33,7 @@ function Map({
     CLOSED_DOOR,
     OPEN_DOOR,
     PORTAL,
+    PAW,
     GREEN_MONSTER,
     BLUE_MONSTER,
     CAT_SPRITE_FRAMES,
@@ -54,7 +56,7 @@ function Map({
   mapAsset.src = "/assets/image/map_asset.png";
 
   useEffect(() => {
-    setNewMapInfo(mapInfo);
+    setNewMapInfo(cloneDeep(mapInfo));
     mapAsset.addEventListener(
       "load",
       () => {
@@ -389,6 +391,7 @@ function Map({
 
   const attack = async () => {
     const forwardTileType = getForwardTileType(character);
+    const copyMapInfo = { ...newMapInfo };
     let moveDirection = character.direction;
 
     const { forwardCoordinateX, forwardCoordinateY } = getForwardCoordinate(
@@ -401,7 +404,7 @@ function Map({
       y: forwardCoordinateY,
       direction: character.direction,
     };
-
+    const nextElement = nextCharacter.y * 10 + nextCharacter.x;
     if (forwardTileType.includes("Monster")) {
       let monsterColor;
       if (forwardTileType === "greenMonster") {
@@ -429,11 +432,33 @@ function Map({
         assetCoordinateX: mapInfo.defaultField,
         assetCoordinateY: 0,
       });
-      const monsterPosition = nextCharacter.y * 10 + nextCharacter.x;
-      const copyMapInfo = { ...newMapInfo };
-      copyMapInfo.elements[monsterPosition] = -1;
+
+      copyMapInfo.elements[nextElement] = -1;
 
       setNewMapInfo(copyMapInfo);
+    } else {
+      const catPaw = Math.floor(PAW / 10);
+      for (let i = 0; i < CAT_SPRITE_FRAMES; i++) {
+        drawField({
+          image: mapAsset,
+          mapCoordinateX: nextCharacter.x,
+          mapCoordinateY: nextCharacter.y,
+          assetCoordinateX: i,
+          assetCoordinateY: catPaw,
+        });
+
+        await sleep(CAT_DROWN_FRAME_TIME);
+      }
+      const { x: assetCoordinateX, y: assetCoordinateY } = getAssetCoordinate(
+        copyMapInfo.elements[nextElement],
+      );
+      drawField({
+        image: mapAsset,
+        mapCoordinateX: nextCharacter.x,
+        mapCoordinateY: nextCharacter.y,
+        assetCoordinateX: assetCoordinateX,
+        assetCoordinateY: assetCoordinateY,
+      });
     }
   };
 
