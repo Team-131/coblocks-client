@@ -35,6 +35,7 @@ export const ASSET = {
   SINGLE_ASSET_HEIGHT: 46,
   ROCK: 20,
   WATER: 21,
+  KEY: 40,
   CAT_SPRITE_FRAMES: 4,
   CAT_DROWN_ROW: 4,
   CAT_MOVE_FRAME_TIME: 50,
@@ -46,4 +47,14 @@ export const RENDER = {
   SINGLE_TILE_HEIGHT: 40,
   MAP_PIXEL_WIDTH: 400,
   MAP_PIXEL_HEIGHT: 400,
+};
+
+export const BLOCK_NAMES = {
+  MOVE: "🚶 앞으로 1칸 이동",
+  TURN_RIGHT: "↩️ 오른쪽으로 회전하기",
+  TURN_LEFT: "↪️ 왼쪽으로 회전하기",
+  ATTACK: "⚔️ 공격하기",
+  IF: "🧐 만약",
+  WHILE: "∞ 계속 반복하기",
+  REPEAT: "🔁 반복하기",
 };

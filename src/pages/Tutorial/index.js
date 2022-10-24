@@ -6,7 +6,7 @@ import { tutorialMapsData } from "../../mapInfo/tutorialMapsData";
 
 import { Modal } from "../../components/Modal/Modal";
 import { Header } from "../../components/Header";
-import BlockCombinator from "../../components/BlockCombinator";
+import { BlockCombinator } from "../../components/BlockCombinator";
 import { Map } from "../../components/Map";
 
 import { STARS, BUTTON } from "../../config/constants";
@@ -64,7 +64,7 @@ function Tutorial() {
         <ContentsWrapper>
           <BlockCombinator />
           <RightWrapper>
-            {mapData && <Map mapData={tutorialMapsData[tutorialId]} />}
+            {mapData && <Map mapInfo={tutorialMapsData[tutorialId]} />}
             <Button>{BUTTON.START}</Button>
           </RightWrapper>
         </ContentsWrapper>

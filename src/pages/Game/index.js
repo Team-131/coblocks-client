@@ -6,7 +6,7 @@ import { mapInfo } from "../../mapInfo/mapInfo";
 
 import { Modal } from "../../components/Modal/Modal";
 import { Header } from "../../components/Header";
-import BlockCombinator from "../../components/BlockCombinator";
+import { BlockCombinator } from "../../components/BlockCombinator";
 import { Map } from "../../components/Map";
 
 import { BUTTON } from "../../config/constants";
