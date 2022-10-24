@@ -36,6 +36,11 @@ export const ASSET = {
   ROCK: 20,
   WATER: 21,
   KEY: 40,
+  CLOSED_DOOR: 50,
+  OPEN_DOOR: 51,
+  PORTAL: 60,
+  BLUE_MONSTER: 80,
+  GREEN_MONSTER: 90,
   CAT_SPRITE_FRAMES: 4,
   CAT_DROWN_ROW: 4,
   CAT_MOVE_FRAME_TIME: 50,
@@ -47,6 +52,11 @@ export const RENDER = {
   SINGLE_TILE_HEIGHT: 40,
   MAP_PIXEL_WIDTH: 400,
   MAP_PIXEL_HEIGHT: 400,
+};
+
+export const MESSAGE = {
+  SUCCESS: "성공 🎉",
+  FAIL: "실패 😭",
 };
 
 export const BLOCK_NAMES = {
