@@ -51,8 +51,8 @@ export const RENDER = {
 
 export const BLOCK_NAMES = {
   MOVE: "🚶 앞으로 1칸 이동",
-  TURN_RIGHT: "↪️ 오른쪽으로 회전하기",
-  TURN_LEFT: "↩️ 왼쪽으로 회전하기",
+  TURN_RIGHT: "↩️ 오른쪽으로 회전하기",
+  TURN_LEFT: "↪️ 왼쪽으로 회전하기",
   ATTACK: "⚔️ 공격하기",
   IF: "🧐 만약",
   WHILE: "∞ 계속 반복하기",
