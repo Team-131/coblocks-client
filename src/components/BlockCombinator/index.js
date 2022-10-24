@@ -21,7 +21,7 @@ function BlockCombinator() {
   ];
 
   const [logicBlocks, setLogicBlocks] = useState([]);
-  const [BlocksCount, setBlocksCount] = useState(10);
+  const [blocksCount, setBlocksCount] = useState(10);
 
   let blockIndex;
   let blockId;
@@ -70,7 +70,7 @@ function BlockCombinator() {
       newLogicBlocks[getBlockIndex(targetParentElement)];
 
     if (blockId.includes("codeBlock")) {
-      if (BlocksCount > 0) {
+      if (blocksCount > 0) {
         if (currentBlockText === WHILE || currentBlockText === REPEAT) {
           const insertBlock =
             currentBlockText === WHILE ? whileBlock : repeatBlock;
@@ -134,7 +134,7 @@ function BlockCombinator() {
           }
         }
 
-        setBlocksCount(BlocksCount - 1);
+        setBlocksCount(blocksCount - 1);
         setLogicBlocks(newLogicBlocks);
       }
     } else if (
@@ -240,19 +240,19 @@ function BlockCombinator() {
     if (blockId.includes("logicBlock")) {
       if (typeof newLogicBlocks[blockIndex] === "string") {
         newLogicBlocks.splice(blockIndex, 1);
-        setBlocksCount(BlocksCount + 1);
+        setBlocksCount(blocksCount + 1);
       } else {
         const countContents = newLogicBlocks[blockIndex]["content"].length;
 
         newLogicBlocks.splice(blockIndex, 1);
-        setBlocksCount(BlocksCount + countContents + 1);
+        setBlocksCount(blocksCount + countContents + 1);
       }
     } else if (blockId.includes("childBlock")) {
       const newObjectBlock = newLogicBlocks[getBlockIndex(parentElement)];
 
       newObjectBlock["content"].splice(blockIndex, 1);
       newLogicBlocks.splice(getBlockIndex(parentElement), 1, newObjectBlock);
-      setBlocksCount(BlocksCount + 1);
+      setBlocksCount(blocksCount + 1);
     }
     setLogicBlocks(newLogicBlocks);
   };
@@ -288,16 +288,17 @@ function BlockCombinator() {
         <Title color={"#ffffff"}>{WINDOW.BLOCKS_SELECTION}</Title>
         {blocks.map((block, index) => {
           return block.isNestable === "false" ? (
-            <NormalBlock
+            <NonNestableBlock
               key={block.name}
               id={`codeBlock${index}`}
               draggable="true"
               onDragStart={(event) => dragStart(event, index)}
             >
               {block.name}
-            </NormalBlock>
+            </NonNestableBlock>
           ) : (
             <NestableBlock
+              backGroundColor={block.name === REPEAT ? "#37b647" : "#de3589"}
               key={block.name}
               id={`codeBlock${index}`}
               draggable="true"
@@ -318,7 +319,7 @@ function BlockCombinator() {
         </Title>
         {logicBlocks.map((blockType, index) =>
           blockType === IF ? (
-            <NormalBlock
+            <NonNestableBlock
               key={`${blockType}${index}`}
               id={`logicBlock${index}`}
               draggable="true"
@@ -331,9 +332,9 @@ function BlockCombinator() {
                 <option value={"left"}>{"왼쪽으로 갈 수 있다면, ↪️"}</option>
                 <option value={"right"}>{"오른쪽으로 갈 수 있다면, ↩️"}</option>
               </SelectOption>
-            </NormalBlock>
+            </NonNestableBlock>
           ) : blockType && typeof blockType === "string" ? (
-            <NormalBlock
+            <NonNestableBlock
               key={`${blockType}${index}`}
               id={`logicBlock${index}`}
               draggable="true"
@@ -341,9 +342,12 @@ function BlockCombinator() {
               onDragEnter={(event) => dragEnter(event, index)}
             >
               {blockType}
-            </NormalBlock>
+            </NonNestableBlock>
           ) : (
             <NestableBlock
+              backGroundColor={
+                blockType["type"] === REPEAT ? "#37b647" : "#de3589"
+              }
               key={`${blockType["type"]}${index}`}
               id={`logicBlock${index}`}
               onDragStart={(event) => dragStart(event, index)}
@@ -364,7 +368,7 @@ function BlockCombinator() {
               </div>
               {blockType["content"].map((childBlockType, childIndex) =>
                 childBlockType === IF ? (
-                  <NormalBlock
+                  <NonNestableBlock
                     key={`while${childBlockType}${childIndex}`}
                     id={`childBlock${childIndex}`}
                     draggable="true"
@@ -383,9 +387,9 @@ function BlockCombinator() {
                         {"오른쪽으로 갈 수 있다면, ↩️"}
                       </option>
                     </SelectOption>
-                  </NormalBlock>
+                  </NonNestableBlock>
                 ) : (
-                  <NormalBlock
+                  <NonNestableBlock
                     key={`while${childBlockType}${childIndex}`}
                     id={`childBlock${childIndex}`}
                     draggable="true"
@@ -393,13 +397,13 @@ function BlockCombinator() {
                     onDragEnter={(event) => dragEnter(event, childIndex)}
                   >
                     {childBlockType}
-                  </NormalBlock>
+                  </NonNestableBlock>
                 ),
               )}
             </NestableBlock>
           ),
         )}
-        {Array(BlocksCount)
+        {Array(blocksCount)
           .fill("")
           .map((blockType, index) => (
             <EmptyBlock
@@ -454,7 +458,7 @@ const LogicBlocks = styled.div`
   box-shadow: 0vw 0.3vw 0.3vw rgba(0, 0, 0, 0.25);
 `;
 
-const NormalBlock = styled.div`
+const NonNestableBlock = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
@@ -466,6 +470,7 @@ const NormalBlock = styled.div`
   border: 2px solid #000000;
   color: white;
   font-weight: bolder;
+  font-size: 1vw;
 `;
 
 const NestableBlock = styled.div`
@@ -475,11 +480,12 @@ const NestableBlock = styled.div`
   align-items: center;
   width: 95%;
   margin: 0.1rem 0;
-  padding: 0.5rem;
+  padding: 0.5rem 0.05rem;
   border: 2px solid #000000;
-  background-color: #de3589;
+  background-color: ${(props) => props.backGroundColor};
   color: white;
   font-weight: bolder;
+  font-size: 1vw;
 `;
 
 const EmptyBlock = styled.div`
@@ -497,10 +503,10 @@ const EmptyBlock = styled.div`
 `;
 
 const SelectOption = styled.select`
-  margin-left: 1rem;
+  margin-left: 0.5rem;
   font-size: 0.6rem;
   border-radius: 4px;
-  width: 100%;
+  width: 65%;
 `;
 
 const CountInput = styled.input`
