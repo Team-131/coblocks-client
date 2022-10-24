@@ -1,6 +1,8 @@
 import React, { useRef, useState } from "react";
 import styled from "styled-components";
 import { cloneDeep } from "lodash";
+import { blockSlice } from "../../features/block/blockSlice";
+import { useDispatch } from "react-redux";
 
 import { WINDOW, BLOCK_NAMES } from "../../config/constants";
 
@@ -19,6 +21,8 @@ function BlockCombinator() {
     { name: WHILE, isNestable: "true" },
     { name: REPEAT, isNestable: "true" },
   ];
+
+  const dispatch = useDispatch();
 
   const [logicBlocks, setLogicBlocks] = useState([]);
   const [blocksCount, setBlocksCount] = useState(10);
@@ -264,22 +268,24 @@ function BlockCombinator() {
   const translateBlocks = () => {
     const ifBlocks = document.querySelectorAll(".if");
     const counts = document.querySelectorAll(".count");
-    const newLogicBlocks = cloneDeep(logicBlocks);
+    const translatedBlocks = cloneDeep(logicBlocks);
 
     ifBlocks.forEach((element) => {
       const indexes = element.id.split("-");
 
       if (indexes.length === 3) {
-        newLogicBlocks[indexes[1]]["content"][indexes[2]] = element.value;
+        translatedBlocks[indexes[1]]["content"][indexes[2]] = element.value;
       } else {
-        newLogicBlocks[indexes[1]] = element.value;
+        translatedBlocks[indexes[1]] = element.value;
       }
     });
     counts.forEach((element) => {
       const indexes = element.id.split("-");
 
-      newLogicBlocks[indexes[1]][indexes[0]] = element.value;
+      translatedBlocks[indexes[1]][indexes[0]] = element.value;
     });
+
+    dispatch(blockSlice.updateTranslatedBlocks(translatedBlocks));
   };
 
   return (
