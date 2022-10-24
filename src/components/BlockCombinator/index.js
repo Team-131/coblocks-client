@@ -72,20 +72,20 @@ function BlockCombinator() {
     if (blockId.includes("codeBlock")) {
       if (blocksCount > 0) {
         if (currentBlockText === WHILE || currentBlockText === REPEAT) {
-          const insertBlock =
+          const insertedBlock =
             currentBlockText === WHILE ? whileBlock : repeatBlock;
 
           if (!event.target.id.includes("if")) {
             if (targetBlock) {
-              newLogicBlocks.splice(targetBlockIndex.current, 0, insertBlock);
+              newLogicBlocks.splice(targetBlockIndex.current, 0, insertedBlock);
             } else {
-              newLogicBlocks.push(insertBlock);
+              newLogicBlocks.push(insertedBlock);
             }
           } else {
             newLogicBlocks.splice(
               getBlockIndex(targetParentElement.parentElement),
               0,
-              insertBlock,
+              insertedBlock,
             );
           }
         } else {
@@ -242,10 +242,10 @@ function BlockCombinator() {
         newLogicBlocks.splice(blockIndex, 1);
         setBlocksCount(blocksCount + 1);
       } else {
-        const countContents = newLogicBlocks[blockIndex]["content"].length;
+        const contentCount = newLogicBlocks[blockIndex]["content"].length;
 
         newLogicBlocks.splice(blockIndex, 1);
-        setBlocksCount(blocksCount + countContents + 1);
+        setBlocksCount(blocksCount + contentCount + 1);
       }
     } else if (blockId.includes("childBlock")) {
       const newObjectBlock = newLogicBlocks[getBlockIndex(parentElement)];
