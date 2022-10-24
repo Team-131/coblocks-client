@@ -430,7 +430,6 @@ function BlockCombinator({ subMitBlockInfo, setSubMitBlockInfo }) {
               {blockType}
             </EmptyBlock>
           ))}
-        <button onClick={translateBlocks}>버튼</button>
       </LogicBlocks>
     </Wrapper>
   );

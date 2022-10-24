@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import { useNavigate, useParams } from "react-router-dom";
 import cloneDeep from "lodash/cloneDeep";
@@ -13,8 +13,10 @@ import { Map } from "../../components/Map";
 import { STARS, BUTTON } from "../../config/constants";
 
 function Tutorial() {
-  const [isModalOpen, setIsModalOpen] = useState(true);
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const [isSubmit, setIsSubmit] = useState(false);
+  const [resultMessage, setResultMessage] = useState("");
+  const [keyQuantity, setKeyQuantity] = useState(0);
   const navigate = useNavigate();
   const { tutorialId } = useParams();
   const allTutorialKeys = Object.keys(tutorialMapsData);
@@ -74,7 +76,17 @@ function Tutorial() {
             setSubMitBlockInfo={setIsSubmit}
           />
           <RightWrapper>
-            {mapData && <Map mapInfo={mapData} />}
+            {mapData && (
+              <Map
+                mapInfo={mapData}
+                setMapInfo={setMapData}
+                setIsModalOpen={setIsModalOpen}
+                setResultMessage={setResultMessage}
+                keyQuantity={keyQuantity}
+                setKeyQuantity={setKeyQuantity}
+              />
+            )}
+            열쇠: {keyQuantity}
             <Button onClick={() => setIsSubmit(!isSubmit)}>
               {BUTTON.START}
             </Button>
