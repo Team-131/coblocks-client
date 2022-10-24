@@ -5,7 +5,7 @@ import { cloneDeep } from "lodash";
 import { WINDOW, BLOCKS } from "../../config/constants";
 
 function BlockCombinator() {
-  const targetBlockIndex = useRef(); //도착 블럭의 인덱스
+  const targetBlockIndex = useRef();
   const { MOVE, TURN_RIGHT, TURN_LEFT, ATTACK, IF, WHILE, REPEAT } = BLOCKS;
   const whileBlock = { type: WHILE, content: [] };
   const repeatBlock = { type: REPEAT, content: [] };
@@ -48,6 +48,12 @@ function BlockCombinator() {
   };
   const getBlockIndex = (blockElement) => {
     return Number(blockElement.id.substr(10));
+  };
+
+  const limitNumberRange = (event) => {
+    if (event.target.value < 1 || event.target.value > 9) {
+      event.target.value = 1;
+    }
   };
 
   const handleBlock = (event) => {
@@ -246,7 +252,6 @@ function BlockCombinator() {
       newLogicBlocks.splice(getBlockIndex(parentElement), 1, newObjectBlock);
       setBlocksCount(BlocksCount + 1);
     }
-    ``;
     setLogicBlocks(newLogicBlocks);
   };
 
@@ -339,7 +344,11 @@ function BlockCombinator() {
               <div>
                 {blockType["type"]}
                 {blockType["type"] === REPEAT && (
-                  <CountInput type={"text"}></CountInput>
+                  <CountInput
+                    type={"number"}
+                    onChange={limitNumberRange}
+                    defaultValue={1}
+                  ></CountInput>
                 )}
               </div>
               {blockType["content"].map((childBlockType, childIndex) =>
@@ -490,4 +499,4 @@ const CountInput = styled.input`
   width: 2rem;
 `;
 
-export default BlockCombinator;
+export { BlockCombinator };
