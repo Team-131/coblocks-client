@@ -1,22 +1,32 @@
 import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 import { useNavigate, useParams } from "react-router-dom";
+import cloneDeep from "lodash/cloneDeep";
 
 import { mapInfo } from "../../mapInfo/mapInfo";
 
 import { Modal } from "../../components/Modal/Modal";
 import { Header } from "../../components/Header";
 import { BlockCombinator } from "../../components/BlockCombinator";
-import { Map } from "../../components/Map";
+import { Map } from "../../components/Map/index";
 
 import { BUTTON } from "../../config/constants";
 
 function Game() {
-  const [isModalOpen, setIsModalOpen] = useState(true);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [resultMessage, setResultMessage] = useState("");
+  const [keyQuantity, setKeyQuantity] = useState(0);
   const navigate = useNavigate();
   const { gameId } = useParams();
+  const [mapData, setMapData] = useState(cloneDeep(mapInfo[gameId]));
 
-  const currentMapInfo = { ...mapInfo[gameId] };
+  useEffect(() => {
+    setMapData(cloneDeep(mapInfo[gameId]));
+  }, [gameId]);
+
+  useEffect(() => {
+    isModalOpen;
+  }, [isModalOpen]);
 
   useEffect(() => {
     if (!mapInfo[gameId]) {
@@ -29,12 +39,12 @@ function Game() {
       {isModalOpen && (
         <Modal
           closeModal={() => setIsModalOpen(false)}
-          resultMessage={"성공 🎉 / 실패 😭"}
+          resultMessage={resultMessage}
         />
       )}
       <Header />
       <TopWrapper>
-        <Title>{currentMapInfo.title}</Title>
+        <Title>{mapData.title}</Title>
         <ButtonsWrapper>
           <Button rightMargin={"4vw"}>{BUTTON.REPEAT}</Button>
           <Button rightMargin={"15vw"}>{BUTTON.NEXT_GAME}</Button>
@@ -43,7 +53,17 @@ function Game() {
       <ContentsWrapper>
         <BlockCombinator />
         <RightWrapper>
-          {currentMapInfo && <Map mapInfo={currentMapInfo} />}
+          {mapData && (
+            <Map
+              mapInfo={mapData}
+              setMapInfo={setMapData}
+              setIsModalOpen={setIsModalOpen}
+              setResultMessage={setResultMessage}
+              keyQuantity={keyQuantity}
+              setKeyQuantity={setKeyQuantity}
+            />
+          )}
+          열쇠: {keyQuantity}
           <Button>{BUTTON.START}</Button>
         </RightWrapper>
       </ContentsWrapper>
