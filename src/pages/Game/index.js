@@ -14,6 +14,8 @@ import { BUTTON } from "../../config/constants";
 
 function Game() {
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isSubmit, setIsSubmit] = useState(false);
+
   const [resultMessage, setResultMessage] = useState("");
   const [keyQuantity, setKeyQuantity] = useState(0);
   const navigate = useNavigate();
@@ -51,7 +53,10 @@ function Game() {
         </ButtonsWrapper>
       </TopWrapper>
       <ContentsWrapper>
-        <BlockCombinator />
+        <BlockCombinator
+          submitBlockInfo={isSubmit}
+          setSubmitBlockInfo={setIsSubmit}
+        />
         <RightWrapper>
           {mapData && (
             <Map
@@ -64,7 +69,9 @@ function Game() {
             />
           )}
           열쇠: {keyQuantity}
-          <Button>{BUTTON.START}</Button>
+
+          <Button onClick={() => setIsSubmit(!isSubmit)}>{BUTTON.START}</Button>
+
         </RightWrapper>
       </ContentsWrapper>
     </>

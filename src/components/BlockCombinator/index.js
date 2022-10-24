@@ -1,10 +1,13 @@
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import styled from "styled-components";
+import PropTypes from "prop-types";
 import { cloneDeep } from "lodash";
+import { useDispatch } from "react-redux";
 
+import { updateTranslatedBlocks } from "../../features/block/blockSlice";
 import { WINDOW, BLOCK_NAMES } from "../../config/constants";
 
-function BlockCombinator() {
+function BlockCombinator({ submitBlockInfo, setSubmitBlockInfo }) {
   const targetBlockIndex = useRef();
   const { MOVE, TURN_RIGHT, TURN_LEFT, ATTACK, IF, WHILE, REPEAT } =
     BLOCK_NAMES;
@@ -20,12 +23,21 @@ function BlockCombinator() {
     { name: REPEAT, isNestable: "true" },
   ];
 
+  const dispatch = useDispatch();
+
   const [logicBlocks, setLogicBlocks] = useState([]);
   const [blocksCount, setBlocksCount] = useState(10);
 
   let blockIndex;
   let blockId;
   let parentElement;
+
+  useEffect(() => {
+    if (submitBlockInfo) {
+      translateBlocks();
+      setSubmitBlockInfo(!submitBlockInfo);
+    }
+  }, [submitBlockInfo]);
 
   const dragStart = (event, index) => {
     event.stopPropagation();
@@ -264,22 +276,24 @@ function BlockCombinator() {
   const translateBlocks = () => {
     const ifBlocks = document.querySelectorAll(".if");
     const counts = document.querySelectorAll(".count");
-    const newLogicBlocks = cloneDeep(logicBlocks);
+    const translatedBlocks = cloneDeep(logicBlocks);
 
     ifBlocks.forEach((element) => {
       const indexes = element.id.split("-");
 
       if (indexes.length === 3) {
-        newLogicBlocks[indexes[1]]["content"][indexes[2]] = element.value;
+        translatedBlocks[indexes[1]]["content"][indexes[2]] = element.value;
       } else {
-        newLogicBlocks[indexes[1]] = element.value;
+        translatedBlocks[indexes[1]] = element.value;
       }
     });
     counts.forEach((element) => {
       const indexes = element.id.split("-");
 
-      newLogicBlocks[indexes[1]][indexes[0]] = element.value;
+      translatedBlocks[indexes[1]][indexes[0]] = element.value;
     });
+
+    dispatch(updateTranslatedBlocks(translatedBlocks));
   };
 
   return (
@@ -416,7 +430,6 @@ function BlockCombinator() {
               {blockType}
             </EmptyBlock>
           ))}
-        <button onClick={translateBlocks}>버튼</button>
       </LogicBlocks>
     </Wrapper>
   );
@@ -515,5 +528,10 @@ const CountInput = styled.input`
   border-radius: 4px;
   width: 2rem;
 `;
+
+BlockCombinator.propTypes = {
+  submitBlockInfo: PropTypes.bool.isRequired,
+  setSubmitBlockInfo: PropTypes.func.isRequired,
+};
 
 export { BlockCombinator };

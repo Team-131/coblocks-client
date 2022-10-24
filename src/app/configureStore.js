@@ -1,15 +1,13 @@
 import { configureStore } from "@reduxjs/toolkit";
 import logger from "redux-logger";
 
-import tutorialSlice from "../features/tutorial/tutorialSlice";
-import gameSlice from "../features/game/gameSlice";
+import { blockSlice } from "../features/block/blockSlice";
 
 const store = configureStore({
   reducer: {
-    tutorial: tutorialSlice.reducer,
-    game: gameSlice.reducer,
+    block: blockSlice.reducer,
   },
   middleware: [logger],
 });
 
-export default store;
+export { store };

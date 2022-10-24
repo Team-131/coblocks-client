@@ -14,6 +14,7 @@ import { STARS, BUTTON } from "../../config/constants";
 
 function Tutorial() {
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isSubmit, setIsSubmit] = useState(false);
   const [resultMessage, setResultMessage] = useState("");
   const [keyQuantity, setKeyQuantity] = useState(0);
   const navigate = useNavigate();
@@ -37,6 +38,9 @@ function Tutorial() {
       navigate("/not_found");
     }
   }, []);
+  useEffect(() => {
+    setMapData(cloneDeep(tutorialMapsData[tutorialId]));
+  }, [tutorialId]);
 
   return (
     <>
@@ -76,7 +80,10 @@ function Tutorial() {
           </ButtonsWrapper>
         </TopWrapper>
         <ContentsWrapper>
-          <BlockCombinator />
+          <BlockCombinator
+            submitBlockInfo={isSubmit}
+            setSubmitBlockInfo={setIsSubmit}
+          />
           <RightWrapper>
             {mapData && (
               <Map
@@ -89,7 +96,9 @@ function Tutorial() {
               />
             )}
             열쇠: {keyQuantity}
-            <Button>{BUTTON.START}</Button>
+            <Button onClick={() => setIsSubmit(!isSubmit)}>
+              {BUTTON.START}
+            </Button>
           </RightWrapper>
         </ContentsWrapper>
       </Wrapper>
