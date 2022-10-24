@@ -262,10 +262,11 @@ function BlockCombinator() {
   };
 
   const translateBlocks = () => {
-    const result = document.querySelectorAll(".if");
+    const ifBlocks = document.querySelectorAll(".if");
+    const counts = document.querySelectorAll(".count");
     const newLogicBlocks = cloneDeep(logicBlocks);
 
-    result.forEach((element) => {
+    ifBlocks.forEach((element) => {
       const indexes = element.id.split("-");
 
       if (indexes.length === 3) {
@@ -273,6 +274,11 @@ function BlockCombinator() {
       } else {
         newLogicBlocks[indexes[1]] = element.value;
       }
+    });
+    counts.forEach((element) => {
+      const indexes = element.id.split("-");
+
+      newLogicBlocks[indexes[1]][indexes[0]] = element.value;
     });
   };
 
@@ -349,6 +355,8 @@ function BlockCombinator() {
                 {blockType["type"] === REPEAT && (
                   <CountInput
                     type={"number"}
+                    id={`count-${index}`}
+                    className={"count"}
                     onChange={limitNumberRange}
                     defaultValue={1}
                   ></CountInput>
