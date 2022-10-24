@@ -72,8 +72,8 @@ function Tutorial() {
         </TopWrapper>
         <ContentsWrapper>
           <BlockCombinator
-            subMitBlockInfo={isSubmit}
-            setSubMitBlockInfo={setIsSubmit}
+            submitBlockInfo={isSubmit}
+            setSubmitBlockInfo={setIsSubmit}
           />
           <RightWrapper>
             {mapData && (

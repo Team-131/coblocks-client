@@ -7,7 +7,7 @@ import { useDispatch } from "react-redux";
 import { updateTranslatedBlocks } from "../../features/block/blockSlice";
 import { WINDOW, BLOCK_NAMES } from "../../config/constants";
 
-function BlockCombinator({ subMitBlockInfo, setSubMitBlockInfo }) {
+function BlockCombinator({ submitBlockInfo, setSubmitBlockInfo }) {
   const targetBlockIndex = useRef();
   const { MOVE, TURN_RIGHT, TURN_LEFT, ATTACK, IF, WHILE, REPEAT } =
     BLOCK_NAMES;
@@ -33,11 +33,11 @@ function BlockCombinator({ subMitBlockInfo, setSubMitBlockInfo }) {
   let parentElement;
 
   useEffect(() => {
-    if (subMitBlockInfo) {
+    if (submitBlockInfo) {
       translateBlocks();
-      setSubMitBlockInfo(!subMitBlockInfo);
+      setSubmitBlockInfo(!submitBlockInfo);
     }
-  }, [subMitBlockInfo]);
+  }, [submitBlockInfo]);
 
   const dragStart = (event, index) => {
     event.stopPropagation();
@@ -530,8 +530,8 @@ const CountInput = styled.input`
 `;
 
 BlockCombinator.propTypes = {
-  subMitBlockInfo: PropTypes.bool.isRequired,
-  setSubMitBlockInfo: PropTypes.func.isRequired,
+  submitBlockInfo: PropTypes.bool.isRequired,
+  setSubmitBlockInfo: PropTypes.func.isRequired,
 };
 
 export { BlockCombinator };
