@@ -1,6 +1,7 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import styled from "styled-components";
 import { useNavigate, useParams } from "react-router-dom";
+import cloneDeep from "lodash/cloneDeep";
 
 import { tutorialMapsData } from "../../mapInfo/tutorialMapsData";
 
@@ -16,13 +17,19 @@ function Tutorial() {
   const navigate = useNavigate();
   const { tutorialId } = useParams();
   const allTutorialKeys = Object.keys(tutorialMapsData);
-  const mapData = { ...tutorialMapsData[tutorialId] };
+  const [mapData, setMapData] = useState(
+    cloneDeep(tutorialMapsData[tutorialId]),
+  );
+  const [isSubmit, setIsSubmit] = useState(false);
 
   useEffect(() => {
     if (!tutorialMapsData[tutorialId]) {
       navigate("/not_found");
     }
   }, []);
+  useEffect(() => {
+    setMapData(cloneDeep(tutorialMapsData[tutorialId]));
+  }, [tutorialId]);
 
   return (
     <>
@@ -62,10 +69,15 @@ function Tutorial() {
           </ButtonsWrapper>
         </TopWrapper>
         <ContentsWrapper>
-          <BlockCombinator />
+          <BlockCombinator
+            subMitBlockInfo={isSubmit}
+            setSubMitBlockInfo={setIsSubmit}
+          />
           <RightWrapper>
-            {mapData && <Map mapInfo={tutorialMapsData[tutorialId]} />}
-            <Button>{BUTTON.START}</Button>
+            {mapData && <Map mapInfo={mapData} />}
+            <Button onClick={() => setIsSubmit(!isSubmit)}>
+              {BUTTON.START}
+            </Button>
           </RightWrapper>
         </ContentsWrapper>
       </Wrapper>

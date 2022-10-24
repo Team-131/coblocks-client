@@ -1,12 +1,13 @@
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import styled from "styled-components";
+import PropTypes from "prop-types";
 import { cloneDeep } from "lodash";
-import { blockSlice } from "../../features/block/blockSlice";
 import { useDispatch } from "react-redux";
 
+import { blockSlice } from "../../features/block/blockSlice";
 import { WINDOW, BLOCK_NAMES } from "../../config/constants";
 
-function BlockCombinator() {
+function BlockCombinator({ subMitBlockInfo, setSubMitBlockInfo }) {
   const targetBlockIndex = useRef();
   const { MOVE, TURN_RIGHT, TURN_LEFT, ATTACK, IF, WHILE, REPEAT } =
     BLOCK_NAMES;
@@ -30,6 +31,13 @@ function BlockCombinator() {
   let blockIndex;
   let blockId;
   let parentElement;
+
+  useEffect(() => {
+    if (subMitBlockInfo) {
+      translateBlocks();
+      setSubMitBlockInfo(!subMitBlockInfo);
+    }
+  }, [subMitBlockInfo]);
 
   const dragStart = (event, index) => {
     event.stopPropagation();
@@ -521,5 +529,10 @@ const CountInput = styled.input`
   border-radius: 4px;
   width: 2rem;
 `;
+
+BlockCombinator.propTypes = {
+  subMitBlockInfo: PropTypes.bool.isRequired,
+  setSubMitBlockInfo: PropTypes.func,
+};
 
 export { BlockCombinator };
