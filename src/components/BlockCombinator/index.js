@@ -4,7 +4,7 @@ import PropTypes from "prop-types";
 import { cloneDeep } from "lodash";
 import { useDispatch } from "react-redux";
 
-import { blockSlice } from "../../features/block/blockSlice";
+import { updateTranslatedBlocks } from "../../features/block/blockSlice";
 import { WINDOW, BLOCK_NAMES } from "../../config/constants";
 
 function BlockCombinator({ subMitBlockInfo, setSubMitBlockInfo }) {
@@ -293,7 +293,7 @@ function BlockCombinator({ subMitBlockInfo, setSubMitBlockInfo }) {
       translatedBlocks[indexes[1]][indexes[0]] = element.value;
     });
 
-    dispatch(blockSlice.updateTranslatedBlocks(translatedBlocks));
+    dispatch(updateTranslatedBlocks(translatedBlocks));
   };
 
   return (
@@ -532,7 +532,7 @@ const CountInput = styled.input`
 
 BlockCombinator.propTypes = {
   subMitBlockInfo: PropTypes.bool.isRequired,
-  setSubMitBlockInfo: PropTypes.func,
+  setSubMitBlockInfo: PropTypes.func.isRequired,
 };
 
 export { BlockCombinator };

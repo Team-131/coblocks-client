@@ -14,13 +14,13 @@ import { STARS, BUTTON } from "../../config/constants";
 
 function Tutorial() {
   const [isModalOpen, setIsModalOpen] = useState(true);
+  const [isSubmit, setIsSubmit] = useState(false);
   const navigate = useNavigate();
   const { tutorialId } = useParams();
   const allTutorialKeys = Object.keys(tutorialMapsData);
   const [mapData, setMapData] = useState(
     cloneDeep(tutorialMapsData[tutorialId]),
   );
-  const [isSubmit, setIsSubmit] = useState(false);
 
   useEffect(() => {
     if (!tutorialMapsData[tutorialId]) {

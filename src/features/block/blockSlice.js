@@ -7,14 +7,14 @@ const blockSlice = createSlice({
     isStarted: false,
   },
   reducers: {
-    resetTranslatedBlocks: (state, action) => {
+    resetTranslatedBlocks: (state) => {
       state.translatedBlocks = [];
     },
     updateTranslatedBlocks: (state, action) => {
-      state.translatedBlocks = action.payload.translatedBlocks;
+      state.translatedBlocks = action.payload;
     },
     setIsStarted: (state, action) => {
-      state.isStarted = action.payload.isStarted;
+      state.isStarted = action.payload;
     },
   },
 });

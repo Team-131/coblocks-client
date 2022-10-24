@@ -165,9 +165,11 @@ function Map({
     return { x, y };
   };
 
-  const getForwardTileType = (character) => {
-    const { forwardCoordinateX, forwardCoordinateY } =
-      getForwardCoordinate(character);
+  const getForwardTileType = (character, direction) => {
+    const { forwardCoordinateX, forwardCoordinateY } = getForwardCoordinate(
+      character,
+      direction,
+    );
 
     if (
       forwardCoordinateX < 0 ||
