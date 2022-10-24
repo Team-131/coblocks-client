@@ -236,12 +236,15 @@ function Map({
       const targetAsset = nextCharacter.y * 10 + nextCharacter.x;
       const copyMapInfo = { ...newMapInfo };
       copyMapInfo.elements[targetAsset] = replacement;
+
       setNewMapInfo(copyMapInfo);
     }
 
     if (forwardTileType === "block" || forwardTileType.includes("Monster")) {
       moveDirection = STAY;
+
       setResultMessage(FAIL);
+
       setTimeout(() => {
         setIsModalOpen(true);
       }, 500);
@@ -259,16 +262,20 @@ function Map({
 
     if (forwardTileType === "key") {
       setKeyQuantity(keyQuantity + 1);
+
       replaceAsset(deleteElement);
+
       setMapInfo(mapInfo);
     }
 
     if (forwardTileType === "closedDoor") {
       if (keyQuantity > 0) {
         replaceAsset(OPEN_DOOR);
+
         setKeyQuantity(keyQuantity - 1);
       } else {
         setResultMessage(FAIL);
+
         setTimeout(() => {
           setIsModalOpen(true);
         }, 500);
@@ -277,6 +284,7 @@ function Map({
 
     if (forwardTileType === "portal") {
       setResultMessage(SUCCESS);
+
       setTimeout(() => {
         setIsModalOpen(true);
       }, 500);
@@ -366,9 +374,12 @@ function Map({
         assetCoordinateX: i,
         assetCoordinateY: CAT_DROWN_ROW,
       });
+
       await sleep(CAT_DROWN_FRAME_TIME);
     }
+
     setResultMessage(FAIL);
+
     setTimeout(() => {
       setIsModalOpen(true);
     }, 500);
@@ -419,6 +430,7 @@ function Map({
       const monsterPosition = nextCharacter.y * 10 + nextCharacter.x;
       const copyMapInfo = { ...newMapInfo };
       copyMapInfo.elements[monsterPosition] = -1;
+
       setNewMapInfo(copyMapInfo);
     }
   };
