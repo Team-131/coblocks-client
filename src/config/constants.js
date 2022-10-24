@@ -33,6 +33,7 @@ export const CHARACTER_DIRECTION = {
 export const ASSET = {
   SINGLE_ASSET_WIDTH: 46,
   SINGLE_ASSET_HEIGHT: 46,
+  DELETE_ELEMENT: -1,
   ROCK: 20,
   WATER: 21,
   KEY: 40,

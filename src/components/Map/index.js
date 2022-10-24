@@ -27,6 +27,7 @@ function Map({
   const {
     SINGLE_ASSET_WIDTH,
     SINGLE_ASSET_HEIGHT,
+    DELETE_ELEMENT,
     ROCK,
     WATER,
     KEY,
@@ -231,12 +232,12 @@ function Map({
   const moveOneTile = async () => {
     const context = ref.current.getContext("2d");
     const forwardTileType = getForwardTileType(character);
-    const deleteElement = -1;
     let moveDirection = character.direction;
 
     function replaceAsset(replacement) {
       const targetAsset = nextCharacter.y * 10 + nextCharacter.x;
       const copyMapInfo = { ...newMapInfo };
+
       copyMapInfo.elements[targetAsset] = replacement;
 
       setNewMapInfo(copyMapInfo);
@@ -265,7 +266,7 @@ function Map({
     if (forwardTileType === "key") {
       setKeyQuantity(keyQuantity + 1);
 
-      replaceAsset(deleteElement);
+      replaceAsset(DELETE_ELEMENT);
 
       setMapInfo(mapInfo);
     }
@@ -405,6 +406,7 @@ function Map({
     const nextElement = nextCharacter.y * 10 + nextCharacter.x;
     if (forwardTileType.includes("Monster")) {
       let monsterColor;
+
       if (forwardTileType === "greenMonster") {
         monsterColor = Math.floor(GREEN_MONSTER / 10);
       } else if (forwardTileType === "blueMonster") {
