@@ -1,6 +1,7 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import styled from "styled-components";
 import { useNavigate, useParams } from "react-router-dom";
+import cloneDeep from "lodash/cloneDeep";
 
 import { tutorialMapsData } from "../../mapInfo/tutorialMapsData";
 
@@ -12,11 +13,24 @@ import { Map } from "../../components/Map";
 import { STARS, BUTTON } from "../../config/constants";
 
 function Tutorial() {
-  const [isModalOpen, setIsModalOpen] = useState(true);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [resultMessage, setResultMessage] = useState("");
+  const [keyQuantity, setKeyQuantity] = useState(0);
   const navigate = useNavigate();
   const { tutorialId } = useParams();
   const allTutorialKeys = Object.keys(tutorialMapsData);
-  const mapData = { ...tutorialMapsData[tutorialId] };
+
+  const [mapData, setMapData] = useState(
+    cloneDeep(tutorialMapsData[tutorialId]),
+  );
+
+  useEffect(() => {
+    setMapData(cloneDeep(tutorialMapsData[tutorialId]));
+  }, [tutorialId]);
+
+  useEffect(() => {
+    isModalOpen;
+  }, [isModalOpen]);
 
   useEffect(() => {
     if (!tutorialMapsData[tutorialId]) {
@@ -29,7 +43,7 @@ function Tutorial() {
       {isModalOpen && (
         <Modal
           closeModal={() => setIsModalOpen(false)}
-          resultMessage={"성공 🎉 / 실패 😭"}
+          resultMessage={resultMessage}
         />
       )}
       <Wrapper>
@@ -64,7 +78,17 @@ function Tutorial() {
         <ContentsWrapper>
           <BlockCombinator />
           <RightWrapper>
-            {mapData && <Map mapInfo={tutorialMapsData[tutorialId]} />}
+            {mapData && (
+              <Map
+                mapInfo={mapData}
+                setMapInfo={setMapData}
+                setIsModalOpen={setIsModalOpen}
+                setResultMessage={setResultMessage}
+                keyQuantity={keyQuantity}
+                setKeyQuantity={setKeyQuantity}
+              />
+            )}
+            열쇠: {keyQuantity}
             <Button>{BUTTON.START}</Button>
           </RightWrapper>
         </ContentsWrapper>
