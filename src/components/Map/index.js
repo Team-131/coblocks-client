@@ -3,11 +3,24 @@ import PropTypes from "prop-types";
 import styled from "styled-components";
 
 import { sleep } from "../../utils/sleep";
-import { CHARACTER_DIRECTION, ASSET, RENDER } from "../../config/constants";
+import {
+  CHARACTER_DIRECTION,
+  ASSET,
+  RENDER,
+  MESSAGE,
+} from "../../config/constants";
 
-function Map({ mapInfo }) {
+function Map({
+  mapInfo,
+  setMapInfo,
+  setIsModalOpen,
+  setResultMessage,
+  keyQuantity,
+  setKeyQuantity,
+}) {
   const ref = useRef(null);
   const [character, setCharacter] = useState({ x: 0, y: 0, direction: 0 });
+  const [newMapInfo, setNewMapInfo] = useState({});
 
   const { UP, RIGHT, DOWN, LEFT, STAY } = CHARACTER_DIRECTION;
   const {
@@ -15,6 +28,12 @@ function Map({ mapInfo }) {
     SINGLE_ASSET_HEIGHT,
     ROCK,
     WATER,
+    KEY,
+    CLOSED_DOOR,
+    OPEN_DOOR,
+    PORTAL,
+    GREEN_MONSTER,
+    BLUE_MONSTER,
     CAT_SPRITE_FRAMES,
     CAT_DROWN_ROW,
     CAT_MOVE_FRAME_TIME,
@@ -26,6 +45,7 @@ function Map({ mapInfo }) {
     MAP_PIXEL_WIDTH,
     MAP_PIXEL_HEIGHT,
   } = RENDER;
+  const { SUCCESS, FAIL } = MESSAGE;
 
   const catAsset = new Image();
   const mapAsset = new Image();
@@ -34,6 +54,7 @@ function Map({ mapInfo }) {
   mapAsset.src = "/assets/image/map_asset.png";
 
   useEffect(() => {
+    setNewMapInfo(mapInfo);
     mapAsset.addEventListener(
       "load",
       () => {
@@ -110,7 +131,7 @@ function Map({ mapInfo }) {
   };
 
   const setCharacterDirection = (newCharacter) => {
-    const element = mapInfo.elements[newCharacter.y * 10 + newCharacter.x];
+    const element = newMapInfo.elements[newCharacter.y * 10 + newCharacter.x];
     const { x: assetCoordinateX, y: assetCoordinateY } =
       getAssetCoordinate(element);
 
@@ -121,6 +142,7 @@ function Map({ mapInfo }) {
       assetCoordinateX,
       assetCoordinateY,
     });
+
     drawField({
       image: catAsset,
       mapCoordinateX: newCharacter.x,
@@ -134,7 +156,7 @@ function Map({ mapInfo }) {
 
   const getAssetCoordinate = (rawAssetIndex) => {
     if (rawAssetIndex === -1) {
-      return { x: mapInfo.defaultField, y: 0 };
+      return { x: newMapInfo.defaultField, y: 0 };
     }
 
     const x = rawAssetIndex % 10;
@@ -157,13 +179,23 @@ function Map({ mapInfo }) {
     }
 
     const forwardElement =
-      mapInfo.elements[forwardCoordinateY * 10 + forwardCoordinateX];
+      newMapInfo.elements[forwardCoordinateY * 10 + forwardCoordinateX];
 
     switch (forwardElement) {
       case ROCK:
         return "block";
       case WATER:
         return "water";
+      case KEY:
+        return "key";
+      case CLOSED_DOOR:
+        return "closedDoor";
+      case PORTAL:
+        return "portal";
+      case GREEN_MONSTER:
+        return "greenMonster";
+      case BLUE_MONSTER:
+        return "blueMonster";
       default:
         return "land";
     }
@@ -197,10 +229,22 @@ function Map({ mapInfo }) {
   const moveOneTile = async () => {
     const context = ref.current.getContext("2d");
     const forwardTileType = getForwardTileType(character);
+    const deleteElement = -1;
     let moveDirection = character.direction;
 
-    if (forwardTileType === "block") {
+    function replaceAsset(replacement) {
+      const targetAsset = nextCharacter.y * 10 + nextCharacter.x;
+      const copyMapInfo = { ...newMapInfo };
+      copyMapInfo.elements[targetAsset] = replacement;
+      setNewMapInfo(copyMapInfo);
+    }
+
+    if (forwardTileType === "block" || forwardTileType.includes("Monster")) {
       moveDirection = STAY;
+      setResultMessage(FAIL);
+      setTimeout(() => {
+        setIsModalOpen(true);
+      }, 500);
     }
 
     const { forwardCoordinateX, forwardCoordinateY } = getForwardCoordinate(
@@ -212,12 +256,38 @@ function Map({ mapInfo }) {
       y: forwardCoordinateY,
       direction: character.direction,
     };
+
+    if (forwardTileType === "key") {
+      setKeyQuantity(keyQuantity + 1);
+      replaceAsset(deleteElement);
+      setMapInfo(mapInfo);
+    }
+
+    if (forwardTileType === "closedDoor") {
+      if (keyQuantity > 0) {
+        replaceAsset(OPEN_DOOR);
+        setKeyQuantity(keyQuantity - 1);
+      } else {
+        setResultMessage(FAIL);
+        setTimeout(() => {
+          setIsModalOpen(true);
+        }, 500);
+      }
+    }
+
+    if (forwardTileType === "portal") {
+      setResultMessage(SUCCESS);
+      setTimeout(() => {
+        setIsModalOpen(true);
+      }, 500);
+    }
+
     const forwardAssetCoordinate = getAssetCoordinate(
-      mapInfo.elements[forwardCoordinateY * 10 + forwardCoordinateX],
+      newMapInfo.elements[forwardCoordinateY * 10 + forwardCoordinateX],
     );
 
     for (let i = 0; i < CAT_SPRITE_FRAMES * 2 + 1; i++) {
-      const mapElement = mapInfo.elements[character.y * 10 + character.x];
+      const mapElement = newMapInfo.elements[character.y * 10 + character.x];
       const { x: assetCoordinateX, y: assetCoordinateY } =
         getAssetCoordinate(mapElement);
 
@@ -298,6 +368,59 @@ function Map({ mapInfo }) {
       });
       await sleep(CAT_DROWN_FRAME_TIME);
     }
+    setResultMessage(FAIL);
+    setTimeout(() => {
+      setIsModalOpen(true);
+    }, 500);
+  };
+
+  const attack = async () => {
+    const forwardTileType = getForwardTileType(character);
+    let moveDirection = character.direction;
+
+    const { forwardCoordinateX, forwardCoordinateY } = getForwardCoordinate(
+      character,
+      moveDirection,
+    );
+
+    const nextCharacter = {
+      x: forwardCoordinateX,
+      y: forwardCoordinateY,
+      direction: character.direction,
+    };
+
+    if (forwardTileType.includes("Monster")) {
+      let monsterColor;
+      if (forwardTileType === "greenMonster") {
+        monsterColor = Math.floor(GREEN_MONSTER / 10);
+      } else if (forwardTileType === "blueMonster") {
+        monsterColor = Math.floor(BLUE_MONSTER / 10);
+      }
+
+      for (let i = 0; i < CAT_SPRITE_FRAMES; i++) {
+        drawField({
+          image: mapAsset,
+          mapCoordinateX: nextCharacter.x,
+          mapCoordinateY: nextCharacter.y,
+          assetCoordinateX: i,
+          assetCoordinateY: monsterColor,
+        });
+
+        await sleep(CAT_DROWN_FRAME_TIME);
+      }
+
+      drawField({
+        image: mapAsset,
+        mapCoordinateX: nextCharacter.x,
+        mapCoordinateY: nextCharacter.y,
+        assetCoordinateX: mapInfo.defaultField,
+        assetCoordinateY: 0,
+      });
+      const monsterPosition = nextCharacter.y * 10 + nextCharacter.x;
+      const copyMapInfo = { ...newMapInfo };
+      copyMapInfo.elements[monsterPosition] = -1;
+      setNewMapInfo(copyMapInfo);
+    }
   };
 
   return (
@@ -307,6 +430,7 @@ function Map({ mapInfo }) {
         <button onClick={() => turnLeft(character)}>왼쪽회전</button>
         <button onClick={() => turnRight(character)}>오른쪽회전</button>
         <button onClick={moveOneTile}>1칸전진</button>
+        <button onClick={attack}>때리기</button>
       </TestButtons>
     </>
   );
@@ -318,6 +442,11 @@ const TestButtons = styled.div`
 
 Map.propTypes = {
   mapInfo: PropTypes.object.isRequired,
+  setMapInfo: PropTypes.func.isRequired,
+  setIsModalOpen: PropTypes.func.isRequired,
+  setResultMessage: PropTypes.func.isRequired,
+  keyQuantity: PropTypes.number.isRequired,
+  setKeyQuantity: PropTypes.func.isRequired,
 };
 
 export { Map };
