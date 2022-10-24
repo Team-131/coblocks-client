@@ -4,6 +4,7 @@ const blockSlice = createSlice({
   name: "blockSlice",
   initialState: {
     translatedBlocks: [],
+    isStarted: false,
   },
   reducers: {
     resetTranslatedBlocks: (state, action) => {
@@ -12,9 +13,12 @@ const blockSlice = createSlice({
     updateTranslatedBlocks: (state, action) => {
       state.translatedBlocks = action.payload.translatedBlocks;
     },
+    setIsStarted: (state, action) => {
+      state.isStarted = action.payload.isStarted;
+    },
   },
 });
 
 export { blockSlice };
-export const { resetTranslatedBlocks, updateTranslatedBlocks } =
+export const { resetTranslatedBlocks, updateTranslatedBlocks, setIsStarted } =
   blockSlice.actions;
