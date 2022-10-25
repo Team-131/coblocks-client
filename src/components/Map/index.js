@@ -1,10 +1,12 @@
 import React, { useEffect, useRef } from "react";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import PropTypes from "prop-types";
 import styled from "styled-components";
 import cloneDeep from "lodash/cloneDeep";
 
+import { updateExecutingBlock } from "../../features/block/blockSlice";
 import { sleep } from "../../utils/sleep";
+
 import {
   CHARACTER_DIRECTION,
   ASSET,
@@ -24,6 +26,7 @@ function Map({
   const isEnded = useRef(false);
   const character = useRef({ x: 0, y: 0, direction: 0 });
   const newMapInfo = useRef(cloneDeep(mapInfo));
+  const dispatch = useDispatch();
   const selectTranslatedBlocks = useSelector(
     (state) => state.block.translatedBlocks,
   );
@@ -63,22 +66,28 @@ function Map({
 
   useEffect(() => {
     (async () => {
-      for (const block of selectTranslatedBlocks) {
+      for (let i = 0; i < selectTranslatedBlocks.length; i++) {
         if (isEnded.current) break;
 
+        const block = selectTranslatedBlocks[i];
+
         if (typeof block === "string") {
+          dispatch(updateExecutingBlock(`${i}`));
+
           await executeSingleBlock(block);
         }
 
         if (typeof block === "object") {
           if (block.type.includes("계속 반복하기")) {
-            await executeWhileBlock(block.content);
+            dispatch(updateExecutingBlock(`${i}`));
+            await sleep(1000);
 
-            if (isEnded.current) break;
+            await executeWhileBlock(block.content, i);
           } else if (block.type.includes("반복하기")) {
-            await executeRepeatBlock(block.count, block.content);
+            dispatch(updateExecutingBlock(`${i}`));
+            await sleep(1000);
 
-            if (isEnded.current) break;
+            await executeRepeatBlock(block.count, block.content, i);
           }
         }
       }
@@ -138,21 +147,23 @@ function Map({
     );
   }, [mapInfo]);
 
-  const executeWhileBlock = async (blockArray) => {
+  const executeWhileBlock = async (blockArray, parentIndex) => {
     for (let whileCount = 0; whileCount < 50; whileCount++) {
       for (let i = 0; i < blockArray.length; i++) {
         if (isEnded.current) return;
 
+        dispatch(updateExecutingBlock(`${parentIndex}-${i}`));
         await executeSingleBlock(blockArray[i]);
       }
     }
   };
 
-  const executeRepeatBlock = async (repeatCount, blockArray) => {
+  const executeRepeatBlock = async (repeatCount, blockArray, parentIndex) => {
     for (let repeated = 0; repeated < repeatCount; repeated++) {
       for (let i = 0; i < blockArray.length; i++) {
         if (isEnded.current) return;
 
+        dispatch(updateExecutingBlock(`${parentIndex}-${i}`));
         await executeSingleBlock(blockArray[i]);
       }
     }
@@ -187,7 +198,7 @@ function Map({
       }
     }
 
-    await sleep(100);
+    await sleep(1000);
   };
 
   const getSideTileType = (side) => {
