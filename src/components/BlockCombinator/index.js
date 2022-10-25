@@ -6,8 +6,15 @@ import { useDispatch } from "react-redux";
 
 import { updateTranslatedBlocks } from "../../features/block/blockSlice";
 import { WINDOW, BLOCK_NAMES } from "../../config/constants";
+import { sleep } from "../../utils/sleep";
 
-function BlockCombinator({ submitBlockInfo, setSubmitBlockInfo }) {
+function BlockCombinator({
+  submitBlockInfo,
+  setSubmitBlockInfo,
+  availableBlocks,
+  limitCount,
+  mapId,
+}) {
   const targetBlockIndex = useRef();
   const { MOVE, TURN_RIGHT, TURN_LEFT, ATTACK, IF, WHILE, REPEAT } =
     BLOCK_NAMES;
@@ -24,7 +31,6 @@ function BlockCombinator({ submitBlockInfo, setSubmitBlockInfo }) {
   ];
 
   const dispatch = useDispatch();
-
   const [logicBlocks, setLogicBlocks] = useState([]);
   const [blocksCount, setBlocksCount] = useState(10);
 
@@ -32,12 +38,28 @@ function BlockCombinator({ submitBlockInfo, setSubmitBlockInfo }) {
   let blockId;
   let parentElement;
 
+  const [blockLimitAlarm, setBlockLimitAlarm] = useState("#f5ed58");
+
+  const handleBlockLimitAlarm = async () => {
+    setBlockLimitAlarm("#B33939");
+    await sleep(500);
+    setBlockLimitAlarm("#f5ed58");
+  };
+
   useEffect(() => {
     if (submitBlockInfo) {
       translateBlocks();
       setSubmitBlockInfo(!submitBlockInfo);
     }
   }, [submitBlockInfo]);
+
+  useEffect(() => {
+    setBlocksCount(limitCount);
+  }, [limitCount]);
+
+  useEffect(() => {
+    setLogicBlocks([]);
+  }, [mapId]);
 
   const dragStart = (event, index) => {
     event.stopPropagation();
@@ -244,6 +266,10 @@ function BlockCombinator({ submitBlockInfo, setSubmitBlockInfo }) {
 
       setLogicBlocks(newLogicBlocks);
     }
+
+    if (blocksCount === 0) {
+      handleBlockLimitAlarm();
+    }
   };
 
   const removeLogicBlock = () => {
@@ -301,30 +327,32 @@ function BlockCombinator({ submitBlockInfo, setSubmitBlockInfo }) {
       <SelectionBlocks onDrop={removeLogicBlock} onDragOver={allowDrop}>
         <Title color={"#ffffff"}>{WINDOW.BLOCKS_SELECTION}</Title>
         {blocks.map((block, index) => {
-          return block.isNestable === "false" ? (
-            <NonNestableBlock
-              key={block.name}
-              id={`codeBlock${index}`}
-              draggable="true"
-              onDragStart={(event) => dragStart(event, index)}
-            >
-              {block.name}
-            </NonNestableBlock>
-          ) : (
-            <NestableBlock
-              backGroundColor={block.name === REPEAT ? "#37b647" : "#de3589"}
-              key={block.name}
-              id={`codeBlock${index}`}
-              draggable="true"
-              onDragStart={(event) => dragStart(event, index)}
-            >
-              {block.name}
-            </NestableBlock>
-          );
+          if (availableBlocks.includes(block.name)) {
+            return block.isNestable === "false" ? (
+              <NonNestableBlock
+                key={block.name}
+                id={`codeBlock${index}`}
+                draggable="true"
+                onDragStart={(event) => dragStart(event, index)}
+              >
+                {block.name}
+              </NonNestableBlock>
+            ) : (
+              <NestableBlock
+                backGroundColor={block.name === REPEAT ? "#37b647" : "#de3589"}
+                key={block.name}
+                id={`codeBlock${index}`}
+                draggable="true"
+                onDragStart={(event) => dragStart(event, index)}
+              >
+                {block.name}
+              </NestableBlock>
+            );
+          }
         })}
       </SelectionBlocks>
       <LogicBlocks
-        backGroundColor={"#f5ed58"}
+        backGroundColor={blockLimitAlarm}
         onDrop={handleBlock}
         onDragOver={allowDrop}
       >
@@ -341,7 +369,6 @@ function BlockCombinator({ submitBlockInfo, setSubmitBlockInfo }) {
               onDragEnter={(event) => dragEnter(event, index)}
             >
               {blockType}
-
               <SelectOption id={`if-${index}`} className={"if"}>
                 <option value={"left"}>{"왼쪽으로 갈 수 있다면, ↪️"}</option>
                 <option value={"right"}>{"오른쪽으로 갈 수 있다면, ↩️"}</option>
@@ -467,7 +494,7 @@ const LogicBlocks = styled.div`
   height: 70vh;
   margin-right: 3vw;
   border: 0.3vw solid #000000;
-  background-color: #f5ed58;
+  background-color: ${(props) => props.backGroundColor};
   box-shadow: 0vw 0.3vw 0.3vw rgba(0, 0, 0, 0.25);
 `;
 
@@ -532,6 +559,9 @@ const CountInput = styled.input`
 BlockCombinator.propTypes = {
   submitBlockInfo: PropTypes.bool.isRequired,
   setSubmitBlockInfo: PropTypes.func.isRequired,
+  availableBlocks: PropTypes.array.isRequired,
+  limitCount: PropTypes.number.isRequired,
+  mapId: PropTypes.string.isRequired,
 };
 
 export { BlockCombinator };
