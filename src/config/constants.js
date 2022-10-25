@@ -70,3 +70,8 @@ export const BLOCK_NAMES = {
   WHILE: "∞ 계속 반복하기",
   REPEAT: "🔁 반복하기",
 };
+
+export const SLEEP_TIME = {
+  BLOCK_EXECUTION_TERM: 500,
+  MODAL_OPENING_DELAY: 500,
+};

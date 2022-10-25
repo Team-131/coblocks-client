@@ -12,6 +12,7 @@ import {
   ASSET,
   RENDER,
   MESSAGE,
+  SLEEP_TIME,
 } from "../../config/constants";
 
 function Map({
@@ -57,6 +58,7 @@ function Map({
     MAP_PIXEL_HEIGHT,
   } = RENDER;
   const { SUCCESS, FAIL } = MESSAGE;
+  const { BLOCK_EXECUTION_TERM, MODAL_OPENING_DELAY } = SLEEP_TIME;
 
   const catAsset = new Image();
   const mapAsset = new Image();
@@ -80,12 +82,12 @@ function Map({
         if (typeof block === "object") {
           if (block.type.includes("계속 반복하기")) {
             dispatch(updateExecutingBlock(`${i}`));
-            await sleep(1000);
+            await sleep(BLOCK_EXECUTION_TERM);
 
             await executeWhileBlock(block.content, i);
           } else if (block.type.includes("반복하기")) {
             dispatch(updateExecutingBlock(`${i}`));
-            await sleep(1000);
+            await sleep(BLOCK_EXECUTION_TERM);
 
             await executeRepeatBlock(block.count, block.content, i);
           }
@@ -198,7 +200,7 @@ function Map({
       }
     }
 
-    await sleep(1000);
+    await sleep(BLOCK_EXECUTION_TERM);
   };
 
   const getSideTileType = (side) => {
@@ -369,12 +371,9 @@ function Map({
 
       isEnded.current = true;
 
-      // await sleep(500);
-
-      // setIsModalOpen(true);
       setTimeout(() => {
         setIsModalOpen(true);
-      }, 500);
+      }, MODAL_OPENING_DELAY);
     }
 
     const { forwardCoordinateX, forwardCoordinateY } =
@@ -405,7 +404,7 @@ function Map({
 
         setTimeout(() => {
           setIsModalOpen(true);
-        }, 500);
+        }, MODAL_OPENING_DELAY);
       }
     }
 
@@ -416,7 +415,7 @@ function Map({
 
       setTimeout(() => {
         setIsModalOpen(true);
-      }, 500);
+      }, MODAL_OPENING_DELAY);
     }
 
     const forwardAssetCoordinate = getAssetCoordinate(
@@ -516,7 +515,7 @@ function Map({
 
     setTimeout(() => {
       setIsModalOpen(true);
-    }, 500);
+    }, MODAL_OPENING_DELAY);
   };
 
   const attack = async () => {
