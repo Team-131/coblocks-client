@@ -1,8 +1,14 @@
+import { BLOCK_NAMES } from "../config/constants";
+
+const { MOVE, TURN_RIGHT, TURN_LEFT, ATTACK, IF, WHILE, REPEAT } = BLOCK_NAMES;
+
 const mapInfo = {
   stage1: {
     title: "황무지",
     defaultField: 1,
     startingPoint: 50,
+    blocks: [MOVE, TURN_RIGHT, TURN_LEFT, ATTACK, IF, WHILE, REPEAT],
+    limitCount: 10,
     elements: [
       -1, -1, 20, -1, 10, -1, -1, -1, -1, -1, -1, -1, 20, -1, 21, -1, -1, -1,
       -1, -1, -1, -1, -1, -1, 21, -1, -1, -1, -1, -1, -1, -1, -1, -1, 21, -1,
@@ -16,6 +22,8 @@ const mapInfo = {
     title: "들판",
     defaultField: 0,
     startingPoint: 50,
+    blocks: [MOVE, TURN_RIGHT, TURN_LEFT, ATTACK, IF, WHILE, REPEAT],
+    limitCount: 10,
     elements: [
       -1, -1, 20, -1, 10, -1, -1, -1, -1, -1, -1, -1, 20, -1, 21, -1, -1, -1,
       -1, -1, -1, -1, -1, -1, 21, -1, -1, -1, -1, -1, -1, -1, -1, -1, 21, -1,
@@ -29,6 +37,8 @@ const mapInfo = {
     title: "물조심",
     defaultField: 0,
     startingPoint: 90,
+    blocks: [MOVE, TURN_RIGHT, TURN_LEFT, ATTACK, IF, WHILE, REPEAT],
+    limitCount: 10,
     elements: [
       -1, -1, -1, -1, 10, -1, -1, -1, -1, -1, -1, -1, 20, -1, 21, -1, -1, -1,
       -1, 50, 21, 11, 21, 21, 21, 21, 21, 21, 11, 21, -1, -1, -1, -1, -1, -1,
