@@ -33,12 +33,11 @@ function BlockCombinator({
   const dispatch = useDispatch();
   const [logicBlocks, setLogicBlocks] = useState([]);
   const [blocksCount, setBlocksCount] = useState(10);
+  const [blockLimitAlarm, setBlockLimitAlarm] = useState("#f5ed58");
 
   let blockIndex;
   let blockId;
   let parentElement;
-
-  const [blockLimitAlarm, setBlockLimitAlarm] = useState("#f5ed58");
 
   useEffect(() => {
     if (submittedBlockInfo) {
