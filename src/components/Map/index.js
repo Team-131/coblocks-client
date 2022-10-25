@@ -12,6 +12,7 @@ import {
   RENDER,
   MESSAGE,
   SLEEP_TIME,
+  BLOCK_NAMES,
 } from "../../config/constants";
 
 function Map({
@@ -58,6 +59,7 @@ function Map({
   } = RENDER;
   const { SUCCESS, FAIL } = MESSAGE;
   const { BLOCK_EXECUTION_TERM, MODAL_OPENING_DELAY } = SLEEP_TIME;
+  const { MOVE, TURN_RIGHT, TURN_LEFT, ATTACK, WHILE, REPEAT } = BLOCK_NAMES;
 
   const catAsset = new Image();
   const mapAsset = new Image();
@@ -67,28 +69,32 @@ function Map({
 
   useEffect(() => {
     (async () => {
-      for (let i = 0; i < selectTranslatedBlocks.length; i++) {
+      for (
+        let blockIndex = 0;
+        blockIndex < selectTranslatedBlocks.length;
+        blockIndex++
+      ) {
         if (isEnded.current) break;
 
-        const block = selectTranslatedBlocks[i];
+        const block = selectTranslatedBlocks[blockIndex];
 
         if (typeof block === "string") {
-          dispatch(updateExecutingBlock(`${i}`));
+          dispatch(updateExecutingBlock(`${blockIndex}`));
 
           await executeSingleBlock(block);
         }
 
         if (typeof block === "object") {
-          if (block.type.includes("계속 반복하기")) {
-            dispatch(updateExecutingBlock(`${i}`));
+          if (block.type === WHILE) {
+            dispatch(updateExecutingBlock(`${blockIndex}`));
 
             await sleep(BLOCK_EXECUTION_TERM);
-            await executeWhileBlock(block.content, i);
-          } else if (block.type.includes("반복하기")) {
-            dispatch(updateExecutingBlock(`${i}`));
+            await executeWhileBlock(block.content, blockIndex);
+          } else if (block.type === REPEAT) {
+            dispatch(updateExecutingBlock(`${blockIndex}`));
 
             await sleep(BLOCK_EXECUTION_TERM);
-            await executeRepeatBlock(block.count, block.content, i);
+            await executeRepeatBlock(block.count, block.content, blockIndex);
           }
         }
       }
@@ -173,19 +179,19 @@ function Map({
   };
 
   const executeSingleBlock = async (block) => {
-    if (block.includes("앞으로 1칸 이동")) {
+    if (block === MOVE) {
       await moveOneTile();
     }
 
-    if (block.includes("오른쪽으로 회전하기")) {
+    if (block === TURN_RIGHT) {
       turnRight();
     }
 
-    if (block.includes("왼쪽으로 회전하기")) {
+    if (block === TURN_LEFT) {
       turnLeft();
     }
 
-    if (block.includes("공격하기")) {
+    if (block === ATTACK) {
       await attack();
     }
 
@@ -209,9 +215,7 @@ function Map({
 
     const tileType = getTileTypeOfSelectDirection(character, direction);
 
-    return tileType === "land" || tileType === "portal" || tileType === "key"
-      ? true
-      : false;
+    return tileType === "land" || tileType === "portal" || tileType === "key";
   };
 
   const getLeftDirection = (direction) => {
@@ -321,11 +325,11 @@ function Map({
     }
   };
 
-  const getCoordinateOfSelectDirection = (character, moveDirection) => {
+  const getCoordinateOfSelectDirection = (character, direction) => {
     let x = character.current.x;
     let y = character.current.y;
 
-    switch (moveDirection) {
+    switch (direction) {
       case UP:
         y--;
         break;
@@ -351,7 +355,7 @@ function Map({
       character,
       character.current.direction,
     );
-    let moveDirection = character.current.direction;
+    let direction = character.current.direction;
 
     const replaceAsset = (replacement) => {
       const targetAsset = nextCharacter.y * 10 + nextCharacter.x;
@@ -362,7 +366,7 @@ function Map({
     };
 
     if (forwardTileType === "block" || forwardTileType.includes("Monster")) {
-      moveDirection = STAY;
+      direction = STAY;
 
       setResultMessage(FAIL);
 
@@ -374,7 +378,7 @@ function Map({
     }
 
     const { forwardCoordinateX, forwardCoordinateY } =
-      getCoordinateOfSelectDirection(character, moveDirection);
+      getCoordinateOfSelectDirection(character, direction);
     const nextCharacter = {
       x: forwardCoordinateX,
       y: forwardCoordinateY,
@@ -494,6 +498,8 @@ function Map({
   };
 
   const drown = async (coordinateX, coordinateY) => {
+    isEnded.current = true;
+
     for (let i = 0; i < CAT_SPRITE_FRAMES; i++) {
       drawField({
         image: catAsset,
@@ -507,8 +513,6 @@ function Map({
     }
 
     setResultMessage(FAIL);
-
-    isEnded.current = true;
 
     setTimeout(() => {
       setIsModalOpen(true);
