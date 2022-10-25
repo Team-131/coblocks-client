@@ -9,8 +9,8 @@ import { WINDOW, BLOCK_NAMES } from "../../config/constants";
 import { sleep } from "../../utils/sleep";
 
 function BlockCombinator({
-  submitBlockInfo,
-  setSubmitBlockInfo,
+  submittedBlockInfo,
+  setSubmittedBlockInfo,
   availableBlocks,
   limitCount,
   mapId,
@@ -40,18 +40,12 @@ function BlockCombinator({
 
   const [blockLimitAlarm, setBlockLimitAlarm] = useState("#f5ed58");
 
-  const handleBlockLimitAlarm = async () => {
-    setBlockLimitAlarm("#B33939");
-    await sleep(500);
-    setBlockLimitAlarm("#f5ed58");
-  };
-
   useEffect(() => {
-    if (submitBlockInfo) {
+    if (submittedBlockInfo) {
       translateBlocks();
-      setSubmitBlockInfo(!submitBlockInfo);
+      setSubmittedBlockInfo(!submittedBlockInfo);
     }
-  }, [submitBlockInfo]);
+  }, [submittedBlockInfo]);
 
   useEffect(() => {
     setBlocksCount(limitCount);
@@ -91,7 +85,15 @@ function BlockCombinator({
     }
   };
 
-  const handleBlock = (event) => {
+  const handleBlockLimitAlarm = async () => {
+    setBlockLimitAlarm("#B33939");
+
+    await sleep(500);
+
+    setBlockLimitAlarm("#f5ed58");
+  };
+
+  const handleBlock = async (event) => {
     event.stopPropagation();
 
     const currentBlockText = event.dataTransfer.getData("text");
@@ -268,7 +270,7 @@ function BlockCombinator({
     }
 
     if (blocksCount === 0) {
-      handleBlockLimitAlarm();
+      await handleBlockLimitAlarm();
     }
   };
 
@@ -557,8 +559,8 @@ const CountInput = styled.input`
 `;
 
 BlockCombinator.propTypes = {
-  submitBlockInfo: PropTypes.bool.isRequired,
-  setSubmitBlockInfo: PropTypes.func.isRequired,
+  submittedBlockInfo: PropTypes.bool.isRequired,
+  setSubmittedBlockInfo: PropTypes.func.isRequired,
   availableBlocks: PropTypes.array.isRequired,
   limitCount: PropTypes.number.isRequired,
   mapId: PropTypes.string.isRequired,

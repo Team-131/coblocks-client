@@ -75,8 +75,8 @@ function Tutorial() {
         </TopWrapper>
         <ContentsWrapper>
           <BlockCombinator
-            submitBlockInfo={isSubmit}
-            setSubmitBlockInfo={setIsSubmit}
+            submittedBlockInfo={isSubmit}
+            setSubmittedBlockInfo={setIsSubmit}
             availableBlocks={mapData.blocks}
             limitCount={mapData.limitCount}
             mapId={tutorialId}
