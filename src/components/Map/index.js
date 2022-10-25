@@ -1,7 +1,6 @@
 import React, { useEffect, useRef } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import PropTypes from "prop-types";
-import styled from "styled-components";
 import cloneDeep from "lodash/cloneDeep";
 
 import { updateExecutingBlock } from "../../features/block/blockSlice";
