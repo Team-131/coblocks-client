@@ -15,9 +15,9 @@ import { BUTTON } from "../../config/constants";
 function Game() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isSubmit, setIsSubmit] = useState(false);
-
   const [resultMessage, setResultMessage] = useState("");
   const [keyQuantity, setKeyQuantity] = useState(0);
+
   const navigate = useNavigate();
   const { gameId } = useParams();
   const [mapData, setMapData] = useState(cloneDeep(mapInfo[gameId]));
@@ -25,10 +25,6 @@ function Game() {
   useEffect(() => {
     setMapData(cloneDeep(mapInfo[gameId]));
   }, [gameId]);
-
-  useEffect(() => {
-    isModalOpen;
-  }, [isModalOpen]);
 
   useEffect(() => {
     if (!mapInfo[gameId]) {
@@ -56,6 +52,9 @@ function Game() {
         <BlockCombinator
           submitBlockInfo={isSubmit}
           setSubmitBlockInfo={setIsSubmit}
+          availableBlocks={mapData.blocks}
+          limitCount={mapData.limitCount}
+          mapId={gameId}
         />
         <RightWrapper>
           {mapData && (
@@ -69,9 +68,7 @@ function Game() {
             />
           )}
           열쇠: {keyQuantity}
-
           <Button onClick={() => setIsSubmit(!isSubmit)}>{BUTTON.START}</Button>
-
         </RightWrapper>
       </ContentsWrapper>
     </>

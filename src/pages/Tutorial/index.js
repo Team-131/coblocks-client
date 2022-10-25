@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useRef, useState } from "react";
+import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import { useNavigate, useParams } from "react-router-dom";
 import cloneDeep from "lodash/cloneDeep";
@@ -17,8 +17,10 @@ function Tutorial() {
   const [isSubmit, setIsSubmit] = useState(false);
   const [resultMessage, setResultMessage] = useState("");
   const [keyQuantity, setKeyQuantity] = useState(0);
+
   const navigate = useNavigate();
   const { tutorialId } = useParams();
+
   const allTutorialKeys = Object.keys(tutorialMapsData);
 
   const [mapData, setMapData] = useState(
@@ -30,17 +32,10 @@ function Tutorial() {
   }, [tutorialId]);
 
   useEffect(() => {
-    isModalOpen;
-  }, [isModalOpen]);
-
-  useEffect(() => {
     if (!tutorialMapsData[tutorialId]) {
       navigate("/not_found");
     }
   }, []);
-  useEffect(() => {
-    setMapData(cloneDeep(tutorialMapsData[tutorialId]));
-  }, [tutorialId]);
 
   return (
     <>
@@ -71,7 +66,6 @@ function Tutorial() {
                 </Star>
               ),
             )}
-
             <Tip>Tip: {mapData.tip}</Tip>
           </GuideWrapper>
           <ButtonsWrapper>
@@ -83,6 +77,9 @@ function Tutorial() {
           <BlockCombinator
             submitBlockInfo={isSubmit}
             setSubmitBlockInfo={setIsSubmit}
+            availableBlocks={mapData.blocks}
+            limitCount={mapData.limitCount}
+            mapId={tutorialId}
           />
           <RightWrapper>
             {mapData && (
