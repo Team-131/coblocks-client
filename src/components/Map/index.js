@@ -82,13 +82,13 @@ function Map({
         if (typeof block === "object") {
           if (block.type.includes("계속 반복하기")) {
             dispatch(updateExecutingBlock(`${i}`));
-            await sleep(BLOCK_EXECUTION_TERM);
 
+            await sleep(BLOCK_EXECUTION_TERM);
             await executeWhileBlock(block.content, i);
           } else if (block.type.includes("반복하기")) {
             dispatch(updateExecutingBlock(`${i}`));
-            await sleep(BLOCK_EXECUTION_TERM);
 
+            await sleep(BLOCK_EXECUTION_TERM);
             await executeRepeatBlock(block.count, block.content, i);
           }
         }
@@ -155,6 +155,7 @@ function Map({
         if (isEnded.current) return;
 
         dispatch(updateExecutingBlock(`${parentIndex}-${i}`));
+
         await executeSingleBlock(blockArray[i]);
       }
     }
@@ -166,6 +167,7 @@ function Map({
         if (isEnded.current) return;
 
         dispatch(updateExecutingBlock(`${parentIndex}-${i}`));
+
         await executeSingleBlock(blockArray[i]);
       }
     }
@@ -188,16 +190,12 @@ function Map({
       await attack();
     }
 
-    if (block.includes("left")) {
-      if (getSideTileType("left")) {
-        turnLeft();
-      }
+    if (block.includes("left") && getSideTileType("left")) {
+      turnLeft();
     }
 
-    if (block.includes("right")) {
-      if (getSideTileType("right")) {
-        turnRight();
-      }
+    if (block.includes("right") && getSideTileType("right")) {
+      turnRight();
     }
 
     await sleep(BLOCK_EXECUTION_TERM);
@@ -223,6 +221,7 @@ function Map({
     } else {
       direction--;
     }
+
     return direction;
   };
 
@@ -232,6 +231,7 @@ function Map({
     } else {
       direction++;
     }
+
     return direction;
   };
 
@@ -296,9 +296,8 @@ function Map({
       forwardCoordinateX > 9 ||
       forwardCoordinateY < 0 ||
       forwardCoordinateY > 9
-    ) {
+    )
       return "block";
-    }
 
     const forwardElement =
       newMapInfo.current.elements[forwardCoordinateY * 10 + forwardCoordinateX];
@@ -360,7 +359,6 @@ function Map({
       const copyMapInfo = { ...newMapInfo.current };
 
       copyMapInfo.elements[targetAsset] = replacement;
-
       newMapInfo.current = copyMapInfo;
     };
 
@@ -524,17 +522,18 @@ function Map({
       character.current.direction,
     );
     const copyMapInfo = { ...newMapInfo.current };
+
     let moveDirection = character.current.direction;
 
     const { forwardCoordinateX, forwardCoordinateY } =
       getCoordinateOfSelectDirection(character, moveDirection);
-
     const nextCharacter = {
       x: forwardCoordinateX,
       y: forwardCoordinateY,
       direction: character.current.direction,
     };
     const nextElement = nextCharacter.y * 10 + nextCharacter.x;
+
     if (forwardTileType.includes("Monster")) {
       let monsterColor;
 
@@ -565,7 +564,6 @@ function Map({
       });
 
       copyMapInfo.elements[nextElement] = -1;
-
       newMapInfo.current = copyMapInfo;
     } else {
       const catPaw = Math.floor(PAW / 10);
@@ -580,9 +578,11 @@ function Map({
 
         await sleep(CAT_DROWN_FRAME_TIME);
       }
+
       const { x: assetCoordinateX, y: assetCoordinateY } = getAssetCoordinate(
         copyMapInfo.elements[nextElement],
       );
+
       drawField({
         image: mapAsset,
         mapCoordinateX: nextCharacter.x,
@@ -593,23 +593,8 @@ function Map({
     }
   };
 
-  return (
-    <>
-      <canvas ref={ref} width={MAP_PIXEL_WIDTH} height={MAP_PIXEL_HEIGHT} />
-      <TestButtons>
-        <button onClick={() => turnLeft(character)}>왼쪽회전</button>
-        <button onClick={() => turnRight(character)}>오른쪽회전</button>
-        <button onClick={moveOneTile}>1칸전진</button>
-        <button onClick={attack}>때리기</button>
-        <button onClick={() => getSideTileType("left")}>왼쪽확인</button>
-      </TestButtons>
-    </>
-  );
+  return <canvas ref={ref} width={MAP_PIXEL_WIDTH} height={MAP_PIXEL_HEIGHT} />;
 }
-
-const TestButtons = styled.div`
-  display: flex;
-`;
 
 Map.propTypes = {
   mapInfo: PropTypes.object.isRequired,
