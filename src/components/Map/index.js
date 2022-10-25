@@ -1,4 +1,5 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef } from "react";
+import { useSelector } from "react-redux";
 import PropTypes from "prop-types";
 import styled from "styled-components";
 import cloneDeep from "lodash/cloneDeep";
@@ -20,8 +21,12 @@ function Map({
   setKeyQuantity,
 }) {
   const ref = useRef(null);
-  const [character, setCharacter] = useState({ x: 0, y: 0, direction: 0 });
-  const [newMapInfo, setNewMapInfo] = useState({});
+  const isEnded = useRef(false);
+  const character = useRef({ x: 0, y: 0, direction: 0 });
+  const newMapInfo = useRef(cloneDeep(mapInfo));
+  const selectTranslatedBlocks = useSelector(
+    (state) => state.block.translatedBlocks,
+  );
 
   const { UP, RIGHT, DOWN, LEFT, STAY } = CHARACTER_DIRECTION;
   const {
@@ -57,18 +62,42 @@ function Map({
   mapAsset.src = "/assets/image/map_asset.png";
 
   useEffect(() => {
-    setNewMapInfo(cloneDeep(mapInfo));
+    (async () => {
+      for (const block of selectTranslatedBlocks) {
+        if (isEnded.current) break;
+
+        if (typeof block === "string") {
+          await executeSingleBlock(block);
+        }
+
+        if (typeof block === "object") {
+          if (block.type.includes("계속 반복하기")) {
+            await executeWhileBlock(block.content);
+
+            if (isEnded.current) break;
+          } else if (block.type.includes("반복하기")) {
+            await executeRepeatBlock(block.count, block.content);
+
+            if (isEnded.current) break;
+          }
+        }
+      }
+    })();
+  }, [selectTranslatedBlocks]);
+
+  useEffect(() => {
+    newMapInfo.current = cloneDeep(mapInfo);
     mapAsset.addEventListener(
       "load",
       () => {
         const { x: startingCoordinateX, y: startingCoordinateY } =
           getAssetCoordinate(mapInfo.startingPoint);
 
-        setCharacter({
+        character.current = {
           x: startingCoordinateX,
           y: startingCoordinateY,
           direction: RIGHT,
-        });
+        };
 
         for (let mapCoordinateY = 0; mapCoordinateY < 10; mapCoordinateY++) {
           for (let mapCoordinateX = 0; mapCoordinateX < 10; mapCoordinateX++) {
@@ -109,32 +138,109 @@ function Map({
     );
   }, [mapInfo]);
 
-  const turnLeft = (character) => {
-    const newCharacter = { ...character };
+  const executeWhileBlock = async (blockArray) => {
+    for (let whileCount = 0; whileCount < 50; whileCount++) {
+      for (let i = 0; i < blockArray.length; i++) {
+        if (isEnded.current) return;
 
-    if (newCharacter.direction === UP) {
-      newCharacter.direction = LEFT;
-    } else {
-      newCharacter.direction--;
+        await executeSingleBlock(blockArray[i]);
+      }
     }
+  };
+
+  const executeRepeatBlock = async (repeatCount, blockArray) => {
+    for (let repeated = 0; repeated < repeatCount; repeated++) {
+      for (let i = 0; i < blockArray.length; i++) {
+        if (isEnded.current) return;
+
+        await executeSingleBlock(blockArray[i]);
+      }
+    }
+  };
+
+  const executeSingleBlock = async (block) => {
+    if (block.includes("앞으로 1칸 이동")) {
+      await moveOneTile();
+    }
+
+    if (block.includes("오른쪽으로 회전하기")) {
+      turnRight();
+    }
+
+    if (block.includes("왼쪽으로 회전하기")) {
+      turnLeft();
+    }
+
+    if (block.includes("공격하기")) {
+      await attack();
+    }
+
+    if (block.includes("left")) {
+      if (getSideTileType("left")) {
+        turnLeft();
+      }
+    }
+
+    if (block.includes("right")) {
+      if (getSideTileType("right")) {
+        turnRight();
+      }
+    }
+
+    await sleep(100);
+  };
+
+  const getSideTileType = (side) => {
+    let direction;
+
+    side === "left"
+      ? (direction = getLeftDirection(character.current.direction))
+      : (direction = getRightDirection(character.current.direction));
+
+    const tileType = getTileTypeOfSelectDirection(character, direction);
+
+    return tileType === "land" || tileType === "portal" || tileType === "key"
+      ? true
+      : false;
+  };
+
+  const getLeftDirection = (direction) => {
+    if (direction === UP) {
+      direction = LEFT;
+    } else {
+      direction--;
+    }
+    return direction;
+  };
+
+  const getRightDirection = (direction) => {
+    if (direction === LEFT) {
+      direction = UP;
+    } else {
+      direction++;
+    }
+    return direction;
+  };
+
+  const turnLeft = () => {
+    const newCharacter = { ...character.current };
+
+    newCharacter.direction = getLeftDirection(newCharacter.direction);
 
     setCharacterDirection(newCharacter);
   };
 
-  const turnRight = (character) => {
-    const newCharacter = { ...character };
+  const turnRight = () => {
+    const newCharacter = { ...character.current };
 
-    if (newCharacter.direction === LEFT) {
-      newCharacter.direction = UP;
-    } else {
-      newCharacter.direction++;
-    }
+    newCharacter.direction = getRightDirection(newCharacter.direction);
 
     setCharacterDirection(newCharacter);
   };
 
   const setCharacterDirection = (newCharacter) => {
-    const element = newMapInfo.elements[newCharacter.y * 10 + newCharacter.x];
+    const element =
+      newMapInfo.current.elements[newCharacter.y * 10 + newCharacter.x];
     const { x: assetCoordinateX, y: assetCoordinateY } =
       getAssetCoordinate(element);
 
@@ -154,12 +260,12 @@ function Map({
       assetCoordinateY: newCharacter.direction,
     });
 
-    setCharacter(newCharacter);
+    character.current = newCharacter;
   };
 
   const getAssetCoordinate = (rawAssetIndex) => {
     if (rawAssetIndex === -1) {
-      return { x: newMapInfo.defaultField, y: 0 };
+      return { x: newMapInfo.current.defaultField, y: 0 };
     }
 
     const x = rawAssetIndex % 10;
@@ -168,11 +274,9 @@ function Map({
     return { x, y };
   };
 
-  const getForwardTileType = (character, direction) => {
-    const { forwardCoordinateX, forwardCoordinateY } = getForwardCoordinate(
-      character,
-      direction,
-    );
+  const getTileTypeOfSelectDirection = (character, direction) => {
+    const { forwardCoordinateX, forwardCoordinateY } =
+      getCoordinateOfSelectDirection(character, direction);
 
     if (
       forwardCoordinateX < 0 ||
@@ -184,7 +288,7 @@ function Map({
     }
 
     const forwardElement =
-      newMapInfo.elements[forwardCoordinateY * 10 + forwardCoordinateX];
+      newMapInfo.current.elements[forwardCoordinateY * 10 + forwardCoordinateX];
 
     switch (forwardElement) {
       case ROCK:
@@ -206,12 +310,11 @@ function Map({
     }
   };
 
-  const getForwardCoordinate = (character, moveDirection) => {
-    const direction = moveDirection || character.direction;
-    let x = character.x;
-    let y = character.y;
+  const getCoordinateOfSelectDirection = (character, moveDirection) => {
+    let x = character.current.x;
+    let y = character.current.y;
 
-    switch (direction) {
+    switch (moveDirection) {
       case UP:
         y--;
         break;
@@ -233,36 +336,42 @@ function Map({
 
   const moveOneTile = async () => {
     const context = ref.current.getContext("2d");
-    const forwardTileType = getForwardTileType(character);
-    let moveDirection = character.direction;
+    const forwardTileType = getTileTypeOfSelectDirection(
+      character,
+      character.current.direction,
+    );
+    let moveDirection = character.current.direction;
 
-    function replaceAsset(replacement) {
+    const replaceAsset = (replacement) => {
       const targetAsset = nextCharacter.y * 10 + nextCharacter.x;
-      const copyMapInfo = { ...newMapInfo };
+      const copyMapInfo = { ...newMapInfo.current };
 
       copyMapInfo.elements[targetAsset] = replacement;
 
-      setNewMapInfo(copyMapInfo);
-    }
+      newMapInfo.current = copyMapInfo;
+    };
 
     if (forwardTileType === "block" || forwardTileType.includes("Monster")) {
       moveDirection = STAY;
 
       setResultMessage(FAIL);
 
+      isEnded.current = true;
+
+      // await sleep(500);
+
+      // setIsModalOpen(true);
       setTimeout(() => {
         setIsModalOpen(true);
       }, 500);
     }
 
-    const { forwardCoordinateX, forwardCoordinateY } = getForwardCoordinate(
-      character,
-      moveDirection,
-    );
+    const { forwardCoordinateX, forwardCoordinateY } =
+      getCoordinateOfSelectDirection(character, moveDirection);
     const nextCharacter = {
       x: forwardCoordinateX,
       y: forwardCoordinateY,
-      direction: character.direction,
+      direction: character.current.direction,
     };
 
     if (forwardTileType === "key") {
@@ -281,6 +390,8 @@ function Map({
       } else {
         setResultMessage(FAIL);
 
+        isEnded.current = true;
+
         setTimeout(() => {
           setIsModalOpen(true);
         }, 500);
@@ -290,24 +401,29 @@ function Map({
     if (forwardTileType === "portal") {
       setResultMessage(SUCCESS);
 
+      isEnded.current = true;
+
       setTimeout(() => {
         setIsModalOpen(true);
       }, 500);
     }
 
     const forwardAssetCoordinate = getAssetCoordinate(
-      newMapInfo.elements[forwardCoordinateY * 10 + forwardCoordinateX],
+      newMapInfo.current.elements[forwardCoordinateY * 10 + forwardCoordinateX],
     );
 
     for (let i = 0; i < CAT_SPRITE_FRAMES * 2 + 1; i++) {
-      const mapElement = newMapInfo.elements[character.y * 10 + character.x];
+      const mapElement =
+        newMapInfo.current.elements[
+          character.current.y * 10 + character.current.x
+        ];
       const { x: assetCoordinateX, y: assetCoordinateY } =
         getAssetCoordinate(mapElement);
 
       drawField({
         image: mapAsset,
-        mapCoordinateX: character.x,
-        mapCoordinateY: character.y,
+        mapCoordinateX: character.current.x,
+        mapCoordinateY: character.current.y,
         assetCoordinateX,
         assetCoordinateY,
       });
@@ -326,12 +442,12 @@ function Map({
         SINGLE_ASSET_HEIGHT * nextCharacter.direction,
         SINGLE_ASSET_WIDTH,
         SINGLE_ASSET_HEIGHT,
-        SINGLE_TILE_WIDTH * character.x +
-          (nextCharacter.x - character.x) *
+        SINGLE_TILE_WIDTH * character.current.x +
+          (nextCharacter.x - character.current.x) *
             (SINGLE_TILE_WIDTH / (CAT_SPRITE_FRAMES * 2)) *
             i,
-        SINGLE_TILE_HEIGHT * character.y +
-          (nextCharacter.y - character.y) *
+        SINGLE_TILE_HEIGHT * character.current.y +
+          (nextCharacter.y - character.current.y) *
             (SINGLE_TILE_WIDTH / (CAT_SPRITE_FRAMES * 2)) *
             i,
         SINGLE_TILE_WIDTH,
@@ -345,7 +461,7 @@ function Map({
       drown(nextCharacter.x, nextCharacter.y);
     }
 
-    setCharacter(nextCharacter);
+    character.current = nextCharacter;
   };
 
   const drawField = ({
@@ -385,25 +501,28 @@ function Map({
 
     setResultMessage(FAIL);
 
+    isEnded.current = true;
+
     setTimeout(() => {
       setIsModalOpen(true);
     }, 500);
   };
 
   const attack = async () => {
-    const forwardTileType = getForwardTileType(character);
-    const copyMapInfo = { ...newMapInfo };
-    let moveDirection = character.direction;
-
-    const { forwardCoordinateX, forwardCoordinateY } = getForwardCoordinate(
+    const forwardTileType = getTileTypeOfSelectDirection(
       character,
-      moveDirection,
+      character.current.direction,
     );
+    const copyMapInfo = { ...newMapInfo.current };
+    let moveDirection = character.current.direction;
+
+    const { forwardCoordinateX, forwardCoordinateY } =
+      getCoordinateOfSelectDirection(character, moveDirection);
 
     const nextCharacter = {
       x: forwardCoordinateX,
       y: forwardCoordinateY,
-      direction: character.direction,
+      direction: character.current.direction,
     };
     const nextElement = nextCharacter.y * 10 + nextCharacter.x;
     if (forwardTileType.includes("Monster")) {
@@ -437,7 +556,7 @@ function Map({
 
       copyMapInfo.elements[nextElement] = -1;
 
-      setNewMapInfo(copyMapInfo);
+      newMapInfo.current = copyMapInfo;
     } else {
       const catPaw = Math.floor(PAW / 10);
       for (let i = 0; i < CAT_SPRITE_FRAMES; i++) {
@@ -472,6 +591,7 @@ function Map({
         <button onClick={() => turnRight(character)}>오른쪽회전</button>
         <button onClick={moveOneTile}>1칸전진</button>
         <button onClick={attack}>때리기</button>
+        <button onClick={() => getSideTileType("left")}>왼쪽확인</button>
       </TestButtons>
     </>
   );
