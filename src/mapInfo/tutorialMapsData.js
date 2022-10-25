@@ -1,9 +1,13 @@
+import { BLOCK_NAMES } from "../config/constants";
+
+const { MOVE, TURN_RIGHT, TURN_LEFT, ATTACK, IF, WHILE, REPEAT } = BLOCK_NAMES;
+
 const tutorialMapsData = {
   stage1: {
     tip: "앞으로 1칸 이동 사용해서 목적지에 도착해 보세요.",
     defaultField: 1,
     startingPoint: 50,
-    blocks: ["앞으로 1칸 이동"],
+    blocks: [MOVE],
     limitCount: 10,
     elements: [
       0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 21, 21, 21, 21, 11, 21, 21, 21, 21, 21, 0,
@@ -17,7 +21,7 @@ const tutorialMapsData = {
     tip: "앞으로 1칸 이동과 계속 반복하기를 사용해서 목적지에 도착해 보세요.",
     defaultField: 0,
     startingPoint: 50,
-    blocks: ["앞으로 1칸 이동", "계속 반복하기"],
+    blocks: [MOVE, WHILE, REPEAT],
     limitCount: 2,
     elements: [
       30, 30, 30, 30, -1, 30, 30, 30, 30, 30, 21, 21, 21, 21, 11, 21, 21, 21,
@@ -32,12 +36,7 @@ const tutorialMapsData = {
     tip: "돌리기 블록을 사용해 보세요.",
     defaultField: 0,
     startingPoint: 90,
-    blocks: [
-      "앞으로 1칸 이동",
-      "계속 반복하기",
-      "오른쪽으로 돌리기",
-      "왼쪽으로 돌리기",
-    ],
+    blocks: [MOVE, TURN_RIGHT, TURN_LEFT, WHILE, REPEAT],
     limitCount: 10,
     elements: [
       21, 21, 21, 21, 21, 21, 21, 21, 1, 60, 21, 21, 21, 21, 21, 21, 21, 21, 1,
@@ -52,12 +51,7 @@ const tutorialMapsData = {
     tip: "앞으로 1칸 이동, 돌리기 블록을 반복문에 넣어서 사용해 보세요.",
     defaultField: 0,
     startingPoint: 90,
-    blocks: [
-      "앞으로 1칸 이동",
-      "계속 반복하기",
-      "오른쪽으로 돌리기",
-      "왼쪽으로 돌리기",
-    ],
+    blocks: [MOVE, TURN_RIGHT, TURN_LEFT, WHILE, REPEAT],
     limitCount: 6,
     elements: [
       -1, -1, -1, -1, 10, -1, -1, -1, -1, -1, -1, -1, 20, -1, 21, -1, -1, -1,
@@ -72,12 +66,7 @@ const tutorialMapsData = {
     tip: "열쇠를 얻어야 문을 열 수 있습니다.",
     defaultField: 0,
     startingPoint: 90,
-    blocks: [
-      "앞으로 1칸 이동",
-      "계속 반복하기",
-      "오른쪽으로 돌리기",
-      "왼쪽으로 돌리기",
-    ],
+    blocks: [MOVE, TURN_RIGHT, TURN_LEFT, WHILE, REPEAT],
     limitCount: 10,
     elements: [
       80, 80, 80, 21, 21, 21, 21, -1, -1, 60, 90, 90, 90, 21, 21, 21, 21, -1,
@@ -92,13 +81,7 @@ const tutorialMapsData = {
     tip: "공격을 하면 몬스터를 사라지게 할 수 있습니다.",
     defaultField: 1,
     startingPoint: 90,
-    blocks: [
-      "앞으로 1칸 이동",
-      "계속 반복하기",
-      "오른쪽으로 돌리기",
-      "왼쪽으로 돌리기",
-      "공격",
-    ],
+    blocks: [MOVE, TURN_RIGHT, TURN_LEFT, WHILE, REPEAT, ATTACK],
     limitCount: 10,
     elements: [
       80, 80, 80, 21, 21, 21, 21, -1, -1, 60, 90, 90, 90, 21, 21, 21, 21, -1,
@@ -113,13 +96,7 @@ const tutorialMapsData = {
     tip: "만약 ... 한다면를 사용해서 목적지에 도달해 보세요.",
     defaultField: 0,
     startingPoint: 90,
-    blocks: [
-      "앞으로 1칸 이동",
-      "계속 반복하기",
-      "오른쪽으로 돌리기",
-      "왼쪽으로 돌리기",
-      "만약 ... 한다면",
-    ],
+    blocks: [MOVE, TURN_RIGHT, TURN_LEFT, IF, WHILE, REPEAT],
     limitCount: 6,
     elements: [
       20, 20, 20, 20, 20, 20, 20, 20, 20, 60, -1, -1, -1, -1, -1, -1, -1, -1,
