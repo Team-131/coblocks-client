@@ -3,7 +3,10 @@ import { useSelector, useDispatch } from "react-redux";
 import PropTypes from "prop-types";
 import cloneDeep from "lodash/cloneDeep";
 
-import { updateExecutingBlock } from "../../features/block/blockSlice";
+import {
+  updateExecutingBlock,
+  resetTranslatedBlocks,
+} from "../../features/block/blockSlice";
 import { sleep } from "../../utils/sleep";
 
 import {
@@ -117,6 +120,10 @@ function Map({
   }, [selectTranslatedBlocks]);
 
   useEffect(() => {
+    dispatch(resetTranslatedBlocks());
+    isEnded.current = true;
+    setTimeout(() => (isEnded.current = false), BLOCK_EXECUTION_TERM);
+
     newMapInfo.current = cloneDeep(mapInfo);
     mapAsset.addEventListener(
       "load",
