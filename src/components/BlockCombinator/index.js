@@ -80,7 +80,7 @@ function BlockCombinator({
           : (previousBlock.current = indexes);
       }
     } catch (error) {
-      navigate("/error", { state: { message: error.message } });
+      navigate("/error", { state: { error: error } });
     }
   }, [executingBlock]);
 
