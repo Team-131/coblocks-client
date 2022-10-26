@@ -6,6 +6,7 @@ import { useDispatch } from "react-redux";
 
 import {
   resetTranslatedBlocks,
+  resetExecutingBlock,
   updateExecutingBlock,
 } from "../../features/block/blockSlice";
 import { tutorialMapsData } from "../../mapInfo/tutorialMapsData";
@@ -39,9 +40,13 @@ function Tutorial() {
     }
 
     setMapData(cloneDeep(tutorialMapsData[tutorialId]));
+    setIsSubmit(false);
   }, [tutorialId]);
 
   const moveNextStage = () => {
+    dispatch(resetExecutingBlock());
+    dispatch(resetTranslatedBlocks());
+
     const currentIndex = allTutorialKeys.indexOf(tutorialId);
 
     if (currentIndex + 1 === allTutorialKeys.length) {
@@ -65,6 +70,15 @@ function Tutorial() {
     setIsSubmit(true);
   };
 
+  const handleStarClick = (stage) => {
+    dispatch(updateExecutingBlock("end"));
+    dispatch(resetTranslatedBlocks());
+    setMapData(cloneDeep(tutorialMapsData[tutorialId]));
+    setIsSubmit(false);
+
+    navigate(`/tutorial/${stage}`, { replace: true });
+  };
+
   return (
     <>
       {isModalOpen && (
@@ -86,9 +100,7 @@ function Tutorial() {
                 <Star
                   color={"#808080"}
                   key={`tutorial${tutorialId}-${index}`}
-                  onClick={() =>
-                    navigate(`/tutorial/${stage}`, { replace: true })
-                  }
+                  onClick={() => handleStarClick(stage)}
                 >
                   {STARS.EMPTY_STAR}
                 </Star>
