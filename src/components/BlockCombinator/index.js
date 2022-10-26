@@ -63,6 +63,7 @@ function BlockCombinator({
 
   useEffect(() => {
     setLogicBlocks([]);
+    setIsBlockFreezed(false);
   }, [mapId]);
 
   useEffect(() => {
