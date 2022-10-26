@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 import styled from "styled-components";
 import PropTypes from "prop-types";
 import { cloneDeep } from "lodash";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 
 import { updateTranslatedBlocks } from "../../features/block/blockSlice";
 import { WINDOW, BLOCK_NAMES } from "../../config/constants";
@@ -15,9 +15,18 @@ function BlockCombinator({
   limitCount,
   mapId,
 }) {
-  const targetBlockIndex = useRef();
   const { MOVE, TURN_RIGHT, TURN_LEFT, ATTACK, IF, WHILE, REPEAT } =
     BLOCK_NAMES;
+  const dispatch = useDispatch();
+  const targetBlockIndex = useRef();
+  const selectBlocksRef = useRef([]);
+  const ifBlocksRef = useRef({});
+  const repeatCountRef = useRef({});
+  const previousBlock = useRef([]);
+  const [logicBlocks, setLogicBlocks] = useState([]);
+  const [blocksCount, setBlocksCount] = useState(10);
+  const [blockLimitAlarm, setBlockLimitAlarm] = useState("#f5ed58");
+
   const whileBlock = { type: WHILE, content: [] };
   const repeatBlock = { type: REPEAT, content: [] };
   const blocks = [
@@ -29,11 +38,7 @@ function BlockCombinator({
     { name: WHILE, isNestable: "true" },
     { name: REPEAT, isNestable: "true" },
   ];
-
-  const dispatch = useDispatch();
-  const [logicBlocks, setLogicBlocks] = useState([]);
-  const [blocksCount, setBlocksCount] = useState(10);
-  const [blockLimitAlarm, setBlockLimitAlarm] = useState("#f5ed58");
+  const executingBlock = useSelector((state) => state.block.executingBlock);
 
   let blockIndex;
   let blockId;
@@ -53,6 +58,41 @@ function BlockCombinator({
   useEffect(() => {
     setLogicBlocks([]);
   }, [mapId]);
+
+  useEffect(() => {
+    try {
+      if (executingBlock) {
+        const indexes = executingBlock.split("-");
+
+        if (executingBlock !== "end") {
+          paintCurrentBlock(indexes, "#ffa500", "5px");
+        }
+        if (previousBlock.current.length !== 0) {
+          paintCurrentBlock(previousBlock.current, "black", "2px");
+        }
+
+        executingBlock === "end"
+          ? (previousBlock.current = [])
+          : (previousBlock.current = indexes);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  }, [executingBlock]);
+
+  const paintCurrentBlock = (indexes, color, width) => {
+    if (indexes.length === 2) {
+      selectBlocksRef.current[indexes[0]].childNodes[
+        indexes[1]
+      ].style.borderColor = color;
+      selectBlocksRef.current[indexes[0]].childNodes[
+        indexes[1]
+      ].style.borderWidth = width;
+    } else {
+      selectBlocksRef.current[indexes[0]].style.borderColor = color;
+      selectBlocksRef.current[indexes[0]].style.borderWidth = width;
+    }
+  };
 
   const dragStart = (event, index) => {
     event.stopPropagation();
@@ -79,7 +119,9 @@ function BlockCombinator({
   };
 
   const limitNumberRange = (event) => {
-    if (event.target.value < 1 || event.target.value > 9) {
+    if (event.target.value < 1) {
+      event.target.value = 9;
+    } else if (event.target.value > 9) {
       event.target.value = 1;
     }
   };
@@ -94,7 +136,6 @@ function BlockCombinator({
 
   const handleBlock = async (event) => {
     event.stopPropagation();
-
     const currentBlockText = event.dataTransfer.getData("text");
     const newLogicBlocks = logicBlocks.slice();
     const currentBlock = newLogicBlocks[blockIndex];
@@ -110,58 +151,30 @@ function BlockCombinator({
           const insertedBlock =
             currentBlockText === WHILE ? whileBlock : repeatBlock;
 
-          if (!event.target.id.includes("if")) {
-            if (targetBlock) {
-              newLogicBlocks.splice(targetBlockIndex.current, 0, insertedBlock);
-            } else {
-              newLogicBlocks.push(insertedBlock);
-            }
+          if (targetBlock) {
+            newLogicBlocks.splice(targetBlockIndex.current, 0, insertedBlock);
           } else {
-            newLogicBlocks.splice(
-              getBlockIndex(targetParentElement.parentElement),
-              0,
-              insertedBlock,
-            );
+            newLogicBlocks.push(insertedBlock);
           }
         } else {
-          if (!event.target.id.includes("if")) {
-            if (targetParentElement.id) {
-              newTargetParentBlock["content"].splice(
-                targetBlockIndex.current,
-                0,
-                currentBlockText,
-              );
-              newLogicBlocks.splice(
-                getBlockIndex(targetParentElement),
-                1,
-                newTargetParentBlock,
-              );
-            } else {
-              if (typeof targetBlock === "object") {
-                targetBlock["content"].push(currentBlockText);
-                newLogicBlocks.splice(targetBlockIndex.current, 1, targetBlock);
-              } else {
-                newLogicBlocks.splice(
-                  targetBlockIndex.current,
-                  0,
-                  currentBlockText,
-                );
-              }
-            }
+          if (targetParentElement.id) {
+            newTargetParentBlock["content"].splice(
+              targetBlockIndex.current + 1,
+              0,
+              currentBlockText,
+            );
+            newLogicBlocks.splice(
+              getBlockIndex(targetParentElement),
+              1,
+              newTargetParentBlock,
+            );
           } else {
-            if (targetParentElement.id.includes("childBlock")) {
-              const index = getBlockIndex(targetParentElement.parentElement);
-              const newObjectBlock = cloneDeep(newLogicBlocks[index]);
-
-              newObjectBlock["content"].splice(
-                getBlockIndex(targetParentElement),
-                0,
-                currentBlockText,
-              );
-              newLogicBlocks.splice(index, 1, newObjectBlock);
+            if (typeof targetBlock === "object") {
+              targetBlock["content"].push(currentBlockText);
+              newLogicBlocks.splice(targetBlockIndex.current, 1, targetBlock);
             } else {
               newLogicBlocks.splice(
-                getBlockIndex(targetParentElement),
+                targetBlockIndex.current,
                 0,
                 currentBlockText,
               );
@@ -171,11 +184,12 @@ function BlockCombinator({
 
         setBlocksCount(blocksCount - 1);
         setLogicBlocks(newLogicBlocks);
+      } else {
+        if (blocksCount === 0) {
+          await handleBlockLimitAlarm();
+        }
       }
-    } else if (
-      blockId.includes("logicBlock") &&
-      !event.target.id.includes("if")
-    ) {
+    } else if (blockId.includes("logicBlock")) {
       if (typeof currentBlock === "object") {
         if (!targetParentElement.id) {
           newLogicBlocks.splice(blockIndex, 1);
@@ -267,10 +281,6 @@ function BlockCombinator({
 
       setLogicBlocks(newLogicBlocks);
     }
-
-    if (blocksCount === 0) {
-      await handleBlockLimitAlarm();
-    }
   };
 
   const removeLogicBlock = () => {
@@ -301,24 +311,22 @@ function BlockCombinator({
   };
 
   const translateBlocks = () => {
-    const ifBlocks = document.querySelectorAll(".if");
-    const counts = document.querySelectorAll(".count");
     const translatedBlocks = cloneDeep(logicBlocks);
 
-    ifBlocks.forEach((element) => {
-      const indexes = element.id.split("-");
+    for (const key in ifBlocksRef.current) {
+      const indexes = key.split("-");
 
-      if (indexes.length === 3) {
-        translatedBlocks[indexes[1]]["content"][indexes[2]] = element.value;
+      if (indexes.length === 2) {
+        translatedBlocks[indexes[0]]["content"][indexes[1]] =
+          ifBlocksRef.current[key].value;
       } else {
-        translatedBlocks[indexes[1]] = element.value;
+        translatedBlocks[indexes[0]] = ifBlocksRef.current[key].value;
       }
-    });
-    counts.forEach((element) => {
-      const indexes = element.id.split("-");
+    }
 
-      translatedBlocks[indexes[1]][indexes[0]] = element.value;
-    });
+    for (const key in repeatCountRef.current) {
+      translatedBlocks[key]["count"] = repeatCountRef.current[key].value;
+    }
 
     dispatch(updateTranslatedBlocks(translatedBlocks));
   };
@@ -365,12 +373,16 @@ function BlockCombinator({
             <NonNestableBlock
               key={`${blockType}${index}`}
               id={`logicBlock${index}`}
+              ref={(element) => (selectBlocksRef.current[index] = element)}
               draggable="true"
               onDragStart={(event) => dragStart(event, index)}
               onDragEnter={(event) => dragEnter(event, index)}
             >
               {blockType}
-              <SelectOption id={`if-${index}`} className={"if"}>
+              <SelectOption
+                id={`if-${index}`}
+                ref={(element) => (ifBlocksRef.current[`${index}`] = element)}
+              >
                 <option value={"left"}>{"왼쪽으로 갈 수 있다면, ↪️"}</option>
                 <option value={"right"}>{"오른쪽으로 갈 수 있다면, ↩️"}</option>
               </SelectOption>
@@ -379,6 +391,7 @@ function BlockCombinator({
             <NonNestableBlock
               key={`${blockType}${index}`}
               id={`logicBlock${index}`}
+              ref={(el) => (selectBlocksRef.current[index] = el)}
               draggable="true"
               onDragStart={(event) => dragStart(event, index)}
               onDragEnter={(event) => dragEnter(event, index)}
@@ -392,6 +405,7 @@ function BlockCombinator({
               }
               key={`${blockType["type"]}${index}`}
               id={`logicBlock${index}`}
+              ref={(el) => (selectBlocksRef.current[index] = el)}
               onDragStart={(event) => dragStart(event, index)}
               onDragEnter={(event) => dragEnter(event, index)}
               draggable="true"
@@ -402,7 +416,9 @@ function BlockCombinator({
                   <CountInput
                     type={"number"}
                     id={`count-${index}`}
-                    className={"count"}
+                    ref={(element) =>
+                      (repeatCountRef.current[`${index}`] = element)
+                    }
                     onChange={limitNumberRange}
                     defaultValue={1}
                   ></CountInput>
@@ -420,7 +436,10 @@ function BlockCombinator({
                     {childBlockType}
                     <SelectOption
                       id={`if-${index}-${childIndex}`}
-                      className={"if"}
+                      ref={(element) =>
+                        (ifBlocksRef.current[`${index}-${childIndex}`] =
+                          element)
+                      }
                     >
                       <option value={"left"}>
                         {"왼쪽으로 갈 수 있다면, ↪️"}
@@ -449,8 +468,8 @@ function BlockCombinator({
           .fill("")
           .map((blockType, index) => (
             <EmptyBlock
-              key={`${blockType}${logicBlocks.length + index}`}
-              id={`${blockType}${logicBlocks.length + index}`}
+              key={`emptyBlock${logicBlocks.length + index}`}
+              id={`emptyBlock${logicBlocks.length + index}`}
               onDragEnter={(event) =>
                 dragEnter(event, logicBlocks.length + index)
               }
