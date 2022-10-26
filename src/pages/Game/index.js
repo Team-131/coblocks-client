@@ -2,7 +2,12 @@ import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 import { useNavigate, useParams } from "react-router-dom";
 import cloneDeep from "lodash/cloneDeep";
+import { useDispatch } from "react-redux";
 
+import {
+  resetTranslatedBlocks,
+  updateExecutingBlock,
+} from "../../features/block/blockSlice";
 import { mapInfo } from "../../mapInfo/mapInfo";
 
 import { Modal } from "../../components/Modal/Modal";
@@ -13,6 +18,7 @@ import { Map } from "../../components/Map/index";
 import { BUTTON, MESSAGE } from "../../config/constants";
 
 function Game() {
+  const dispatch = useDispatch();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isSubmit, setIsSubmit] = useState(false);
   const [resultMessage, setResultMessage] = useState("");
@@ -20,27 +26,39 @@ function Game() {
 
   const navigate = useNavigate();
   const { gameId } = useParams();
-  const [mapData, setMapData] = useState(cloneDeep(mapInfo[gameId]));
+
   const mapInfoKeys = Object.keys(mapInfo);
 
-  useEffect(() => {
-    setMapData(cloneDeep(mapInfo[gameId]));
-  }, [gameId]);
+  const [mapData, setMapData] = useState();
 
   useEffect(() => {
     if (!mapInfo[gameId]) {
       navigate("/not_found");
     }
-  }, []);
+
+    setMapData(cloneDeep(mapInfo[gameId]));
+  }, [gameId]);
 
   const moveNextStage = () => {
     const currentIndex = mapInfoKeys.indexOf(gameId);
+
     if (currentIndex + 1 === mapInfoKeys.length) {
       setResultMessage(MESSAGE.LAST_STAGE);
       setIsModalOpen(!isModalOpen);
     } else {
       navigate(`/game/${mapInfoKeys[currentIndex + 1]}`, { replace: true });
     }
+  };
+
+  const restart = () => {
+    dispatch(updateExecutingBlock("end"));
+    dispatch(resetTranslatedBlocks());
+    setMapData(cloneDeep(mapInfo[gameId]));
+    setIsSubmit(false);
+  };
+
+  const start = () => {
+    setIsSubmit(true);
   };
 
   return (
@@ -53,9 +71,11 @@ function Game() {
       )}
       <Header />
       <TopWrapper>
-        <Title>{mapData.title}</Title>
+        <Title>{mapData?.title}</Title>
         <ButtonsWrapper>
-          <Button rightMargin={"4vw"}>{BUTTON.REPEAT}</Button>
+          <Button onClick={restart} rightMargin={"4vw"}>
+            {BUTTON.RESTART}
+          </Button>
           <Button rightMargin={"15vw"} onClick={moveNextStage}>
             {BUTTON.NEXT_GAME}
           </Button>
@@ -65,8 +85,8 @@ function Game() {
         <BlockCombinator
           submittedBlockInfo={isSubmit}
           setSubmittedBlockInfo={setIsSubmit}
-          availableBlocks={mapData.blocks}
-          limitCount={mapData.limitCount}
+          availableBlocks={mapData?.blocks || []}
+          limitCount={mapData?.limitCount || 10}
           mapId={gameId}
         />
         <RightWrapper>
@@ -81,7 +101,7 @@ function Game() {
             />
           )}
           열쇠: {keyQuantity}
-          <Button onClick={() => setIsSubmit(!isSubmit)}>{BUTTON.START}</Button>
+          <Button onClick={start}>{BUTTON.START}</Button>
         </RightWrapper>
       </ContentsWrapper>
     </>
