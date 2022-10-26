@@ -233,7 +233,7 @@ function Map({
 
     const tileType = getTileTypeOfSelectDirection(character, direction);
 
-    return tileType === "land" || tileType === "portal" || tileType === "key";
+    return ["land", "portal", "key", "closedDoor"].includes(tileType);
   };
 
   const getLeftDirection = (direction) => {
