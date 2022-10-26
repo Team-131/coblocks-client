@@ -22,7 +22,7 @@ function BlockCombinator({
   const navigate = useNavigate();
   const targetBlockIndex = useRef();
   const selectBlocksRef = useRef([]);
-  const ifBlocksRef = useRef({});
+  const selectOptionRef = useRef({});
   const repeatCountRef = useRef({});
   const previousBlock = useRef([]);
   const [logicBlocks, setLogicBlocks] = useState([]);
@@ -158,30 +158,58 @@ function BlockCombinator({
           const insertedBlock =
             currentBlockText === WHILE ? whileBlock : repeatBlock;
 
-          if (targetBlock) {
-            newLogicBlocks.splice(targetBlockIndex.current, 0, insertedBlock);
+          if (!event.target.id.includes("if")) {
+            if (targetBlock) {
+              newLogicBlocks.splice(targetBlockIndex.current, 0, insertedBlock);
+            } else {
+              newLogicBlocks.push(insertedBlock);
+            }
           } else {
-            newLogicBlocks.push(insertedBlock);
+            newLogicBlocks.splice(
+              getBlockIndex(targetParentElement.parentElement),
+              0,
+              insertedBlock,
+            );
           }
         } else {
-          if (targetParentElement.id) {
-            newTargetParentBlock["content"].splice(
-              targetBlockIndex.current + 1,
-              0,
-              currentBlockText,
-            );
-            newLogicBlocks.splice(
-              getBlockIndex(targetParentElement),
-              1,
-              newTargetParentBlock,
-            );
+          if (!event.target.id.includes("if")) {
+            if (targetParentElement.id) {
+              newTargetParentBlock["content"].splice(
+                targetBlockIndex.current,
+                0,
+                currentBlockText,
+              );
+              newLogicBlocks.splice(
+                getBlockIndex(targetParentElement),
+                1,
+                newTargetParentBlock,
+              );
+            } else {
+              if (typeof targetBlock === "object") {
+                targetBlock["content"].push(currentBlockText);
+                newLogicBlocks.splice(targetBlockIndex.current, 1, targetBlock);
+              } else {
+                newLogicBlocks.splice(
+                  targetBlockIndex.current,
+                  0,
+                  currentBlockText,
+                );
+              }
+            }
           } else {
-            if (typeof targetBlock === "object") {
-              targetBlock["content"].push(currentBlockText);
-              newLogicBlocks.splice(targetBlockIndex.current, 1, targetBlock);
+            if (targetParentElement.id.includes("childBlock")) {
+              const index = getBlockIndex(targetParentElement.parentElement);
+              const newObjectBlock = cloneDeep(newLogicBlocks[index]);
+
+              newObjectBlock["content"].splice(
+                getBlockIndex(targetParentElement),
+                0,
+                currentBlockText,
+              );
+              newLogicBlocks.splice(index, 1, newObjectBlock);
             } else {
               newLogicBlocks.splice(
-                targetBlockIndex.current,
+                getBlockIndex(targetParentElement),
                 0,
                 currentBlockText,
               );
@@ -191,12 +219,11 @@ function BlockCombinator({
 
         setBlocksCount(blocksCount - 1);
         setLogicBlocks(newLogicBlocks);
-      } else {
-        if (blocksCount === 0) {
-          await handleBlockLimitAlarm();
-        }
       }
-    } else if (blockId.includes("logicBlock")) {
+    } else if (
+      blockId.includes("logicBlock") &&
+      !event.target.id.includes("if")
+    ) {
       if (typeof currentBlock === "object") {
         if (!targetParentElement.id) {
           newLogicBlocks.splice(blockIndex, 1);
@@ -288,6 +315,10 @@ function BlockCombinator({
 
       setLogicBlocks(newLogicBlocks);
     }
+
+    if (blocksCount === 0) {
+      await handleBlockLimitAlarm();
+    }
   };
 
   const removeLogicBlock = () => {
@@ -320,15 +351,15 @@ function BlockCombinator({
   const translateBlocks = () => {
     const translatedBlocks = cloneDeep(logicBlocks);
 
-    for (const key in ifBlocksRef.current) {
+    for (const key in selectOptionRef.current) {
       const indexes = key.split("-");
 
-      if (ifBlocksRef.current[key]) {
+      if (selectOptionRef.current[key]) {
         if (indexes.length === 2) {
           translatedBlocks[indexes[0]]["content"][indexes[1]] =
-            ifBlocksRef.current[key].value;
+            selectOptionRef.current[key].value;
         } else {
-          translatedBlocks[indexes[0]] = ifBlocksRef.current[key].value;
+          translatedBlocks[indexes[0]] = selectOptionRef.current[key].value;
         }
       }
     }
@@ -392,7 +423,9 @@ function BlockCombinator({
               {blockType}
               <SelectOption
                 id={`if-${index}`}
-                ref={(element) => (ifBlocksRef.current[`${index}`] = element)}
+                ref={(element) =>
+                  (selectOptionRef.current[`${index}`] = element)
+                }
               >
                 <option value={"left"}>{"왼쪽으로 갈 수 있다면, ↪️"}</option>
                 <option value={"right"}>{"오른쪽으로 갈 수 있다면, ↩️"}</option>
@@ -448,7 +481,7 @@ function BlockCombinator({
                     <SelectOption
                       id={`if-${index}-${childIndex}`}
                       ref={(element) =>
-                        (ifBlocksRef.current[`${index}-${childIndex}`] =
+                        (selectOptionRef.current[`${index}-${childIndex}`] =
                           element)
                       }
                     >
