@@ -2,7 +2,8 @@ import React, { useEffect, useRef, useState } from "react";
 import styled from "styled-components";
 import PropTypes from "prop-types";
 import { cloneDeep } from "lodash";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
 
 import { updateTranslatedBlocks } from "../../features/block/blockSlice";
 import { WINDOW, BLOCK_NAMES } from "../../config/constants";
@@ -15,9 +16,20 @@ function BlockCombinator({
   limitCount,
   mapId,
 }) {
-  const targetBlockIndex = useRef();
   const { MOVE, TURN_RIGHT, TURN_LEFT, ATTACK, IF, WHILE, REPEAT } =
     BLOCK_NAMES;
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const targetBlockIndex = useRef();
+  const selectBlocksRef = useRef([]);
+  const selectOptionRef = useRef({});
+  const repeatCountRef = useRef({});
+  const previousBlock = useRef([]);
+  const [logicBlocks, setLogicBlocks] = useState([]);
+  const [blocksCount, setBlocksCount] = useState(10);
+  const [blockLimitAlarm, setBlockLimitAlarm] = useState("#f5ed58");
+  const [isBlockFreezed, setIsBlockFreezed] = useState(false);
+
   const whileBlock = { type: WHILE, content: [] };
   const repeatBlock = { type: REPEAT, content: [] };
   const blocks = [
@@ -29,11 +41,9 @@ function BlockCombinator({
     { name: WHILE, isNestable: "true" },
     { name: REPEAT, isNestable: "true" },
   ];
-
-  const dispatch = useDispatch();
-  const [logicBlocks, setLogicBlocks] = useState([]);
-  const [blocksCount, setBlocksCount] = useState(10);
-  const [blockLimitAlarm, setBlockLimitAlarm] = useState("#f5ed58");
+  const selectExecutingBlock = useSelector(
+    (state) => state.block.executingBlock,
+  );
 
   let blockIndex;
   let blockId;
@@ -43,6 +53,7 @@ function BlockCombinator({
     if (submittedBlockInfo) {
       translateBlocks();
       setSubmittedBlockInfo(!submittedBlockInfo);
+      setIsBlockFreezed(!isBlockFreezed);
     }
   }, [submittedBlockInfo]);
 
@@ -54,7 +65,47 @@ function BlockCombinator({
     setLogicBlocks([]);
   }, [mapId]);
 
+  useEffect(() => {
+    try {
+      if (selectExecutingBlock) {
+        const indexes = selectExecutingBlock.split("-");
+
+        if (selectExecutingBlock !== "end") {
+          paintBlock(indexes, "#ffa500", "5px");
+        }
+
+        if (previousBlock.current.length !== 0) {
+          paintBlock(previousBlock.current, "black", "2px");
+        }
+
+        selectExecutingBlock === "end"
+          ? (previousBlock.current = [])
+          : (previousBlock.current = indexes);
+      }
+    } catch (error) {
+      navigate("/error", { state: { error } });
+    }
+  }, [selectExecutingBlock]);
+
+  const paintBlock = (indexes, color, width) => {
+    if (indexes.length === 2) {
+      selectBlocksRef.current[indexes[0]].childNodes[
+        indexes[1]
+      ].style.borderColor = color;
+      selectBlocksRef.current[indexes[0]].childNodes[
+        indexes[1]
+      ].style.borderWidth = width;
+    } else {
+      selectBlocksRef.current[indexes[0]].style.borderColor = color;
+      selectBlocksRef.current[indexes[0]].style.borderWidth = width;
+    }
+  };
+
   const dragStart = (event, index) => {
+    if (isBlockFreezed) {
+      return false;
+    }
+
     event.stopPropagation();
 
     let blockName = event.target.innerText;
@@ -79,7 +130,9 @@ function BlockCombinator({
   };
 
   const limitNumberRange = (event) => {
-    if (event.target.value < 1 || event.target.value > 9) {
+    if (event.target.value < 1) {
+      event.target.value = 9;
+    } else if (event.target.value > 9) {
       event.target.value = 1;
     }
   };
@@ -94,7 +147,6 @@ function BlockCombinator({
 
   const handleBlock = async (event) => {
     event.stopPropagation();
-
     const currentBlockText = event.dataTransfer.getData("text");
     const newLogicBlocks = logicBlocks.slice();
     const currentBlock = newLogicBlocks[blockIndex];
@@ -301,24 +353,26 @@ function BlockCombinator({
   };
 
   const translateBlocks = () => {
-    const ifBlocks = document.querySelectorAll(".if");
-    const counts = document.querySelectorAll(".count");
     const translatedBlocks = cloneDeep(logicBlocks);
 
-    ifBlocks.forEach((element) => {
-      const indexes = element.id.split("-");
+    for (const key in selectOptionRef.current) {
+      const indexes = key.split("-");
 
-      if (indexes.length === 3) {
-        translatedBlocks[indexes[1]]["content"][indexes[2]] = element.value;
-      } else {
-        translatedBlocks[indexes[1]] = element.value;
+      if (selectOptionRef.current[key]) {
+        if (indexes.length === 2) {
+          translatedBlocks[indexes[0]]["content"][indexes[1]] =
+            selectOptionRef.current[key].value;
+        } else {
+          translatedBlocks[indexes[0]] = selectOptionRef.current[key].value;
+        }
       }
-    });
-    counts.forEach((element) => {
-      const indexes = element.id.split("-");
+    }
 
-      translatedBlocks[indexes[1]][indexes[0]] = element.value;
-    });
+    for (const key in repeatCountRef.current) {
+      if (repeatCountRef.current[key]) {
+        translatedBlocks[key]["count"] = repeatCountRef.current[key].value;
+      }
+    }
 
     dispatch(updateTranslatedBlocks(translatedBlocks));
   };
@@ -333,7 +387,7 @@ function BlockCombinator({
               <NonNestableBlock
                 key={block.name}
                 id={`codeBlock${index}`}
-                draggable="true"
+                draggable={!isBlockFreezed}
                 onDragStart={(event) => dragStart(event, index)}
               >
                 {block.name}
@@ -343,7 +397,7 @@ function BlockCombinator({
                 backGroundColor={block.name === REPEAT ? "#37b647" : "#de3589"}
                 key={block.name}
                 id={`codeBlock${index}`}
-                draggable="true"
+                draggable={!isBlockFreezed}
                 onDragStart={(event) => dragStart(event, index)}
               >
                 {block.name}
@@ -357,7 +411,7 @@ function BlockCombinator({
         onDrop={handleBlock}
         onDragOver={allowDrop}
       >
-        <Title color={"#000000"} draggable="false">
+        <Title color={"#000000"} draggable={!isBlockFreezed}>
           {WINDOW.BLOCKS_LOGIC}
         </Title>
         {logicBlocks.map((blockType, index) =>
@@ -365,12 +419,18 @@ function BlockCombinator({
             <NonNestableBlock
               key={`${blockType}${index}`}
               id={`logicBlock${index}`}
-              draggable="true"
+              ref={(element) => (selectBlocksRef.current[index] = element)}
+              draggable={!isBlockFreezed}
               onDragStart={(event) => dragStart(event, index)}
               onDragEnter={(event) => dragEnter(event, index)}
             >
               {blockType}
-              <SelectOption id={`if-${index}`} className={"if"}>
+              <SelectOption
+                id={`if-${index}`}
+                ref={(element) =>
+                  (selectOptionRef.current[`${index}`] = element)
+                }
+              >
                 <option value={"left"}>{"왼쪽으로 갈 수 있다면, ↪️"}</option>
                 <option value={"right"}>{"오른쪽으로 갈 수 있다면, ↩️"}</option>
               </SelectOption>
@@ -379,7 +439,8 @@ function BlockCombinator({
             <NonNestableBlock
               key={`${blockType}${index}`}
               id={`logicBlock${index}`}
-              draggable="true"
+              ref={(el) => (selectBlocksRef.current[index] = el)}
+              draggable={!isBlockFreezed}
               onDragStart={(event) => dragStart(event, index)}
               onDragEnter={(event) => dragEnter(event, index)}
             >
@@ -392,9 +453,10 @@ function BlockCombinator({
               }
               key={`${blockType["type"]}${index}`}
               id={`logicBlock${index}`}
+              ref={(el) => (selectBlocksRef.current[index] = el)}
               onDragStart={(event) => dragStart(event, index)}
               onDragEnter={(event) => dragEnter(event, index)}
-              draggable="true"
+              draggable={!isBlockFreezed}
             >
               <div>
                 {blockType["type"]}
@@ -402,7 +464,9 @@ function BlockCombinator({
                   <CountInput
                     type={"number"}
                     id={`count-${index}`}
-                    className={"count"}
+                    ref={(element) =>
+                      (repeatCountRef.current[`${index}`] = element)
+                    }
                     onChange={limitNumberRange}
                     defaultValue={1}
                   ></CountInput>
@@ -413,14 +477,17 @@ function BlockCombinator({
                   <NonNestableBlock
                     key={`while${childBlockType}${childIndex}`}
                     id={`childBlock${childIndex}`}
-                    draggable="true"
+                    draggable={!isBlockFreezed}
                     onDragStart={(event) => dragStart(event, childIndex)}
                     onDragEnter={(event) => dragEnter(event, childIndex)}
                   >
                     {childBlockType}
                     <SelectOption
                       id={`if-${index}-${childIndex}`}
-                      className={"if"}
+                      ref={(element) =>
+                        (selectOptionRef.current[`${index}-${childIndex}`] =
+                          element)
+                      }
                     >
                       <option value={"left"}>
                         {"왼쪽으로 갈 수 있다면, ↪️"}
@@ -434,7 +501,7 @@ function BlockCombinator({
                   <NonNestableBlock
                     key={`while${childBlockType}${childIndex}`}
                     id={`childBlock${childIndex}`}
-                    draggable="true"
+                    draggable={!isBlockFreezed}
                     onDragStart={(event) => dragStart(event, childIndex)}
                     onDragEnter={(event) => dragEnter(event, childIndex)}
                   >
@@ -449,8 +516,8 @@ function BlockCombinator({
           .fill("")
           .map((blockType, index) => (
             <EmptyBlock
-              key={`${blockType}${logicBlocks.length + index}`}
-              id={`${blockType}${logicBlocks.length + index}`}
+              key={`emptyBlock${logicBlocks.length + index}`}
+              id={`emptyBlock${logicBlocks.length + index}`}
               onDragEnter={(event) =>
                 dragEnter(event, logicBlocks.length + index)
               }

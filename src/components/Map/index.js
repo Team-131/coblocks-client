@@ -97,6 +97,20 @@ function Map({
             await executeRepeatBlock(block.count, block.content, blockIndex);
           }
         }
+
+        if (
+          blockIndex + 1 === selectTranslatedBlocks.length &&
+          !isEnded.current
+        ) {
+          dispatch(updateExecutingBlock("end"));
+          setResultMessage(FAIL);
+
+          isEnded.current = true;
+
+          setTimeout(() => {
+            setIsModalOpen(true);
+          }, MODAL_OPENING_DELAY);
+        }
       }
     })();
   }, [selectTranslatedBlocks]);
@@ -156,24 +170,24 @@ function Map({
 
   const executeWhileBlock = async (blockArray, parentIndex) => {
     for (let whileCount = 0; whileCount < 50; whileCount++) {
-      for (let i = 0; i < blockArray.length; i++) {
+      for (let childIndex = 0; childIndex < blockArray.length; childIndex++) {
         if (isEnded.current) return;
 
-        dispatch(updateExecutingBlock(`${parentIndex}-${i}`));
+        dispatch(updateExecutingBlock(`${parentIndex}-${childIndex + 1}`));
 
-        await executeSingleBlock(blockArray[i]);
+        await executeSingleBlock(blockArray[childIndex]);
       }
     }
   };
 
   const executeRepeatBlock = async (repeatCount, blockArray, parentIndex) => {
     for (let repeated = 0; repeated < repeatCount; repeated++) {
-      for (let i = 0; i < blockArray.length; i++) {
+      for (let childIndex = 0; childIndex < blockArray.length; childIndex++) {
         if (isEnded.current) return;
 
-        dispatch(updateExecutingBlock(`${parentIndex}-${i}`));
+        dispatch(updateExecutingBlock(`${parentIndex}-${childIndex + 1}`));
 
-        await executeSingleBlock(blockArray[i]);
+        await executeSingleBlock(blockArray[childIndex]);
       }
     }
   };
@@ -203,6 +217,10 @@ function Map({
       turnRight();
     }
 
+    if (isEnded.current) {
+      dispatch(updateExecutingBlock("end"));
+    }
+
     await sleep(BLOCK_EXECUTION_TERM);
   };
 
@@ -215,7 +233,7 @@ function Map({
 
     const tileType = getTileTypeOfSelectDirection(character, direction);
 
-    return tileType === "land" || tileType === "portal" || tileType === "key";
+    return ["land", "portal", "key", "closedDoor"].includes(tileType);
   };
 
   const getLeftDirection = (direction) => {
