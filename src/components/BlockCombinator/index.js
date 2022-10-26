@@ -28,7 +28,7 @@ function BlockCombinator({
   const [logicBlocks, setLogicBlocks] = useState([]);
   const [blocksCount, setBlocksCount] = useState(10);
   const [blockLimitAlarm, setBlockLimitAlarm] = useState("#f5ed58");
-  const [freezeBlock, setFreezeBlock] = useState(false);
+  const [isBlockFreezed, setIsBlockFreezed] = useState(false);
 
   const whileBlock = { type: WHILE, content: [] };
   const repeatBlock = { type: REPEAT, content: [] };
@@ -41,7 +41,9 @@ function BlockCombinator({
     { name: WHILE, isNestable: "true" },
     { name: REPEAT, isNestable: "true" },
   ];
-  const executingBlock = useSelector((state) => state.block.executingBlock);
+  const selectExecutingBlock = useSelector(
+    (state) => state.block.executingBlock,
+  );
 
   let blockIndex;
   let blockId;
@@ -51,7 +53,7 @@ function BlockCombinator({
     if (submittedBlockInfo) {
       translateBlocks();
       setSubmittedBlockInfo(!submittedBlockInfo);
-      setFreezeBlock(!freezeBlock);
+      setIsBlockFreezed(!isBlockFreezed);
     }
   }, [submittedBlockInfo]);
 
@@ -65,26 +67,27 @@ function BlockCombinator({
 
   useEffect(() => {
     try {
-      if (executingBlock) {
-        const indexes = executingBlock.split("-");
+      if (selectExecutingBlock) {
+        const indexes = selectExecutingBlock.split("-");
 
-        if (executingBlock !== "end") {
-          paintCurrentBlock(indexes, "#ffa500", "5px");
+        if (selectExecutingBlock !== "end") {
+          paintBlock(indexes, "#ffa500", "5px");
         }
+
         if (previousBlock.current.length !== 0) {
-          paintCurrentBlock(previousBlock.current, "black", "2px");
+          paintBlock(previousBlock.current, "black", "2px");
         }
 
-        executingBlock === "end"
+        selectExecutingBlock === "end"
           ? (previousBlock.current = [])
           : (previousBlock.current = indexes);
       }
     } catch (error) {
-      navigate("/error", { state: { error: error } });
+      navigate("/error", { state: { error } });
     }
-  }, [executingBlock]);
+  }, [selectExecutingBlock]);
 
-  const paintCurrentBlock = (indexes, color, width) => {
+  const paintBlock = (indexes, color, width) => {
     if (indexes.length === 2) {
       selectBlocksRef.current[indexes[0]].childNodes[
         indexes[1]
@@ -99,9 +102,10 @@ function BlockCombinator({
   };
 
   const dragStart = (event, index) => {
-    if (freezeBlock) {
+    if (isBlockFreezed) {
       return false;
     }
+
     event.stopPropagation();
 
     let blockName = event.target.innerText;
@@ -383,7 +387,7 @@ function BlockCombinator({
               <NonNestableBlock
                 key={block.name}
                 id={`codeBlock${index}`}
-                draggable={!freezeBlock}
+                draggable={!isBlockFreezed}
                 onDragStart={(event) => dragStart(event, index)}
               >
                 {block.name}
@@ -393,7 +397,7 @@ function BlockCombinator({
                 backGroundColor={block.name === REPEAT ? "#37b647" : "#de3589"}
                 key={block.name}
                 id={`codeBlock${index}`}
-                draggable={!freezeBlock}
+                draggable={!isBlockFreezed}
                 onDragStart={(event) => dragStart(event, index)}
               >
                 {block.name}
@@ -407,7 +411,7 @@ function BlockCombinator({
         onDrop={handleBlock}
         onDragOver={allowDrop}
       >
-        <Title color={"#000000"} draggable={!freezeBlock}>
+        <Title color={"#000000"} draggable={!isBlockFreezed}>
           {WINDOW.BLOCKS_LOGIC}
         </Title>
         {logicBlocks.map((blockType, index) =>
@@ -416,7 +420,7 @@ function BlockCombinator({
               key={`${blockType}${index}`}
               id={`logicBlock${index}`}
               ref={(element) => (selectBlocksRef.current[index] = element)}
-              draggable={!freezeBlock}
+              draggable={!isBlockFreezed}
               onDragStart={(event) => dragStart(event, index)}
               onDragEnter={(event) => dragEnter(event, index)}
             >
@@ -436,7 +440,7 @@ function BlockCombinator({
               key={`${blockType}${index}`}
               id={`logicBlock${index}`}
               ref={(el) => (selectBlocksRef.current[index] = el)}
-              draggable={!freezeBlock}
+              draggable={!isBlockFreezed}
               onDragStart={(event) => dragStart(event, index)}
               onDragEnter={(event) => dragEnter(event, index)}
             >
@@ -452,7 +456,7 @@ function BlockCombinator({
               ref={(el) => (selectBlocksRef.current[index] = el)}
               onDragStart={(event) => dragStart(event, index)}
               onDragEnter={(event) => dragEnter(event, index)}
-              draggable={!freezeBlock}
+              draggable={!isBlockFreezed}
             >
               <div>
                 {blockType["type"]}
@@ -473,7 +477,7 @@ function BlockCombinator({
                   <NonNestableBlock
                     key={`while${childBlockType}${childIndex}`}
                     id={`childBlock${childIndex}`}
-                    draggable={!freezeBlock}
+                    draggable={!isBlockFreezed}
                     onDragStart={(event) => dragStart(event, childIndex)}
                     onDragEnter={(event) => dragEnter(event, childIndex)}
                   >
@@ -497,7 +501,7 @@ function BlockCombinator({
                   <NonNestableBlock
                     key={`while${childBlockType}${childIndex}`}
                     id={`childBlock${childIndex}`}
-                    draggable={!freezeBlock}
+                    draggable={!isBlockFreezed}
                     onDragStart={(event) => dragStart(event, childIndex)}
                     onDragEnter={(event) => dragEnter(event, childIndex)}
                   >
