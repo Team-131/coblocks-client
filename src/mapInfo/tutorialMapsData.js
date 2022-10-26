@@ -9,6 +9,7 @@ const tutorialMapsData = {
     startingPoint: 45,
     blocks: [MOVE, TURN_RIGHT, TURN_LEFT],
     limitCount: 10,
+    keyCount: 0,
     elements: [
       0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 21, 21, 21, 21, 11, 11, 21, 21, 21, 21, 0,
       0, 0, 0, 0, 0, 0, 0, 0, 0, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 10, 10,
@@ -23,6 +24,7 @@ const tutorialMapsData = {
     startingPoint: 52,
     blocks: [MOVE, ATTACK],
     limitCount: 10,
+    keyCount: 0,
     elements: [
       30, 30, 30, 30, -1, -1, 30, 30, 30, 30, 21, 21, 21, 21, 11, 11, 21, 21,
       21, 21, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 20,
@@ -38,6 +40,7 @@ const tutorialMapsData = {
     startingPoint: 40,
     blocks: [MOVE, TURN_RIGHT, TURN_LEFT, REPEAT],
     limitCount: 7,
+    keyCount: 0,
     elements: [
       1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
       1, 1, 1, 1, 1, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, -1, -1, -1, -1, -1,
@@ -53,6 +56,7 @@ const tutorialMapsData = {
     startingPoint: 90,
     blocks: [MOVE, TURN_RIGHT, TURN_LEFT, WHILE],
     limitCount: 7,
+    keyCount: 0,
     elements: [
       -1, -1, -1, -1, 10, -1, -1, -1, -1, -1, -1, -1, 20, -1, 21, -1, -1, -1,
       -1, 60, 21, 11, 21, 21, 21, 21, 21, 21, 11, 21, -1, -1, -1, -1, -1, -1,
@@ -68,6 +72,7 @@ const tutorialMapsData = {
     startingPoint: 84,
     blocks: [MOVE, IF, WHILE],
     limitCount: 4,
+    keyCount: 0,
     elements: [
       20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, -1, -1, 20, 20, -1, -1,
       20, 20, 20, -1, -1, -1, -1, -1, -1, -1, -1, 20, -1, -1, 20, 20, 60, 60,

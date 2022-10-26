@@ -9,6 +9,7 @@ const mapInfo = {
     startingPoint: 25,
     blocks: [MOVE, TURN_RIGHT, TURN_LEFT, ATTACK, IF, WHILE, REPEAT],
     limitCount: 10,
+    keyCount: 1,
     elements: [
       -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 20, 20, 20,
       20, -1, -1, -1, -1, -1, -1, -1, -1, -1, 90, 40, -1, -1, -1, -1, -1, 20,
@@ -24,6 +25,7 @@ const mapInfo = {
     startingPoint: 94,
     blocks: [MOVE, TURN_RIGHT, TURN_LEFT, ATTACK, IF, WHILE, REPEAT],
     limitCount: 10,
+    keyCount: 0,
     elements: [
       1, 1, 1, 20, -1, -1, 20, 1, 1, 1, 1, 1, 20, -1, 60, 60, -1, 20, 1, 1, 1,
       20, -1, -1, 20, 20, -1, -1, 20, 1, 20, -1, -1, 20, 1, 1, 20, -1, -1, 20,
@@ -39,6 +41,7 @@ const mapInfo = {
     startingPoint: 50,
     blocks: [MOVE, TURN_RIGHT, TURN_LEFT, ATTACK, IF, WHILE, REPEAT],
     limitCount: 10,
+    keyCount: 1,
     elements: [
       21, 21, 21, -1, -1, -1, 21, 21, 21, 21, 21, 21, 21, -1, 21, -1, 21, 21,
       21, 21, 21, 21, 21, -1, -1, -1, 21, 21, 21, 21, 21, 21, 21, 21, 21, -1,
