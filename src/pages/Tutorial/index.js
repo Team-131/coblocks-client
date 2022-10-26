@@ -2,7 +2,12 @@ import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import { useNavigate, useParams } from "react-router-dom";
 import cloneDeep from "lodash/cloneDeep";
+import { useDispatch } from "react-redux";
 
+import {
+  resetTranslatedBlocks,
+  updateExecutingBlock,
+} from "../../features/block/blockSlice";
 import { tutorialMapsData } from "../../mapInfo/tutorialMapsData";
 
 import { Modal } from "../../components/Modal/Modal";
@@ -13,6 +18,7 @@ import { Map } from "../../components/Map";
 import { STARS, BUTTON, MESSAGE } from "../../config/constants";
 
 function Tutorial() {
+  const dispatch = useDispatch();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isSubmit, setIsSubmit] = useState(false);
   const [resultMessage, setResultMessage] = useState("");
@@ -24,21 +30,20 @@ function Tutorial() {
   const allTutorialKeys = Object.keys(tutorialMapsData);
 
   const [mapData, setMapData] = useState(
-    cloneDeep(tutorialMapsData[tutorialId]),
+    tutorialMapsData[tutorialId] && cloneDeep(tutorialMapsData[tutorialId]),
   );
-
-  useEffect(() => {
-    setMapData(cloneDeep(tutorialMapsData[tutorialId]));
-  }, [tutorialId]);
 
   useEffect(() => {
     if (!tutorialMapsData[tutorialId]) {
       navigate("/not_found");
     }
-  }, []);
+
+    setMapData(cloneDeep(tutorialMapsData[tutorialId]));
+  }, [tutorialId]);
 
   const moveNextStage = () => {
     const currentIndex = allTutorialKeys.indexOf(tutorialId);
+
     if (currentIndex + 1 === allTutorialKeys.length) {
       setResultMessage(MESSAGE.LAST_STAGE);
       setIsModalOpen(!isModalOpen);
@@ -47,6 +52,17 @@ function Tutorial() {
         replace: true,
       });
     }
+  };
+
+  const restart = () => {
+    dispatch(updateExecutingBlock("end"));
+    dispatch(resetTranslatedBlocks());
+    setMapData(cloneDeep(tutorialMapsData[tutorialId]));
+    setIsSubmit(false);
+  };
+
+  const start = () => {
+    setIsSubmit(true);
   };
 
   return (
@@ -78,10 +94,12 @@ function Tutorial() {
                 </Star>
               ),
             )}
-            <Tip>Tip: {mapData.tip}</Tip>
+            <Tip>Tip: {mapData?.tip}</Tip>
           </GuideWrapper>
           <ButtonsWrapper>
-            <Button rightMargin={"4vw"}>{BUTTON.REPEAT}</Button>
+            <Button onClick={restart} rightMargin={"4vw"}>
+              {BUTTON.RESTART}
+            </Button>
             <Button rightMargin={"15vw"} onClick={moveNextStage}>
               {BUTTON.NEXT_GAME}
             </Button>
@@ -91,8 +109,8 @@ function Tutorial() {
           <BlockCombinator
             submittedBlockInfo={isSubmit}
             setSubmittedBlockInfo={setIsSubmit}
-            availableBlocks={mapData.blocks}
-            limitCount={mapData.limitCount}
+            availableBlocks={mapData?.blocks || []}
+            limitCount={mapData?.limitCount || 10}
             mapId={tutorialId}
           />
           <RightWrapper>
@@ -130,9 +148,7 @@ function Tutorial() {
                     ),
                   )}
             </div>
-            <Button onClick={() => setIsSubmit(!isSubmit)}>
-              {BUTTON.START}
-            </Button>
+            <Button onClick={start}>{BUTTON.START}</Button>
           </RightWrapper>
         </ContentsWrapper>
       </Wrapper>
