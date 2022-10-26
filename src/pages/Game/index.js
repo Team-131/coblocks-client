@@ -10,7 +10,7 @@ import { Header } from "../../components/Header";
 import { BlockCombinator } from "../../components/BlockCombinator";
 import { Map } from "../../components/Map/index";
 
-import { BUTTON } from "../../config/constants";
+import { BUTTON, MESSAGE } from "../../config/constants";
 
 function Game() {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -21,6 +21,7 @@ function Game() {
   const navigate = useNavigate();
   const { gameId } = useParams();
   const [mapData, setMapData] = useState(cloneDeep(mapInfo[gameId]));
+  const mapInfoKeys = Object.keys(mapInfo);
 
   useEffect(() => {
     setMapData(cloneDeep(mapInfo[gameId]));
@@ -31,6 +32,16 @@ function Game() {
       navigate("/not_found");
     }
   }, []);
+
+  const moveNextStage = () => {
+    const currentIndex = mapInfoKeys.indexOf(gameId);
+    if (currentIndex + 1 === mapInfoKeys.length) {
+      setResultMessage(MESSAGE.LAST_STAGE);
+      setIsModalOpen(!isModalOpen);
+    } else {
+      navigate(`/game/${mapInfoKeys[currentIndex + 1]}`, { replace: true });
+    }
+  };
 
   return (
     <>
@@ -45,7 +56,9 @@ function Game() {
         <Title>{mapData.title}</Title>
         <ButtonsWrapper>
           <Button rightMargin={"4vw"}>{BUTTON.REPEAT}</Button>
-          <Button rightMargin={"15vw"}>{BUTTON.NEXT_GAME}</Button>
+          <Button rightMargin={"15vw"} onClick={moveNextStage}>
+            {BUTTON.NEXT_GAME}
+          </Button>
         </ButtonsWrapper>
       </TopWrapper>
       <ContentsWrapper>

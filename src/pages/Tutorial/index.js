@@ -10,7 +10,7 @@ import { Header } from "../../components/Header";
 import { BlockCombinator } from "../../components/BlockCombinator";
 import { Map } from "../../components/Map";
 
-import { STARS, BUTTON } from "../../config/constants";
+import { STARS, BUTTON, MESSAGE } from "../../config/constants";
 
 function Tutorial() {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -36,6 +36,18 @@ function Tutorial() {
       navigate("/not_found");
     }
   }, []);
+
+  const moveNextStage = () => {
+    const currentIndex = allTutorialKeys.indexOf(tutorialId);
+    if (currentIndex + 1 === allTutorialKeys.length) {
+      setResultMessage(MESSAGE.LAST_STAGE);
+      setIsModalOpen(!isModalOpen);
+    } else {
+      navigate(`/tutorial/${allTutorialKeys[currentIndex + 1]}`, {
+        replace: true,
+      });
+    }
+  };
 
   return (
     <>
@@ -70,7 +82,9 @@ function Tutorial() {
           </GuideWrapper>
           <ButtonsWrapper>
             <Button rightMargin={"4vw"}>{BUTTON.REPEAT}</Button>
-            <Button rightMargin={"15vw"}>{BUTTON.NEXT_GAME}</Button>
+            <Button rightMargin={"15vw"} onClick={moveNextStage}>
+              {BUTTON.NEXT_GAME}
+            </Button>
           </ButtonsWrapper>
         </TopWrapper>
         <ContentsWrapper>

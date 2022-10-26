@@ -59,6 +59,7 @@ export const RENDER = {
 export const MESSAGE = {
   SUCCESS: "성공 🎉",
   FAIL: "실패 😭",
+  LAST_STAGE: "모든 stage 완료! 🚀",
 };
 
 export const BLOCK_NAMES = {
