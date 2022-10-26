@@ -52,7 +52,7 @@ const tutorialMapsData = {
     defaultField: 0,
     startingPoint: 90,
     blocks: [MOVE, TURN_RIGHT, TURN_LEFT, WHILE],
-    limitCount: 10,
+    limitCount: 7,
     elements: [
       -1, -1, -1, -1, 10, -1, -1, -1, -1, -1, -1, -1, 20, -1, 21, -1, -1, -1,
       -1, 60, 21, 11, 21, 21, 21, 21, 21, 21, 11, 21, -1, -1, -1, -1, -1, -1,
