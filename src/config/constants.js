@@ -12,7 +12,7 @@ export const STARS = {
 export const BUTTON = {
   TUTORIAL: "연습하기",
   GAME_SELECTION: "게임선택",
-  REPEAT: "다시하기",
+  RESTART: "다시하기",
   NEXT_GAME: "다음게임",
   START: "시작하기",
 };
