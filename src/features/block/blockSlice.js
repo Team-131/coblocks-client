@@ -10,6 +10,9 @@ const blockSlice = createSlice({
     resetTranslatedBlocks: (state) => {
       state.translatedBlocks = [];
     },
+    resetExecutingBlock: (state) => {
+      state.executingBlock = "";
+    },
     updateTranslatedBlocks: (state, action) => {
       state.translatedBlocks = action.payload;
     },
@@ -22,6 +25,7 @@ const blockSlice = createSlice({
 export { blockSlice };
 export const {
   resetTranslatedBlocks,
+  resetExecutingBlock,
   updateTranslatedBlocks,
   updateExecutingBlock,
 } = blockSlice.actions;
