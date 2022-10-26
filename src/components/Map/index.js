@@ -6,7 +6,9 @@ import cloneDeep from "lodash/cloneDeep";
 import {
   updateExecutingBlock,
   resetTranslatedBlocks,
+  resetExecutingBlock,
 } from "../../features/block/blockSlice";
+
 import { sleep } from "../../utils/sleep";
 
 import {
@@ -30,7 +32,10 @@ function Map({
   const isEnded = useRef(false);
   const character = useRef({ x: 0, y: 0, direction: 0 });
   const newMapInfo = useRef(cloneDeep(mapInfo));
+  const catAsset = useRef(new Image());
+  const mapAsset = useRef(new Image());
   const keyQuantityRef = useRef(keyQuantity);
+
   const dispatch = useDispatch();
   const selectTranslatedBlocks = useSelector(
     (state) => state.block.translatedBlocks,
@@ -65,12 +70,6 @@ function Map({
   const { BLOCK_EXECUTION_TERM, MODAL_OPENING_DELAY } = SLEEP_TIME;
   const { MOVE, TURN_RIGHT, TURN_LEFT, ATTACK, WHILE, REPEAT } = BLOCK_NAMES;
 
-  const catAsset = new Image();
-  const mapAsset = new Image();
-
-  catAsset.src = "/assets/image/cat_asset.png";
-  mapAsset.src = "/assets/image/map_asset.png";
-
   useEffect(() => {
     (async () => {
       for (
@@ -78,7 +77,7 @@ function Map({
         blockIndex < selectTranslatedBlocks.length;
         blockIndex++
       ) {
-        if (isEnded.current) break;
+        if (isEnded.current) return;
 
         const block = selectTranslatedBlocks[blockIndex];
 
@@ -120,12 +119,16 @@ function Map({
   }, [selectTranslatedBlocks]);
 
   useEffect(() => {
+    catAsset.current.src = "/assets/image/cat_asset.png";
+    mapAsset.current.src = "/assets/image/map_asset.png";
+
     dispatch(resetTranslatedBlocks());
+    dispatch(resetExecutingBlock());
     isEnded.current = true;
-    setTimeout(() => (isEnded.current = false), BLOCK_EXECUTION_TERM);
+    setTimeout(() => (isEnded.current = false), BLOCK_EXECUTION_TERM * 2);
 
     newMapInfo.current = cloneDeep(mapInfo);
-    mapAsset.addEventListener(
+    mapAsset.current.addEventListener(
       "load",
       () => {
         const { x: startingCoordinateX, y: startingCoordinateY } =
@@ -145,7 +148,7 @@ function Map({
               getAssetCoordinate(mapElement);
 
             drawField({
-              image: mapAsset,
+              image: mapAsset.current,
               mapCoordinateX,
               mapCoordinateY,
               assetCoordinateX: mapInfo.defaultField,
@@ -154,7 +157,7 @@ function Map({
 
             if (mapElement !== -1) {
               drawField({
-                image: mapAsset,
+                image: mapAsset.current,
                 mapCoordinateX,
                 mapCoordinateY,
                 assetCoordinateX,
@@ -165,7 +168,7 @@ function Map({
         }
 
         drawField({
-          image: catAsset,
+          image: catAsset.current,
           mapCoordinateX: startingCoordinateX,
           mapCoordinateY: startingCoordinateY,
           assetCoordinateX: 0,
@@ -287,7 +290,7 @@ function Map({
       getAssetCoordinate(element);
 
     drawField({
-      image: mapAsset,
+      image: mapAsset.current,
       mapCoordinateX: newCharacter.x,
       mapCoordinateY: newCharacter.y,
       assetCoordinateX: mapInfo.defaultField,
@@ -303,7 +306,7 @@ function Map({
     });
 
     drawField({
-      image: catAsset,
+      image: catAsset.current,
       mapCoordinateX: newCharacter.x,
       mapCoordinateY: newCharacter.y,
       assetCoordinateX: 0,
@@ -384,7 +387,6 @@ function Map({
   };
 
   const moveOneTile = async () => {
-    console.log("keyQuantity=", keyQuantityRef.current);
     const context = ref.current.getContext("2d");
     const forwardTileType = getTileTypeOfSelectDirection(
       character,
@@ -469,7 +471,7 @@ function Map({
         getAssetCoordinate(mapElement);
 
       drawField({
-        image: mapAsset,
+        image: mapAsset.current,
         mapCoordinateX: character.current.x,
         mapCoordinateY: character.current.y,
         assetCoordinateX: mapInfo.defaultField,
@@ -485,7 +487,7 @@ function Map({
       });
 
       drawField({
-        image: mapAsset,
+        image: mapAsset.current,
         mapCoordinateX: nextCharacter.x,
         mapCoordinateY: nextCharacter.y,
         assetCoordinateX: mapInfo.defaultField,
@@ -501,7 +503,7 @@ function Map({
       });
 
       context.drawImage(
-        catAsset,
+        catAsset.current,
         (i % CAT_SPRITE_FRAMES) * SINGLE_ASSET_WIDTH,
         SINGLE_ASSET_HEIGHT * nextCharacter.direction,
         SINGLE_ASSET_WIDTH,
@@ -522,7 +524,7 @@ function Map({
     }
 
     if (forwardTileType === "water") {
-      drown(nextCharacter.x, nextCharacter.y);
+      await drown(nextCharacter.x, nextCharacter.y);
     }
 
     character.current = nextCharacter;
@@ -555,7 +557,7 @@ function Map({
 
     for (let i = 0; i < CAT_SPRITE_FRAMES; i++) {
       drawField({
-        image: catAsset,
+        image: catAsset.current,
         mapCoordinateX: coordinateX,
         mapCoordinateY: coordinateY,
         assetCoordinateX: i,
@@ -601,7 +603,7 @@ function Map({
 
       for (let i = 0; i < CAT_SPRITE_FRAMES; i++) {
         drawField({
-          image: mapAsset,
+          image: mapAsset.current,
           mapCoordinateX: nextCharacter.x,
           mapCoordinateY: nextCharacter.y,
           assetCoordinateX: i,
@@ -612,7 +614,7 @@ function Map({
       }
 
       drawField({
-        image: mapAsset,
+        image: mapAsset.current,
         mapCoordinateX: nextCharacter.x,
         mapCoordinateY: nextCharacter.y,
         assetCoordinateX: mapInfo.defaultField,
@@ -625,7 +627,7 @@ function Map({
       const catPaw = Math.floor(PAW / 10);
       for (let i = 0; i < CAT_SPRITE_FRAMES; i++) {
         drawField({
-          image: mapAsset,
+          image: mapAsset.current,
           mapCoordinateX: nextCharacter.x,
           mapCoordinateY: nextCharacter.y,
           assetCoordinateX: i,
@@ -640,7 +642,7 @@ function Map({
       );
 
       drawField({
-        image: mapAsset,
+        image: mapAsset.current,
         mapCoordinateX: nextCharacter.x,
         mapCoordinateY: nextCharacter.y,
         assetCoordinateX: assetCoordinateX,
