@@ -71,6 +71,12 @@ function Map({
   const { MOVE, TURN_RIGHT, TURN_LEFT, ATTACK, WHILE, REPEAT } = BLOCK_NAMES;
 
   useEffect(() => {
+    return () => {
+      isEnded.current = true;
+    };
+  }, []);
+
+  useEffect(() => {
     (async () => {
       for (
         let blockIndex = 0;
@@ -385,7 +391,6 @@ function Map({
 
   const moveOneTile = async () => {
     if (!ref.current) return;
-
     const context = ref.current.getContext("2d");
     const forwardTileType = getTileTypeOfSelectDirection(
       character,
@@ -536,19 +541,20 @@ function Map({
     assetCoordinateX = 0,
     assetCoordinateY = 0,
   }) => {
-    const context = ref.current.getContext("2d");
+    const context = ref.current?.getContext("2d");
 
-    context.drawImage(
-      image,
-      SINGLE_ASSET_WIDTH * assetCoordinateX,
-      SINGLE_ASSET_HEIGHT * assetCoordinateY,
-      SINGLE_ASSET_WIDTH,
-      SINGLE_ASSET_HEIGHT,
-      SINGLE_TILE_WIDTH * mapCoordinateX,
-      SINGLE_TILE_HEIGHT * mapCoordinateY,
-      SINGLE_TILE_WIDTH,
-      SINGLE_TILE_HEIGHT,
-    );
+    context &&
+      context.drawImage(
+        image,
+        SINGLE_ASSET_WIDTH * assetCoordinateX,
+        SINGLE_ASSET_HEIGHT * assetCoordinateY,
+        SINGLE_ASSET_WIDTH,
+        SINGLE_ASSET_HEIGHT,
+        SINGLE_TILE_WIDTH * mapCoordinateX,
+        SINGLE_TILE_HEIGHT * mapCoordinateY,
+        SINGLE_TILE_WIDTH,
+        SINGLE_TILE_HEIGHT,
+      );
   };
 
   const drown = async (coordinateX, coordinateY) => {
