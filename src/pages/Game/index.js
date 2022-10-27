@@ -80,7 +80,31 @@ function Game() {
               setKeyQuantity={setKeyQuantity}
             />
           )}
-          열쇠: {keyQuantity}
+          <div>
+            {mapData.keyCount !== 0 &&
+              Array(mapData.keyCount)
+                .fill("")
+                .map((none, index) =>
+                  keyQuantity < index + 1 ? (
+                    <img
+                      src="/assets/image/emptyKey.png"
+                      key={`keyCount-${index}`}
+                      alt="emptyKey"
+                      height="40px"
+                      width="40px"
+                    ></img>
+                  ) : (
+                    <img
+                      src="/assets/image/key.png"
+                      key={`keyCount-${index}`}
+                      alt="fullFillKey"
+                      height="40px"
+                      width="40px"
+                    ></img>
+                  ),
+                )}
+          </div>
+
           <Button onClick={() => setIsSubmit(!isSubmit)}>{BUTTON.START}</Button>
         </RightWrapper>
       </ContentsWrapper>
