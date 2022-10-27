@@ -11,7 +11,6 @@ import { sleep } from "../../utils/sleep";
 
 function BlockCombinator({
   submittedBlockInfo,
-  setSubmittedBlockInfo,
   availableBlocks,
   limitCount,
   mapId,
@@ -52,8 +51,9 @@ function BlockCombinator({
   useEffect(() => {
     if (submittedBlockInfo) {
       translateBlocks();
-      setSubmittedBlockInfo(!submittedBlockInfo);
-      setIsBlockFreezed(!isBlockFreezed);
+      setIsBlockFreezed(true);
+    } else {
+      setIsBlockFreezed(false);
     }
   }, [submittedBlockInfo]);
 
@@ -63,6 +63,8 @@ function BlockCombinator({
 
   useEffect(() => {
     setLogicBlocks([]);
+    setIsBlockFreezed(false);
+    setBlocksCount(limitCount);
   }, [mapId]);
 
   useEffect(() => {
@@ -377,6 +379,15 @@ function BlockCombinator({
     dispatch(updateTranslatedBlocks(translatedBlocks));
   };
 
+  const clearLogicBlock = () => {
+    if (!isBlockFreezed) {
+      setLogicBlocks([]);
+      setBlocksCount(limitCount);
+      selectOptionRef.current = {};
+      repeatCountRef.current = {};
+    }
+  };
+
   return (
     <Wrapper>
       <SelectionBlocks onDrop={removeLogicBlock} onDragOver={allowDrop}>
@@ -411,8 +422,9 @@ function BlockCombinator({
         onDrop={handleBlock}
         onDragOver={allowDrop}
       >
-        <Title color={"#000000"} draggable={!isBlockFreezed}>
+        <Title color={"#000000"}>
           {WINDOW.BLOCKS_LOGIC}
+          <ClearButton onClick={clearLogicBlock}>🗑️</ClearButton>
         </Title>
         {logicBlocks.map((blockType, index) =>
           blockType === IF ? (
@@ -536,6 +548,17 @@ const Title = styled.div`
   font-size: 1.8vw;
   font-weight: bolder;
   text-align: center;
+`;
+
+const ClearButton = styled.button`
+  background-color: transparent;
+  border: none;
+  font-size: 1.8vw;
+  transition: all 300ms;
+
+  &:hover {
+    transform: scale(1.1) rotate(180deg);
+  }
 `;
 
 const Wrapper = styled.div`
