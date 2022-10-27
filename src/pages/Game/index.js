@@ -28,6 +28,7 @@ function Game() {
   const { gameId } = useParams();
   const catAsset = useRef(new Image());
   const mapAsset = useRef(new Image());
+
   const mapInfoKeys = Object.keys(mapInfo);
 
   const [mapData, setMapData] = useState();
@@ -36,7 +37,9 @@ function Game() {
     if (!mapInfo[gameId]) {
       navigate("/not_found");
     }
+
     setMapData(cloneDeep(mapInfo[gameId]));
+    setIsSubmit(false);
   }, [gameId]);
 
   useEffect(() => {
@@ -121,12 +124,14 @@ function Game() {
                       src="/assets/image/emptyKey.png"
                       key={`keyCount-${index}`}
                       alt="emptyKey"
+                      draggable={false}
                     ></img>
                   ) : (
                     <img
                       src="/assets/image/key.png"
                       key={`keyCount-${index}`}
                       alt="fulFillKey"
+                      draggable={false}
                     ></img>
                   ),
                 )}
