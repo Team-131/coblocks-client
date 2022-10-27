@@ -137,7 +137,8 @@ function Tutorial() {
               />
             )}
             <div>
-              {mapData.keyCount !== 0 &&
+              {mapData &&
+                mapData.keyCount !== 0 &&
                 Array(mapData.keyCount)
                   .fill("")
                   .map((none, index) =>
