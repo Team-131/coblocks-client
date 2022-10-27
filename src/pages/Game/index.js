@@ -121,16 +121,12 @@ function Game() {
                       src="/assets/image/emptyKey.png"
                       key={`keyCount-${index}`}
                       alt="emptyKey"
-                      height="40px"
-                      width="40px"
                     ></img>
                   ) : (
                     <img
                       src="/assets/image/key.png"
                       key={`keyCount-${index}`}
                       alt="fullFillKey"
-                      height="40px"
-                      width="40px"
                     ></img>
                   ),
                 )}
