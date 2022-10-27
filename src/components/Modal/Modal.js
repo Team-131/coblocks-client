@@ -3,6 +3,7 @@ import styled from "styled-components";
 import PropTypes from "prop-types";
 
 import { Portal } from "../Portal";
+import { COLOR } from "../../config/constants";
 
 function Modal({ closeModal, resultMessage, children }) {
   return (
@@ -43,13 +44,13 @@ const Content = styled.div`
   justify-content: center;
   align-items: center;
   flex-direction: column;
-  width: 40rem;
-  height: 30rem;
-  border: 5px solid #000000;
-  border-radius: 10px;
-  background-color: #f5ed58;
-  color: #000000;
-  font-size: 4rem;
+  width: 45vw;
+  height: 35vw;
+  border: none;
+  border-radius: 20px;
+  background-color: ${COLOR.GREEN};
+  color: ${COLOR.WHITE};
+  font-size: 3.3rem;
   animation: smoothOpen 0.15s;
 
   @keyframes smoothOpen {
@@ -71,15 +72,18 @@ const CloseButton = styled.div`
   width: 10rem;
   height: 3rem;
   margin-top: 5rem;
-  background-color: #de3589;
-  border: 5px solid black;
+  background-color: ${COLOR.RED};
+  border: none;
   border-radius: 50px;
-  color: #ffffff;
+  color: ${COLOR.WHITE};
   font-size: 1.5rem;
+  box-shadow: rgba(60, 64, 67, 0.3) 0px 1px 2px 0px,
+    rgba(60, 64, 67, 0.15) 0px 2px 6px 2px;
+  cursor: pointer;
 
   &:hover {
-    color: #de3589;
-    background-color: #ffffff;
+    background-color: ${COLOR.WHITE};
+    color: ${COLOR.RED};
     transition: all 200ms;
   }
 `;

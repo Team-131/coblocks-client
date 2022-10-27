@@ -1,6 +1,7 @@
 import React from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import styled from "styled-components";
+import { COLOR } from "../../config/constants";
 
 function Error() {
   const location = useLocation();
@@ -36,9 +37,9 @@ const Container = styled.div`
   justify-content: center;
   align-items: center;
   flex-direction: column;
+  width: 45vw;
+  height: 35vw;
   border-radius: 1rem;
-  width: 30rem;
-  height: 25rem;
   box-shadow: rgba(60, 64, 67, 0.3) 0px 1px 2px 0px,
     rgba(60, 64, 67, 0.15) 0px 2px 6px 2px;
 `;
@@ -58,16 +59,17 @@ const HomeButton = styled.div`
   align-items: center;
   width: 10rem;
   height: 3rem;
-  background-color: #de3589;
+  background-color: ${COLOR.RED};
   border-radius: 50px;
-  color: #ffffff;
+  color: ${COLOR.WHITE};
   font-size: 1.5rem;
   box-shadow: rgba(60, 64, 67, 0.3) 0px 1px 2px 0px,
     rgba(60, 64, 67, 0.15) 0px 2px 6px 2px;
+  cursor: pointer;
 
   &:hover {
-    color: #de3589;
-    background-color: #ffffff;
+    background-color: ${COLOR.WHITE};
+    color: ${COLOR.RED};
     transition: all 200ms;
   }
 `;

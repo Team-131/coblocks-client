@@ -2,12 +2,12 @@ import React from "react";
 import { Route, Routes } from "react-router-dom";
 import { createGlobalStyle } from "styled-components";
 
-import Home from "../pages/Home";
-import Tutorial from "../pages/Tutorial";
-import { Game } from "../pages/Game";
-import { GameList } from "../pages/GameList";
+import { Home } from "../pages/Home/Home";
+import { Tutorial } from "../pages/Tutorial/Tutorial";
+import { Game } from "../pages/Game/Game";
+import { GameList } from "../pages/GameList/GameList";
 import { Error } from "../pages/Error/Error";
-import NotFound from "../pages/NotFound";
+import { NotFound } from "../pages/NotFound/NotFound";
 
 function App() {
   return (
@@ -21,6 +21,12 @@ function App() {
         <Route path="/error" element={<Error />} />
         <Route path="*" element={<NotFound />} />
       </Routes>
+      <audio
+        src="/assets/audio/cat_and_soup.mp3"
+        autoPlay={true}
+        loop={true}
+      ></audio>
+      ;
     </>
   );
 }
@@ -34,7 +40,7 @@ const Global = createGlobalStyle`
     -khtml-user-select: none;
     -webkit-user-select: none;
     user-select: none;
-  }
+}
 `;
 
-export default App;
+export { App };
