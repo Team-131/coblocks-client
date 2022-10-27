@@ -5,7 +5,10 @@ import { cloneDeep } from "lodash";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 
-import { updateTranslatedBlocks } from "../../features/block/blockSlice";
+import {
+  updateTranslatedBlocks,
+  resetExecutingBlock,
+} from "../../features/block/blockSlice";
 import { WINDOW, BLOCK_NAMES } from "../../config/constants";
 import { sleep } from "../../utils/sleep";
 
@@ -62,9 +65,16 @@ function BlockCombinator({
   }, [limitCount]);
 
   useEffect(() => {
-    setLogicBlocks([]);
-    setIsBlockFreezed(false);
-    setBlocksCount(limitCount);
+    return () => {
+      setLogicBlocks([]);
+      setIsBlockFreezed(false);
+      setBlocksCount(limitCount);
+      dispatch(resetExecutingBlock());
+      selectBlocksRef.current = [];
+      selectOptionRef.current = {};
+      repeatCountRef.current = {};
+      previousBlock.current = [];
+    };
   }, [mapId]);
 
   useEffect(() => {
@@ -90,16 +100,20 @@ function BlockCombinator({
   }, [selectExecutingBlock]);
 
   const paintBlock = (indexes, color, width) => {
-    if (indexes.length === 2) {
-      selectBlocksRef.current[indexes[0]].childNodes[
-        indexes[1]
-      ].style.borderColor = color;
-      selectBlocksRef.current[indexes[0]].childNodes[
-        indexes[1]
-      ].style.borderWidth = width;
-    } else {
-      selectBlocksRef.current[indexes[0]].style.borderColor = color;
-      selectBlocksRef.current[indexes[0]].style.borderWidth = width;
+    try {
+      if (indexes.length === 2) {
+        selectBlocksRef.current[indexes[0]].childNodes[
+          indexes[1]
+        ].style.borderColor = color;
+        selectBlocksRef.current[indexes[0]].childNodes[
+          indexes[1]
+        ].style.borderWidth = width;
+      } else {
+        selectBlocksRef.current[indexes[0]].style.borderColor = color;
+        selectBlocksRef.current[indexes[0]].style.borderWidth = width;
+      }
+    } catch (error) {
+      navigate("/error", { state: { error } });
     }
   };
 
@@ -166,13 +180,17 @@ function BlockCombinator({
 
           if (!event.target.id.includes("if")) {
             if (targetBlock) {
-              newLogicBlocks.splice(targetBlockIndex.current, 0, insertedBlock);
+              newLogicBlocks.splice(
+                targetBlockIndex.current + 1,
+                0,
+                insertedBlock,
+              );
             } else {
               newLogicBlocks.push(insertedBlock);
             }
           } else {
             newLogicBlocks.splice(
-              getBlockIndex(targetParentElement.parentElement),
+              getBlockIndex(targetParentElement.parentElement) + 1,
               0,
               insertedBlock,
             );
@@ -181,7 +199,7 @@ function BlockCombinator({
           if (!event.target.id.includes("if")) {
             if (targetParentElement.id) {
               newTargetParentBlock["content"].splice(
-                targetBlockIndex.current,
+                targetBlockIndex.current + 1,
                 0,
                 currentBlockText,
               );
@@ -208,14 +226,14 @@ function BlockCombinator({
               const newObjectBlock = cloneDeep(newLogicBlocks[index]);
 
               newObjectBlock["content"].splice(
-                getBlockIndex(targetParentElement),
+                getBlockIndex(targetParentElement) + 1,
                 0,
                 currentBlockText,
               );
               newLogicBlocks.splice(index, 1, newObjectBlock);
             } else {
               newLogicBlocks.splice(
-                getBlockIndex(targetParentElement),
+                getBlockIndex(targetParentElement) + 1,
                 0,
                 currentBlockText,
               );
@@ -225,6 +243,8 @@ function BlockCombinator({
 
         setBlocksCount(blocksCount - 1);
         setLogicBlocks(newLogicBlocks);
+      } else {
+        await handleBlockLimitAlarm();
       }
     } else if (
       blockId.includes("logicBlock") &&
@@ -320,10 +340,6 @@ function BlockCombinator({
       }
 
       setLogicBlocks(newLogicBlocks);
-    }
-
-    if (blocksCount === 0) {
-      await handleBlockLimitAlarm();
     }
   };
 

@@ -6,7 +6,7 @@ function Error() {
   const location = useLocation();
   const navigate = useNavigate();
 
-  const ErrorMessage = location.state.error.message;
+  const ErrorMessage = location.state?.error.message || "errorMessage";
 
   const handleClick = () => {
     navigate("/", { replace: true });

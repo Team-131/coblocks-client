@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import styled from "styled-components";
 import { useNavigate, useParams } from "react-router-dom";
 import cloneDeep from "lodash/cloneDeep";
@@ -26,7 +26,8 @@ function Game() {
 
   const navigate = useNavigate();
   const { gameId } = useParams();
-
+  const catAsset = useRef(new Image());
+  const mapAsset = useRef(new Image());
   const mapInfoKeys = Object.keys(mapInfo);
 
   const [mapData, setMapData] = useState();
@@ -35,11 +36,18 @@ function Game() {
     if (!mapInfo[gameId]) {
       navigate("/not_found");
     }
-
     setMapData(cloneDeep(mapInfo[gameId]));
   }, [gameId]);
 
+  useEffect(() => {
+    catAsset.current.src = "/assets/image/cat_asset.png";
+    mapAsset.current.src = "/assets/image/map_asset.png";
+  }, [mapData]);
+
   const moveNextStage = () => {
+    dispatch(updateExecutingBlock("end"));
+    dispatch(resetTranslatedBlocks());
+
     const currentIndex = mapInfoKeys.indexOf(gameId);
 
     if (currentIndex + 1 === mapInfoKeys.length) {
@@ -94,13 +102,36 @@ function Game() {
             <Map
               mapInfo={mapData}
               setMapInfo={setMapData}
+              catAsset={catAsset.current}
+              mapAsset={mapAsset.current}
               setIsModalOpen={setIsModalOpen}
               setResultMessage={setResultMessage}
               keyQuantity={keyQuantity}
               setKeyQuantity={setKeyQuantity}
             />
           )}
-          열쇠: {keyQuantity}
+          <div>
+            {mapData &&
+              mapData.keyCount !== 0 &&
+              Array(mapData.keyCount)
+                .fill("")
+                .map((none, index) =>
+                  keyQuantity < index + 1 ? (
+                    <img
+                      src="/assets/image/emptyKey.png"
+                      key={`keyCount-${index}`}
+                      alt="emptyKey"
+                    ></img>
+                  ) : (
+                    <img
+                      src="/assets/image/key.png"
+                      key={`keyCount-${index}`}
+                      alt="fulFillKey"
+                    ></img>
+                  ),
+                )}
+          </div>
+
           <Button onClick={start}>{BUTTON.START}</Button>
         </RightWrapper>
       </ContentsWrapper>
