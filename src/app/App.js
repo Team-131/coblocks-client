@@ -29,6 +29,11 @@ const Global = createGlobalStyle`
   * {
     box-sizing: border-box;
     margin: 0;
+    -ms-user-select: none;
+    -moz-user-select: -moz-none;
+    -khtml-user-select: none;
+    -webkit-user-select: none;
+    user-select: none;
   }
 `;
 
