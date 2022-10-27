@@ -383,6 +383,8 @@ function BlockCombinator({
     if (!isBlockFreezed) {
       setLogicBlocks([]);
       setBlocksCount(limitCount);
+      selectOptionRef.current = {};
+      repeatCountRef.current = {};
     }
   };
 
