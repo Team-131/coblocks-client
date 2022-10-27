@@ -225,6 +225,8 @@ function BlockCombinator({
 
         setBlocksCount(blocksCount - 1);
         setLogicBlocks(newLogicBlocks);
+      } else {
+        await handleBlockLimitAlarm();
       }
     } else if (
       blockId.includes("logicBlock") &&
@@ -320,10 +322,6 @@ function BlockCombinator({
       }
 
       setLogicBlocks(newLogicBlocks);
-    }
-
-    if (blocksCount === 0) {
-      await handleBlockLimitAlarm();
     }
   };
 
