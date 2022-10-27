@@ -293,6 +293,14 @@ function Map({
       image: mapAsset.current,
       mapCoordinateX: newCharacter.x,
       mapCoordinateY: newCharacter.y,
+      assetCoordinateX: mapInfo.defaultField,
+      assetCoordinateY: 0,
+    });
+
+    drawField({
+      image: mapAsset,
+      mapCoordinateX: newCharacter.x,
+      mapCoordinateY: newCharacter.y,
       assetCoordinateX,
       assetCoordinateY,
     });
@@ -466,12 +474,28 @@ function Map({
         image: mapAsset.current,
         mapCoordinateX: character.current.x,
         mapCoordinateY: character.current.y,
+        assetCoordinateX: mapInfo.defaultField,
+        assetCoordinateY: 0,
+      });
+
+      drawField({
+        image: mapAsset,
+        mapCoordinateX: character.current.x,
+        mapCoordinateY: character.current.y,
         assetCoordinateX,
         assetCoordinateY,
       });
 
       drawField({
         image: mapAsset.current,
+        mapCoordinateX: nextCharacter.x,
+        mapCoordinateY: nextCharacter.y,
+        assetCoordinateX: mapInfo.defaultField,
+        assetCoordinateY: 0,
+      });
+
+      drawField({
+        image: mapAsset,
         mapCoordinateX: nextCharacter.x,
         mapCoordinateY: nextCharacter.y,
         assetCoordinateX: forwardAssetCoordinate.x,
