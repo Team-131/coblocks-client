@@ -23,6 +23,8 @@ import {
 function Map({
   mapInfo,
   setMapInfo,
+  catAsset,
+  mapAsset,
   setIsModalOpen,
   setResultMessage,
   keyQuantity,
@@ -32,8 +34,6 @@ function Map({
   const isEnded = useRef(false);
   const character = useRef({ x: 0, y: 0, direction: 0 });
   const newMapInfo = useRef(cloneDeep(mapInfo));
-  const catAsset = useRef(new Image());
-  const mapAsset = useRef(new Image());
   const keyQuantityRef = useRef(keyQuantity);
 
   const dispatch = useDispatch();
@@ -119,16 +119,13 @@ function Map({
   }, [selectTranslatedBlocks]);
 
   useEffect(() => {
-    catAsset.current.src = "/assets/image/cat_asset.png";
-    mapAsset.current.src = "/assets/image/map_asset.png";
-
     dispatch(resetTranslatedBlocks());
     dispatch(resetExecutingBlock());
     isEnded.current = true;
     setTimeout(() => (isEnded.current = false), BLOCK_EXECUTION_TERM * 2);
 
     newMapInfo.current = cloneDeep(mapInfo);
-    mapAsset.current.addEventListener(
+    mapAsset.addEventListener(
       "load",
       () => {
         const { x: startingCoordinateX, y: startingCoordinateY } =
@@ -148,7 +145,7 @@ function Map({
               getAssetCoordinate(mapElement);
 
             drawField({
-              image: mapAsset.current,
+              image: mapAsset,
               mapCoordinateX,
               mapCoordinateY,
               assetCoordinateX: mapInfo.defaultField,
@@ -157,7 +154,7 @@ function Map({
 
             if (mapElement !== -1) {
               drawField({
-                image: mapAsset.current,
+                image: mapAsset,
                 mapCoordinateX,
                 mapCoordinateY,
                 assetCoordinateX,
@@ -168,7 +165,7 @@ function Map({
         }
 
         drawField({
-          image: catAsset.current,
+          image: catAsset,
           mapCoordinateX: startingCoordinateX,
           mapCoordinateY: startingCoordinateY,
           assetCoordinateX: 0,
@@ -290,7 +287,7 @@ function Map({
       getAssetCoordinate(element);
 
     drawField({
-      image: mapAsset.current,
+      image: mapAsset,
       mapCoordinateX: newCharacter.x,
       mapCoordinateY: newCharacter.y,
       assetCoordinateX: mapInfo.defaultField,
@@ -306,7 +303,7 @@ function Map({
     });
 
     drawField({
-      image: catAsset.current,
+      image: catAsset,
       mapCoordinateX: newCharacter.x,
       mapCoordinateY: newCharacter.y,
       assetCoordinateX: 0,
@@ -387,6 +384,8 @@ function Map({
   };
 
   const moveOneTile = async () => {
+    if (!ref.current) return;
+
     const context = ref.current.getContext("2d");
     const forwardTileType = getTileTypeOfSelectDirection(
       character,
@@ -471,7 +470,7 @@ function Map({
         getAssetCoordinate(mapElement);
 
       drawField({
-        image: mapAsset.current,
+        image: mapAsset,
         mapCoordinateX: character.current.x,
         mapCoordinateY: character.current.y,
         assetCoordinateX: mapInfo.defaultField,
@@ -487,7 +486,7 @@ function Map({
       });
 
       drawField({
-        image: mapAsset.current,
+        image: mapAsset,
         mapCoordinateX: nextCharacter.x,
         mapCoordinateY: nextCharacter.y,
         assetCoordinateX: mapInfo.defaultField,
@@ -503,7 +502,7 @@ function Map({
       });
 
       context.drawImage(
-        catAsset.current,
+        catAsset,
         (i % CAT_SPRITE_FRAMES) * SINGLE_ASSET_WIDTH,
         SINGLE_ASSET_HEIGHT * nextCharacter.direction,
         SINGLE_ASSET_WIDTH,
@@ -557,7 +556,7 @@ function Map({
 
     for (let i = 0; i < CAT_SPRITE_FRAMES; i++) {
       drawField({
-        image: catAsset.current,
+        image: catAsset,
         mapCoordinateX: coordinateX,
         mapCoordinateY: coordinateY,
         assetCoordinateX: i,
@@ -603,7 +602,7 @@ function Map({
 
       for (let i = 0; i < CAT_SPRITE_FRAMES; i++) {
         drawField({
-          image: mapAsset.current,
+          image: mapAsset,
           mapCoordinateX: nextCharacter.x,
           mapCoordinateY: nextCharacter.y,
           assetCoordinateX: i,
@@ -614,7 +613,7 @@ function Map({
       }
 
       drawField({
-        image: mapAsset.current,
+        image: mapAsset,
         mapCoordinateX: nextCharacter.x,
         mapCoordinateY: nextCharacter.y,
         assetCoordinateX: mapInfo.defaultField,
@@ -627,7 +626,7 @@ function Map({
       const catPaw = Math.floor(PAW / 10);
       for (let i = 0; i < CAT_SPRITE_FRAMES; i++) {
         drawField({
-          image: mapAsset.current,
+          image: mapAsset,
           mapCoordinateX: nextCharacter.x,
           mapCoordinateY: nextCharacter.y,
           assetCoordinateX: i,
@@ -642,7 +641,7 @@ function Map({
       );
 
       drawField({
-        image: mapAsset.current,
+        image: mapAsset,
         mapCoordinateX: nextCharacter.x,
         mapCoordinateY: nextCharacter.y,
         assetCoordinateX: assetCoordinateX,
@@ -651,12 +650,20 @@ function Map({
     }
   };
 
-  return <canvas ref={ref} width={MAP_PIXEL_WIDTH} height={MAP_PIXEL_HEIGHT} />;
+  return (
+    <>
+      <canvas ref={ref} width={MAP_PIXEL_WIDTH} height={MAP_PIXEL_HEIGHT} />
+      <button onClick={turnLeft}>좌</button>
+      <button onClick={moveOneTile}>이동</button>
+    </>
+  );
 }
 
 Map.propTypes = {
   mapInfo: PropTypes.object.isRequired,
   setMapInfo: PropTypes.func.isRequired,
+  catAsset: PropTypes.instanceOf(Image),
+  mapAsset: PropTypes.instanceOf(Image),
   setIsModalOpen: PropTypes.func.isRequired,
   setResultMessage: PropTypes.func.isRequired,
   keyQuantity: PropTypes.number.isRequired,

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import styled from "styled-components";
 import { useNavigate, useParams } from "react-router-dom";
 import cloneDeep from "lodash/cloneDeep";
@@ -27,6 +27,8 @@ function Tutorial() {
 
   const navigate = useNavigate();
   const { tutorialId } = useParams();
+  const catAsset = useRef(new Image());
+  const mapAsset = useRef(new Image());
 
   const allTutorialKeys = Object.keys(tutorialMapsData);
 
@@ -43,8 +45,13 @@ function Tutorial() {
     setIsSubmit(false);
   }, [tutorialId]);
 
+  useEffect(() => {
+    catAsset.current.src = "/assets/image/cat_asset.png";
+    mapAsset.current.src = "/assets/image/map_asset.png";
+  }, [mapData]);
+
   const moveNextStage = () => {
-    dispatch(resetExecutingBlock());
+    dispatch(updateExecutingBlock("end"));
     dispatch(resetTranslatedBlocks());
 
     const currentIndex = allTutorialKeys.indexOf(tutorialId);
@@ -130,6 +137,8 @@ function Tutorial() {
               <Map
                 mapInfo={mapData}
                 setMapInfo={setMapData}
+                catAsset={catAsset.current}
+                mapAsset={mapAsset.current}
                 setIsModalOpen={setIsModalOpen}
                 setResultMessage={setResultMessage}
                 keyQuantity={keyQuantity}
