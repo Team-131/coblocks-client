@@ -650,13 +650,7 @@ function Map({
     }
   };
 
-  return (
-    <>
-      <canvas ref={ref} width={MAP_PIXEL_WIDTH} height={MAP_PIXEL_HEIGHT} />
-      <button onClick={turnLeft}>좌</button>
-      <button onClick={moveOneTile}>이동</button>
-    </>
-  );
+  return <canvas ref={ref} width={MAP_PIXEL_WIDTH} height={MAP_PIXEL_HEIGHT} />;
 }
 
 Map.propTypes = {
