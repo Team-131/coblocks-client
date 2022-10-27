@@ -28,7 +28,7 @@ function BlockCombinator({
   const repeatCountRef = useRef({});
   const previousBlock = useRef([]);
   const [logicBlocks, setLogicBlocks] = useState([]);
-  const [blocksCount, setBlocksCount] = useState(10);
+  const [blocksCount, setBlocksCount] = useState(limitCount);
   const [blockLimitAlarm, setBlockLimitAlarm] = useState("#f5ed58");
   const [isBlockFreezed, setIsBlockFreezed] = useState(false);
 
@@ -65,6 +65,8 @@ function BlockCombinator({
   }, [limitCount]);
 
   useEffect(() => {
+    setBlocksCount(limitCount);
+
     return () => {
       setLogicBlocks([]);
       setIsBlockFreezed(false);
@@ -101,6 +103,8 @@ function BlockCombinator({
 
   const paintBlock = (indexes, color, width) => {
     try {
+      if (!selectBlocksRef.current[indexes[0]]) return;
+
       if (indexes.length === 2) {
         selectBlocksRef.current[indexes[0]].childNodes[
           indexes[1]

@@ -32,10 +32,9 @@ function Map({
 }) {
   const ref = useRef(null);
   const isEnded = useRef(false);
-  const character = useRef({ x: 0, y: 0, direction: 0 });
+  const character = useRef();
   const newMapInfo = useRef(cloneDeep(mapInfo));
   const keyQuantityRef = useRef(keyQuantity);
-
   const dispatch = useDispatch();
   const selectTranslatedBlocks = useSelector(
     (state) => state.block.translatedBlocks,
@@ -390,7 +389,8 @@ function Map({
   };
 
   const moveOneTile = async () => {
-    if (!ref.current) return;
+    if (!ref.current || !character.current) return;
+
     const context = ref.current.getContext("2d");
     const forwardTileType = getTileTypeOfSelectDirection(
       character,

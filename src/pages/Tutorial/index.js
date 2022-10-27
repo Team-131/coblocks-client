@@ -6,7 +6,6 @@ import { useDispatch } from "react-redux";
 
 import {
   resetTranslatedBlocks,
-  resetExecutingBlock,
   updateExecutingBlock,
 } from "../../features/block/blockSlice";
 import { tutorialMapsData } from "../../mapInfo/tutorialMapsData";
@@ -113,7 +112,7 @@ function Tutorial() {
                 </Star>
               ),
             )}
-            <Tip>Tip: {mapData?.tip}</Tip>
+            <Tip>Tip: {mapData.tip}</Tip>
           </GuideWrapper>
           <ButtonsWrapper>
             <Button onClick={restart} rightMargin={"4vw"}>
@@ -128,8 +127,8 @@ function Tutorial() {
           <BlockCombinator
             submittedBlockInfo={isSubmit}
             setSubmittedBlockInfo={setIsSubmit}
-            availableBlocks={mapData?.blocks || []}
-            limitCount={mapData?.limitCount || 10}
+            availableBlocks={mapData.blocks}
+            limitCount={mapData.limitCount}
             mapId={tutorialId}
           />
           <RightWrapper>
@@ -156,12 +155,14 @@ function Tutorial() {
                         src="/assets/image/emptyKey.png"
                         key={`keyCount-${index}`}
                         alt="emptyKey"
+                        draggable={false}
                       ></img>
                     ) : (
                       <img
                         src="/assets/image/key.png"
                         key={`keyCount-${index}`}
                         alt="fulFillKey"
+                        draggable={false}
                       ></img>
                     ),
                   )}
