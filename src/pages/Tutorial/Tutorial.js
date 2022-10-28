@@ -208,7 +208,7 @@ const Star = styled.div`
   cursor: pointer;
 
   &:hover {
-    transform: scale(1.5) rotateY(180deg);
+    transform: scale(1.5);
   }
 `;
 

@@ -2,6 +2,7 @@ import React from "react";
 import { Route, Routes } from "react-router-dom";
 import { createGlobalStyle } from "styled-components";
 
+import { Music } from "../components/Music/Music";
 import { Home } from "../pages/Home/Home";
 import { Tutorial } from "../pages/Tutorial/Tutorial";
 import { Game } from "../pages/Game/Game";
@@ -12,6 +13,7 @@ import { NotFound } from "../pages/NotFound/NotFound";
 function App() {
   return (
     <>
+      <Music />
       <Global />
       <Routes>
         <Route path="/" exact element={<Home />} />
@@ -21,12 +23,6 @@ function App() {
         <Route path="/error" element={<Error />} />
         <Route path="*" element={<NotFound />} />
       </Routes>
-      <audio
-        src="/assets/audio/cat_and_soup.mp3"
-        autoPlay={true}
-        loop={true}
-      ></audio>
-      ;
     </>
   );
 }
