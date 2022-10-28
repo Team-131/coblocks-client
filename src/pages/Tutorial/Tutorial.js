@@ -135,40 +135,42 @@ function Tutorial() {
             mapId={tutorialId}
           />
           <RightWrapper>
-            {mapData && (
-              <Map
-                mapInfo={mapData}
-                setMapInfo={setMapData}
-                catAsset={catAsset.current}
-                mapAsset={mapAsset.current}
-                setIsModalOpen={setIsModalOpen}
-                setResultMessage={setResultMessage}
-                keyQuantity={keyQuantity}
-                setKeyQuantity={setKeyQuantity}
-              />
-            )}
             <div>
-              {mapData &&
-                mapData.keyCount !== 0 &&
-                Array(mapData.keyCount)
-                  .fill("")
-                  .map((none, index) =>
-                    keyQuantity < index + 1 ? (
-                      <img
-                        src="/assets/image/empty_key.png"
-                        key={`keyCount-${index}`}
-                        alt="emptyKey"
-                        draggable={false}
-                      ></img>
-                    ) : (
-                      <img
-                        src="/assets/image/key.png"
-                        key={`keyCount-${index}`}
-                        alt="fulFillKey"
-                        draggable={false}
-                      ></img>
-                    ),
-                  )}
+              {mapData && (
+                <Map
+                  mapInfo={mapData}
+                  setMapInfo={setMapData}
+                  catAsset={catAsset.current}
+                  mapAsset={mapAsset.current}
+                  setIsModalOpen={setIsModalOpen}
+                  setResultMessage={setResultMessage}
+                  keyQuantity={keyQuantity}
+                  setKeyQuantity={setKeyQuantity}
+                />
+              )}
+              <KeyWrapper>
+                {mapData &&
+                  mapData.keyCount !== 0 &&
+                  Array(mapData.keyCount)
+                    .fill("")
+                    .map((none, index) =>
+                      keyQuantity < index + 1 ? (
+                        <img
+                          src="/assets/image/empty_key.png"
+                          key={`keyCount-${index}`}
+                          alt="emptyKey"
+                          draggable={false}
+                        ></img>
+                      ) : (
+                        <img
+                          src="/assets/image/key.png"
+                          key={`keyCount-${index}`}
+                          alt="fulFillKey"
+                          draggable={false}
+                        ></img>
+                      ),
+                    )}
+              </KeyWrapper>
             </div>
             <Button onClick={start}>{BUTTON.START}</Button>
           </RightWrapper>
@@ -206,7 +208,7 @@ const Star = styled.div`
   cursor: pointer;
 
   &:hover {
-    transform: scale(1.5);
+    transform: scale(1.5) rotateY(180deg);
   }
 `;
 
@@ -259,6 +261,11 @@ const RightWrapper = styled.div`
   align-items: center;
   flex-direction: column;
   height: 70vh;
+`;
+
+const KeyWrapper = styled.div`
+  display: flex;
+  justify-content: end;
 `;
 
 export { Tutorial };

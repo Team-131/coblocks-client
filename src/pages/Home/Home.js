@@ -12,11 +12,11 @@ function Home() {
       <Logo>
         <Text>{LOGO.C}</Text>
         <div>
-          <img
+          <CatImage
             src="/assets/image/logo_cat.png"
             width="110vw"
             height="110vh"
-          ></img>
+          ></CatImage>
         </div>
         <Text>{LOGO.BLOCKS}</Text>
       </Logo>
@@ -57,6 +57,14 @@ const Text = styled.span`
 
 const Icon = styled.i`
   margin-right: 1rem;
+`;
+
+const CatImage = styled.img`
+  transition: all 1s ease-in-out;
+
+  &:hover {
+    transform: rotateY(360deg);
+  }
 `;
 
 const Button = styled.button`
