@@ -76,7 +76,6 @@ const Button = styled.button`
   &:hover {
     border-bottom: 2px solid ${COLOR.BLACK};
     color: ${COLOR.BLACK};
-    transition: all 200ms;
   }
 `;
 

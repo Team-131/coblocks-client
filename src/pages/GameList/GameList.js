@@ -45,6 +45,7 @@ const ListWrapper = styled.div`
   border: none;
   background: ${COLOR.BLUE};
   box-shadow: 0rem 0.3rem 0.3rem rgba(0, 0, 0, 0.25);
+  overflow-x: hidden;
   overflow-y: scroll;
 
   &::-webkit-scrollbar {
