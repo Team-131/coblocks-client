@@ -204,11 +204,11 @@ const Star = styled.div`
   color: ${(props) => props.color};
   font-size: 1.5rem;
   font-weight: bolder;
-  transition: all 1s ease-out;
+  transition: all 300ms ease-out;
   cursor: pointer;
 
   &:hover {
-    transform: scale(1.5) rotateY(360deg);
+    transform: scale(1.5) rotateY(180deg);
   }
 `;
 
