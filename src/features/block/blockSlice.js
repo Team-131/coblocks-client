@@ -5,6 +5,7 @@ const blockSlice = createSlice({
   initialState: {
     translatedBlocks: [],
     executingBlock: "",
+    isMusicPlaying: false,
   },
   reducers: {
     resetTranslatedBlocks: (state) => {
@@ -19,6 +20,9 @@ const blockSlice = createSlice({
     updateExecutingBlock: (state, action) => {
       state.executingBlock = action.payload;
     },
+    updateIsMusicPlay: (state, action) => {
+      state.isMusicPlaying = action.payload;
+    },
   },
 });
 
@@ -28,4 +32,5 @@ export const {
   resetExecutingBlock,
   updateTranslatedBlocks,
   updateExecutingBlock,
+  updateIsMusicPlay,
 } = blockSlice.actions;

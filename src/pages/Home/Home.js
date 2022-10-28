@@ -1,12 +1,21 @@
-import React from "react";
+import React, { useEffect } from "react";
 import styled from "styled-components";
 import { useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
+
+import { updateIsMusicPlay } from "../../features/block/blockSlice";
 
 import { LOGO, BUTTON } from "../../config/constants";
 import { COLOR } from "../../config/constants";
 
 function Home() {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    dispatch(updateIsMusicPlay(false));
+  }, []);
+
   return (
     <Background>
       <Logo>
@@ -21,11 +30,21 @@ function Home() {
         </div>
         <Text>{LOGO.BLOCKS}</Text>
       </Logo>
-      <Button onClick={() => navigate("/tutorial/stage1", { replace: true })}>
+      <Button
+        onClick={() => {
+          navigate("/tutorial/stage1", { replace: true });
+          dispatch(updateIsMusicPlay(true));
+        }}
+      >
         <Icon className="fa-solid fa-gamepad" />
         {BUTTON.TUTORIAL}
       </Button>
-      <Button onClick={() => navigate("game_list", { replace: true })}>
+      <Button
+        onClick={() => {
+          navigate("game_list", { replace: true });
+          dispatch(updateIsMusicPlay(true));
+        }}
+      >
         <Icon className="fa-solid fa-list" />
         {BUTTON.GAME_SELECTION}
       </Button>
