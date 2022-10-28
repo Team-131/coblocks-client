@@ -76,3 +76,15 @@ export const SLEEP_TIME = {
   BLOCK_EXECUTION_TERM: 500,
   MODAL_OPENING_DELAY: 500,
 };
+
+export const COLOR = {
+  BLACK: "#1A1E23",
+  WHITE: "#F5F5F5",
+  GRAY: "#EAEDEF",
+  RED: "#CD264B",
+  YELLOW: "#FFCF00",
+  GREEN: "#007E49",
+  BLUE: "#0073B7",
+  DEEP_BLUE: "#293744",
+  PURPLE: "#471C8A",
+};
