@@ -13,6 +13,7 @@ function Home() {
         <Text>{LOGO.C}</Text>
         <div>
           <CatImage
+            className="cat"
             src="/assets/image/logo_cat.png"
             width="110vw"
             height="110vh"
@@ -49,6 +50,15 @@ const Logo = styled.div`
   font-size: 13rem;
   font-weight: 900;
   margin-bottom: 3rem;
+  transition: all 1s;
+
+  &:hover {
+    transform: scale(1.05);
+  }
+
+  &:hover .cat {
+    transform: rotateY(360deg);
+  }
 `;
 
 const Text = styled.span`
@@ -61,10 +71,6 @@ const Icon = styled.i`
 
 const CatImage = styled.img`
   transition: all 1s ease-in-out;
-
-  &:hover {
-    transform: rotateY(360deg);
-  }
 `;
 
 const Button = styled.button`
