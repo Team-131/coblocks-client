@@ -6,3 +6,6 @@
 
 # misc
 .DS_Store
+
+# Local Netlify folder
+.netlify
