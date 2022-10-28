@@ -73,7 +73,7 @@ export const BLOCK_NAMES = {
 };
 
 export const SLEEP_TIME = {
-  BLOCK_EXECUTION_TERM: 500,
+  BLOCK_EXECUTION_TERM: 300,
   MODAL_OPENING_DELAY: 500,
 };
 

@@ -12,11 +12,12 @@ function Header() {
       <Logo onClick={() => navigate("/", { replace: true })}>
         <Text>{LOGO.C}</Text>
         <div>
-          <img
+          <CatImage
+            className="cat"
             src="/assets/image/logo_cat.png"
             width="25vw"
             height="25vh"
-          ></img>
+          ></CatImage>
         </div>
         <Text>{LOGO.BLOCKS}</Text>
       </Logo>
@@ -53,6 +54,14 @@ const Logo = styled.div`
   &:hover {
     transform: scale(1.1);
   }
+
+  &:hover .cat {
+    transform: rotateY(360deg);
+  }
+`;
+
+const CatImage = styled.img`
+  transition: all 1s ease-in-out;
 `;
 
 const Text = styled.span`
