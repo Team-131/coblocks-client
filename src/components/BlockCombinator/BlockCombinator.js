@@ -26,6 +26,12 @@ function BlockCombinator({
   const selectOptionRef = useRef({});
   const repeatCountRef = useRef({});
   const previousBlock = useRef([]);
+
+  const [logicBlocks, setLogicBlocks] = useState([]);
+  const [blocksCount, setBlocksCount] = useState(limitCount);
+  const [blockLimitAlarm, setBlockLimitAlarm] = useState(COLOR.GRAY);
+  const [isBlockFreezed, setIsBlockFreezed] = useState(false);
+
   const blocks = [
     { name: MOVE, isNestable: "false" },
     { name: TURN_RIGHT, isNestable: "false" },
@@ -35,11 +41,6 @@ function BlockCombinator({
     { name: WHILE, isNestable: "true" },
     { name: REPEAT, isNestable: "true" },
   ];
-  const [logicBlocks, setLogicBlocks] = useState([]);
-  const [blocksCount, setBlocksCount] = useState(limitCount);
-  const [blockLimitAlarm, setBlockLimitAlarm] = useState(COLOR.GRAY);
-  const [isBlockFreezed, setIsBlockFreezed] = useState(false);
-
   const whileBlock = { type: WHILE, content: [] };
   const repeatBlock = { type: REPEAT, content: [] };
 
