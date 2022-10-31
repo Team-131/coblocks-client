@@ -324,7 +324,7 @@ function BlockCombinator({
     setBlockLimitAlarm(COLOR.GRAY);
   };
 
-  const removeLogicBlock = (event) => {
+  const handleRemoveLogicBlock = (event) => {
     const newLogicBlocks = logicBlocks.slice();
     const currentBlockGroup = event.dataTransfer.getData("currentBlockGroup");
     const currentBlockIndex = event.dataTransfer.getData("currentBlockIndex");
@@ -354,7 +354,7 @@ function BlockCombinator({
     }
   };
 
-  const allowDrop = (event) => {
+  const handleAllowDrop = (event) => {
     event.preventDefault();
   };
 
@@ -394,7 +394,10 @@ function BlockCombinator({
 
   return (
     <Wrapper>
-      <SelectionBlocks onDrop={removeLogicBlock} onDragOver={allowDrop}>
+      <SelectionBlocks
+        onDrop={handleRemoveLogicBlock}
+        onDragOver={handleAllowDrop}
+      >
         <Title>{WINDOW.BLOCKS_SELECTION}</Title>
         {blocks.map((block) => {
           if (availableBlocks.includes(block.name)) {
@@ -423,7 +426,10 @@ function BlockCombinator({
           }
         })}
       </SelectionBlocks>
-      <LogicBlocks backGroundColor={blockLimitAlarm} onDragOver={allowDrop}>
+      <LogicBlocks
+        backGroundColor={blockLimitAlarm}
+        onDragOver={handleAllowDrop}
+      >
         <Title>
           {WINDOW.BLOCKS_LOGIC}
           <ClearButton onClick={clearLogicBlock}>🗑️</ClearButton>
