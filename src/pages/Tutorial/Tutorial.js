@@ -158,7 +158,7 @@ function Tutorial() {
                         <img
                           src="/assets/image/empty_key.png"
                           key={`keyCount-${index}`}
-                          alt="emptyKey"
+                          alt="empty_key"
                           draggable={false}
                         ></img>
                       ) : (
