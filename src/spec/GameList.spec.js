@@ -14,9 +14,9 @@ describe("GameList 컴포넌트", () => {
   });
 
   it("맵 클릭시 게임 페이지로 이동", async () => {
-    renderWithProvider(["/game_list"]);
-
     const user = userEvent.setup();
+
+    renderWithProvider(["/game_list"]);
 
     await user.click(screen.getByText(/stage1/i));
 
