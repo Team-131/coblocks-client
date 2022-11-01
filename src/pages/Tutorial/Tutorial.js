@@ -146,6 +146,7 @@ function Tutorial() {
                   setResultMessage={setResultMessage}
                   keyQuantity={keyQuantity}
                   setKeyQuantity={setKeyQuantity}
+                  unlockBlockControl={() => setIsSubmit(false)}
                 />
               )}
               <KeyWrapper>

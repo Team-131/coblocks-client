@@ -112,6 +112,7 @@ function Game() {
                 setResultMessage={setResultMessage}
                 keyQuantity={keyQuantity}
                 setKeyQuantity={setKeyQuantity}
+                unlockBlockControl={() => setIsSubmit(false)}
               />
             )}
             <KeyWrapper>

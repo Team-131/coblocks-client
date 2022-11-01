@@ -31,6 +31,7 @@ function Map({
   setResultMessage,
   keyQuantity,
   setKeyQuantity,
+  unlockBlockControl,
 }) {
   const ref = useRef(null);
   const isEnded = useRef(false);
@@ -117,9 +118,7 @@ function Map({
 
           isEnded.current = true;
 
-          setTimeout(() => {
-            setIsModalOpen(true);
-          }, MODAL_OPENING_DELAY);
+          openModalAndReset();
         }
       }
     })();
@@ -182,6 +181,16 @@ function Map({
       false,
     );
   }, [mapInfo]);
+
+  const openModalAndReset = () => {
+    setTimeout(() => {
+      setIsModalOpen(true);
+      dispatch(updateExecutingBlock("end"));
+      dispatch(resetTranslatedBlocks());
+      setMapInfo(cloneDeep(mapInfo));
+      unlockBlockControl();
+    }, MODAL_OPENING_DELAY);
+  };
 
   const executeWhileBlock = async (blockArray, parentIndex) => {
     for (let whileCount = 0; whileCount < 50; whileCount++) {
@@ -415,9 +424,7 @@ function Map({
 
       isEnded.current = true;
 
-      setTimeout(() => {
-        setIsModalOpen(true);
-      }, MODAL_OPENING_DELAY);
+      openModalAndReset();
     }
 
     const { forwardCoordinateX, forwardCoordinateY } =
@@ -448,9 +455,7 @@ function Map({
 
         isEnded.current = true;
 
-        setTimeout(() => {
-          setIsModalOpen(true);
-        }, MODAL_OPENING_DELAY);
+        openModalAndReset();
       }
     }
 
@@ -459,9 +464,7 @@ function Map({
 
       isEnded.current = true;
 
-      setTimeout(() => {
-        setIsModalOpen(true);
-      }, MODAL_OPENING_DELAY);
+      openModalAndReset();
     }
 
     const forwardAssetCoordinate = getAssetCoordinate(
@@ -576,9 +579,7 @@ function Map({
 
     setResultMessage(FAIL);
 
-    setTimeout(() => {
-      setIsModalOpen(true);
-    }, MODAL_OPENING_DELAY);
+    openModalAndReset();
   };
 
   const attack = async () => {
@@ -670,6 +671,7 @@ Map.propTypes = {
   setResultMessage: PropTypes.func.isRequired,
   keyQuantity: PropTypes.number.isRequired,
   setKeyQuantity: PropTypes.func.isRequired,
+  unlockBlockControl: PropTypes.func.isRequired,
 };
 
 const Canvas = styled.canvas`
