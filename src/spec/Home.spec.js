@@ -2,6 +2,7 @@ import { screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 
 import { renderWithProvider } from "./test-utils";
+import { BUTTON } from "../config/constants";
 
 describe("Home 컴포넌트", () => {
   it("Home 컴포넌트 렌더링시 element 렌더 정상여부체크", () => {
@@ -16,7 +17,7 @@ describe("Home 컴포넌트", () => {
 
     const user = userEvent.setup();
 
-    await user.click(screen.getByText("연습하기"));
+    await user.click(screen.getByText(BUTTON.TUTORIAL));
 
     expect(screen.getByText(/코드 블록 선택하기/i)).toBeInTheDocument();
     expect(screen.getByText(/어느 방향일까?/i)).toBeInTheDocument();
@@ -27,7 +28,7 @@ describe("Home 컴포넌트", () => {
 
     const user = userEvent.setup();
 
-    await user.click(screen.getByText("게임선택"));
+    await user.click(screen.getByText(BUTTON.GAME_SELECTION));
 
     expect(
       screen.getByText(/도전하고 싶은 맵을 선택하세요./i),
