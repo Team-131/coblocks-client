@@ -11,6 +11,10 @@ describe("GameList 컴포넌트", () => {
       screen.getByText(/도전하고 싶은 맵을 선택하세요./i),
     ).toBeInTheDocument();
     expect(screen.getByText(/stage1/i)).toBeInTheDocument();
+    expect(screen.getByRole("img")).toHaveAttribute(
+      "src",
+      "/assets/image/logo_cat.png",
+    );
   });
 
   it("맵 클릭시 게임 페이지로 이동", async () => {
