@@ -30,7 +30,7 @@
 <br/>
 
 ## 🗂️ Contents
-- [💡 개발 동기](https://github.com/Team-131/coblocks-client/edit/dev/README.md#-%EA%B0%9C%EB%B0%9C-%EB%8F%99%EA%B8%B0)
+- [💡 개발 동기](#💡-개발-동기)
 - [⚙️ 설치 및 실행](https://github.com/Team-131/coblocks-client/edit/dev/README.md#%EF%B8%8F-%EC%84%A4%EC%B9%98-%EB%B0%8F-%EC%8B%A4%ED%96%89)
 - [🛠️ 기술 스택](https://github.com/Team-131/coblocks-client/edit/dev/README.md#%EF%B8%8F-%EA%B8%B0%EC%88%A0-%EC%8A%A4%ED%83%9D)
 - [📂 파일 구조](https://github.com/Team-131/coblocks-client/edit/dev/README.md#-%ED%8C%8C%EC%9D%BC-%EA%B5%AC%EC%A1%B0)
