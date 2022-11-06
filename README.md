@@ -30,7 +30,7 @@
 <br/>
 
 ## 🗂️ Contents
-- [💡 개발 동기](#개발-동기)
+- [💡 개발 동기](#💡-개발-동기)
 - [⚙️ 설치 및 실행](https://github.com/Team-131/coblocks-client/edit/dev/README.md#%EF%B8%8F-%EC%84%A4%EC%B9%98-%EB%B0%8F-%EC%8B%A4%ED%96%89)
 - [🛠️ 기술 스택](https://github.com/Team-131/coblocks-client/edit/dev/README.md#%EF%B8%8F-%EA%B8%B0%EC%88%A0-%EC%8A%A4%ED%83%9D)
 - [📂 파일 구조](https://github.com/Team-131/coblocks-client/edit/dev/README.md#-%ED%8C%8C%EC%9D%BC-%EA%B5%AC%EC%A1%B0)
@@ -41,7 +41,7 @@
 
 <br/>
 
-## 개발 동기
+## 💡 개발 동기
 - 코딩 교육 플랫폼인 `Scratch` 를 보고, `Visualized Code` 에 흥미를 가지게됐고, 비슷한 방식의 시각화된 코드를 조작하는 프로젝트들을 찾아본 결과, 해당 서비스(프로젝트)들은 공통적으로 `Blockly`라는 라이브러리를 사용한다는 걸 알게 되었습니다.
 
 - 저희는 타 서비스(플랫폼)들과의 차별점으로 `Blockly` 라이브러리를 사용하지 않고, HTML Drag&Drop API 만을 사용해 코드를 시각화한 블록을 조작하는 기능을 직접 구현해보기로 했고, 거기에 더해 조작한 블록의 실행과정을 2D 애니메이션으로 보여주는 게임을 구현함으로써 코드 실행과정에 대한 이해와, 흥미를 끌어낼 수 있는 `Coblocks` 프로젝트를 기획하게 되었습니다.
