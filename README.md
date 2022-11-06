@@ -31,13 +31,13 @@
 
 ## 🗂️ Contents
 - [💡 개발 동기](#개발-동기)
-- [⚙️ 설치 및 실행](https://github.com/Team-131/coblocks-client/edit/dev/README.md#%EF%B8%8F-%EC%84%A4%EC%B9%98-%EB%B0%8F-%EC%8B%A4%ED%96%89)
-- [🛠️ 기술 스택](https://github.com/Team-131/coblocks-client/edit/dev/README.md#%EF%B8%8F-%EA%B8%B0%EC%88%A0-%EC%8A%A4%ED%83%9D)
-- [📂 파일 구조](https://github.com/Team-131/coblocks-client/edit/dev/README.md#-%ED%8C%8C%EC%9D%BC-%EA%B5%AC%EC%A1%B0)
-- [🎮 Features](https://github.com/Team-131/coblocks-client/edit/dev/README.md#-features)
-- [🔥 Challenges](https://github.com/Team-131/coblocks-client/edit/dev/README.md#-challenges)
-- [📈 개선하고 싶은 점](https://github.com/Team-131/coblocks-client/edit/dev/README.md#-%EA%B0%9C%EC%84%A0%ED%95%98%EA%B3%A0-%EC%8B%B6%EC%9D%80-%EC%A0%90)
-- [🤔 고민했던 점 & 알게된 점](https://github.com/Team-131/coblocks-client/edit/dev/README.md#-%EA%B3%A0%EB%AF%BC%ED%96%88%EB%8D%98-%EC%A0%90--%EC%95%8C%EA%B2%8C%EB%90%9C-%EC%A0%90)
+- [⚙️ 설치 및 실행](#설치-및-실행)
+- [🛠️ 기술 스택](#기술-스택)
+- [📂 파일 구조](#파일-구조)
+- [🎮 Features](#Features)
+- [🔥 Challenges](#Challenges)
+- [📈 개선하고 싶은 점](개선하고-싶은-점)
+- [🤔 고민했던 점 & 알게된 점](#고민했던-점-&-알게된-점)
 
 <br/>
 
@@ -48,7 +48,7 @@
 
 <br/>
 
-## ⚙️ 설치 및 실행
+## 설치 및 실행
 
 ```
 npm install
@@ -57,7 +57,7 @@ npm start
 
 <br/>
 
-## 🛠️ 기술 스택
+## 기술 스택
 ### Frontend
 - React
 - Redux Toolkit
@@ -77,7 +77,7 @@ npm start
 
 <br/>
 
-## 📂 파일 구조
+## 파일 구조
 <details>
 <summary>펼치기 / 접기</summary>
 📦coblocks-client
@@ -145,7 +145,7 @@ npm start
 </details>
 <br/>
 
-## 🎮 Features
+## Features
 |||
 |:---:|:---:|
 |![1 메인화면](https://user-images.githubusercontent.com/33389245/199160875-438964c7-3735-4356-b7c5-76d7d547f378.gif)|![2 연습하기](https://user-images.githubusercontent.com/33389245/199160886-9871868e-d498-4ff5-99a9-741455173753.gif)|
@@ -159,7 +159,7 @@ npm start
 |![9 게임실패](https://user-images.githubusercontent.com/33389245/199160906-efac7c64-5c9c-4aba-a0b7-da02bc949d41.gif)|![10 게임성공](https://user-images.githubusercontent.com/33389245/199160909-676c0f78-c878-4c7d-a6fb-604c92a01177.gif)|
 |9. 게임실패: 캐릭터가 목적지에 도달하지 못한 경우,<br/>`실패` 메세지가 표시됩니다.|10. 게임성공: 캐릭터가 목적지에 도달한 경우, `성공`메세지가 표시됩니다.|
 
-## 🔥 Challenges
+## Challenges
 ### 라이브러리를 사용하지 않고 동적으로 상호작용하는 블록들을 어떻게 구현 할 것인가?
 - `Blockly` 라이브러리를 사용하지 않고 필요한 기능만을 가진 블록을 직접 구현하기로 했는데, `Blockly` 라이브러리를 사용하지 않은 레퍼런스 사이트가 거의 없어서 어려움을 겪었습니다.
 - 처음에는 블록의 위치를 제한없이 자유롭게 옮기면서 블록들의 데이터를 가져올 수 있는 방법에 대해 고민했었지만, 해당방법은 블록의 정보를 읽어오기 위해 좌표별 블록의 선후관계를 분석해야하므로 구현방식에 문제점이 있다고 판단하여 다른 관점으로 접근했습니다. 대안으로, drag&drop 이벤트 발생시 블록의 순서를 관리하는 배열형태의 상태(state)를 조작함으로써, 리렌더시 블록의 위치가 배열의 순서에 맞게 배치되도록 했으며 배열형태의 상태에서 블록정보를 읽어오는 방식으로 문제를 해결했습니다.
@@ -178,7 +178,7 @@ npm start
 
 <br/>
 
-##  📈 개선하고 싶은 점
+## 개선하고 싶은 점
 - 간편한 인터페이스를 위해 블록 Drag&Drop 상황에 여러가지 제한을 뒀는데, 오히려 이벤트 핸들러 함수에서 처리해야할 경우의 수가 생각이상으로 많아지는 문제가 생겼고, 각 경우의 수를 대비하기 위해 분기문을 일일이 만들어 처리해주었습니다.
 이로인해, 처음 기획당시 예상하지 못한 경우의 수가 나올때마다 분기문을 추가하게됐고 가독성과 유지보수성이 떨어지는 코드가 된 것 같아 아쉬움이 남습니다. <br/>
 따라서, 기존에 설정한 블록별 중첩횟수 제한등의 제약사항을 없애고 자유도를 높인다면, 처리 해줘야하는 경우의 수가 줄어서 분기문을 줄일수 있을것이고, 이벤트 핸들러를 컴포넌트 단위로 구분한다면 코드의 가독성을 높이고 유지보수성을 개선할 수 있을것으로 생각됩니다.
@@ -186,7 +186,7 @@ npm start
 
 <br/>
 
-## 🤔 고민했던 점 & 알게된 점
+## 고민했던 점 & 알게된 점
 ### 전역 상태 관리 Context API vs Redux
 - Redux는 Context API를 기반으로 만든 라이브러리이므로, 전역 상태 관리 측면에서는 차이점이 거의 없습니다.
 하지만 high-frequency updates에 있어서 Context API는 좋지 않은 성능을 보이지만, Redux는 그렇지 않은것으로 알고있으며, 저희 프로젝트에서는 블록실행시 매 단계별 redux state update를 하기 때문에 성능을 고려해 Redux를 사용했습니다.
