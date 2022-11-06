@@ -37,7 +37,7 @@
 - [🎮 Features](#Features)
 - [🔥 Challenges](#Challenges)
 - [📈 개선하고 싶은 점](#개선하고-싶은-점)
-- [🤔 고민했던 점 & 알게된 점](#고민했던-점-&-알게된-점)
+- [🤔 고민했던 점 알게된 점](#고민했던-점과-알게된-점)
 
 <br/>
 
@@ -186,7 +186,7 @@ npm start
 
 <br/>
 
-## 고민했던 점 & 알게된 점
+## 고민했던 점과 알게된 점
 ### 전역 상태 관리 Context API vs Redux
 - Redux는 Context API를 기반으로 만든 라이브러리이므로, 전역 상태 관리 측면에서는 차이점이 거의 없습니다.
 하지만 high-frequency updates에 있어서 Context API는 좋지 않은 성능을 보이지만, Redux는 그렇지 않은것으로 알고있으며, 저희 프로젝트에서는 블록실행시 매 단계별 redux state update를 하기 때문에 성능을 고려해 Redux를 사용했습니다.
