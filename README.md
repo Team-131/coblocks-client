@@ -3,7 +3,7 @@
 
 `Coblocks`는 블록형태의 코드(`기능블록, 조건블록, 반복블록`)를 사용자가 원하는대로 조합해서 캐릭터를 목표지점까지 이동시키는 코딩 로직 교육용 게임입니다.
 
-- ### 배포 : [Coblocks](https://www.coblocks.online/)
+- ### 배포 사이트 링크: [Coblocks](https://www.coblocks.online/)
 
 <br/>
 
